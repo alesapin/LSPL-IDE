@@ -6,7 +6,12 @@
 
 PatternEditorTab::PatternEditorTab(QWidget *parent):QTabWidget(parent)
 {
-    PatterEditor* editor = new PatterEditor();
+    editor = new PatterEditor();
     addTab(editor,"Pattern Editor");
     setCurrentWidget(editor);
+}
+
+QString PatternEditorTab::getText()
+{
+    return editor->toPlainText();
 }

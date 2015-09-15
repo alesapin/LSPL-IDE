@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = LSPL-IDE
 TEMPLATE = app
+CONFIG += c++11
 
 LIBS = -llspl
 
@@ -21,3 +22,4 @@ HEADERS  += mainwindow.h
 include(Text/Text.pri)
 include(Interface/Interface.pri)
 include(Patterns/Patterns.pri)
+include(Engine/Engine.pri)

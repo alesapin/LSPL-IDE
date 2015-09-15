@@ -5,8 +5,11 @@
 
 class PatternEditorTab : public QTabWidget
 {
+private:
+    PatterEditor* editor;
 public:
     PatternEditorTab(QWidget* parent=0);
+    QString getText();
 };
 
 #endif // PATTERNEDITORTAB_H
