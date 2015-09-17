@@ -155,3 +155,12 @@ bool PatternCompiledTable::insertRows(int start, int count, const QModelIndex &p
       endInsertRows();
       return true;
 }
+
+QVector<QString> PatternCompiledTable::getChoosenPatterns()
+{
+    QVector<QString> result(datum.size());
+    for(uint i = 0;i< datum.size();++i){
+        result[i]=datum[i].patternName;
+    }
+    return result;
+}

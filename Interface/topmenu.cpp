@@ -84,11 +84,12 @@ void TopMenu::saveAllFiles()
 
 }
 
-TopMenu::TopMenu(MainWindow* parent,TextBasicWidget* text):QMenuBar(parent),text(text)
+TopMenu::TopMenu(QWidget* parent,CentralWidget* c):QMenuBar(parent),cent(c)
 {
     setDefaultUp(true);
     setNativeMenuBar(true);
     setFileMenu();
+    text = c->getTextWidget();
 
 }
 

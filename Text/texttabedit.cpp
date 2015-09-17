@@ -4,7 +4,9 @@ TextTabEdit::TextTabEdit(QWidget* parent):QTabWidget(parent)
 {
 
     this->setTabsClosable(true);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred );
+    //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding );
+    setMinimumHeight(300);
+//    setMinimumWidth(300);
     connect(this,SIGNAL(tabCloseRequested(int)),this,SLOT(closeTab(int)));
 
 }

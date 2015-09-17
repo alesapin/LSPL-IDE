@@ -30,6 +30,7 @@ public:
     void addPattern(QString patternName,int segments = -1 ,int maches = -1, int variants = -1,bool checked = false);
     void addPatterns(QStringList patterns);
     bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
+    QVector<QString> getChoosenPatterns();
 };
 
 #endif // PATTERNCOMPILEDTABLE_H

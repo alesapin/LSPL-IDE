@@ -3,9 +3,10 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    TextBasicWidget* textPart = new TextBasicWidget(this);
-    setMenuBar(new TopMenu(this,textPart));
-    setCentralWidget(new PatternsBasicWidget());
+    CentralWidget *w = new CentralWidget();
+    setMenuBar(new TopMenu(this,w));
+    //setCentralWidget(new PatternsBasicWidget());
+    setCentralWidget(w);
 }
 
 MainWindow::~MainWindow()

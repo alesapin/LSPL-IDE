@@ -15,9 +15,11 @@ CONFIG += c++11
 LIBS = -llspl
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    centralwidget.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    centralwidget.h
 
 include(Text/Text.pri)
 include(Interface/Interface.pri)

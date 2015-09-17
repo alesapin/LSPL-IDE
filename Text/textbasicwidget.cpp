@@ -73,15 +73,64 @@ void TextBasicWidget::newTextFile()
     textEdit->addAnotherTab("Untilted","");
 }
 
-TextBasicWidget::TextBasicWidget(QWidget *parent) : QWidget(parent)
+void TextBasicWidget::setMatches(const QVector<PatternCompiler::MatchRepr> &matches)
 {
-    QGridLayout * lay = new QGridLayout(this);
+    matchesModel->setMatches(matches);
+}
+
+QString TextBasicWidget::getText()
+{
+    return textEdit->getCurrentText();
+}
+
+void TextBasicWidget::analyzeText()
+{
+//    CentralWidget* par = static_cast<CentralWidget*>(this->parent());
+//    par->getChoosenPatterns();
+    emit buttonClicked();
+}
+
+void TextBasicWidget::initTable()
+{
+    matchTabs = new QTabWidget(this);
+    matchesTable = new QTableView(this);
+    matchesModel = new TextMatchesModel(this);
+    matchesTable->setModel(matchesModel);
+    matchesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    for(int c = 0; c < matchesTable->horizontalHeader()->count();++c){
+        matchesTable->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+    }
+    matchTabs->addTab(matchesTable,"Matches View");
+}
+
+void TextBasicWidget::initEditor()
+{
     textEdit = new TextTabEdit(this);
-    lay->setMargin(10);
-    lay->setRowStretch(0,10);
-    lay->setRowMinimumHeight(0,300);
-    lay->setColumnMinimumWidth(0,300);
-    lay->setColumnStretch(0,10);
-    lay->addWidget((QWidget*)textEdit,0,0);
+
+}
+
+void TextBasicWidget::initButton()
+{
+    analyze = new QPushButton("Analyze",this);
+    connect(analyze,SIGNAL(clicked(bool)),this,SLOT(analyzeText()));
+
+}
+
+TextBasicWidget::TextBasicWidget(PatternCompiler* comp,QWidget *parent) : QWidget(parent),compiler(comp)
+{
+    QHBoxLayout * lay = new QHBoxLayout(this);
+    QSplitter* split = new QSplitter(this);
+    initEditor();
+    initTable();
+    initButton();
+    split->setOrientation(Qt::Vertical);
+    split->addWidget(analyze);
+    split->addWidget(textEdit);
+    split->addWidget(matchTabs);
+//    lay->addWidget(analyze,0,0);
+//    lay->addWidget(textEdit,1,0);
+//    lay->addWidget(matchTabs,2,0);
+    lay->addWidget(split);
+    this->setLayout(lay);
 }
 

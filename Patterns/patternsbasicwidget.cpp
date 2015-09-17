@@ -2,7 +2,6 @@
 #include <QDebug>
 void PatternsBasicWidget::initCompileButton()
 {
-    comp = new PatternCompiler();
     compileButton = new QPushButton("Compile",this);
     connect(compileButton,SIGNAL(clicked(bool)),this,SLOT(compilePattern()));
 
@@ -31,24 +30,35 @@ void PatternsBasicWidget::initPatternLogBar()
     logtab->addTab(logBar,"Compilation output");
 }
 
-PatternsBasicWidget::PatternsBasicWidget(QWidget *parent) : QWidget(parent)
+PatternsBasicWidget::PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent) : QWidget(parent)
 {
-    QGridLayout * lay = new QGridLayout(this);
+    QSplitter *split1 = new QSplitter();
+    QSplitter *split2 = new QSplitter();
+    QSplitter *split3 = new QSplitter();
+    split1->setOrientation(Qt::Vertical);
 
+    QGridLayout * lay = new QGridLayout(this);
+    comp = compiler;
     initCompileButton();
     initPatternEditor();
     initPatternTable();
     initPatternLogBar();
-    lay->addWidget(compileButton,0,0);
-    lay->addWidget(editorTab,1,0);
-    lay->addWidget(table,1,1);
-    lay->addWidget(logtab,2,0,1,2);
+    split1->addWidget(compileButton);
+    split1->addWidget(editorTab);
+    split2->addWidget(split1);
+    split2->addWidget(table);
+    split3->setOrientation(Qt::Vertical);
+    split3->addWidget(split2);
+    split3->addWidget(logtab);
+    lay->addWidget(split3);
 }
 
-PatternsBasicWidget::~PatternsBasicWidget()
+QVector<QString> PatternsBasicWidget::getChoosenPatterns()
 {
-    delete comp;
+    return tableModel->getChoosenPatterns();
 }
+
+
 
 void PatternsBasicWidget::compilePattern()
 {
@@ -57,13 +67,13 @@ void PatternsBasicWidget::compilePattern()
     logBar->setText("");
     for(QString pattern: patterns){
         QString patternName = pattern.split("=").at(0);
-        try{
-            comp->compilePattern(pattern.toStdString().c_str());
-            tableModel->addPattern(patternName);
+        QString res = comp->compilePattern(pattern);
+        if(res.isEmpty()){
+            tableModel->addPattern(patternName.simplified());
             logBar->append("Pattern " + patternName + " successfully compiled.");
-        }catch(lspl::patterns::PatternBuildingException e){
-            logBar->append("Error in pattern: " + patternName);
-            logBar->append("\t"+QString(e.what()));
+        }else{
+            logBar->append("Error in pattern: " + patternName.simplified());
+            logBar->append("\t"+res);
         }
     }
 }

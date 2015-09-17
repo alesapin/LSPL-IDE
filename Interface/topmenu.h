@@ -7,8 +7,8 @@
 #include <QFileDialog>
 
 #include "mainwindow.h"
-#include "Text/textbasicwidget.h"
-class MainWindow;
+#include "../centralwidget.h"
+class CentralWidget;
 class TextBasicWidget;
 class TopMenu : public QMenuBar
 {
@@ -26,9 +26,10 @@ private:
     void setFileMenu();
     void setFileActions();
     TextBasicWidget* text;
+    CentralWidget* cent;
     QString filename;
 public:
-    TopMenu(MainWindow* parent = 0,TextBasicWidget* text=0);
+    TopMenu(QWidget* parent = 0,CentralWidget* c=0);
 private slots:
     void newFile();
     void openFile();

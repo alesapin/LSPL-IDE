@@ -5,7 +5,8 @@ MainTextViewer::MainTextViewer(QWidget *parent) : QTextEdit(parent),modified(fal
     //installEventFilter(this);
     converter = QTextCodec::codecForLocale();
     setMinimumHeight(300);
-    setMinimumWidth(300);
+//    setMinimumWidth(300);
+    //setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     connect(this,SIGNAL(textChanged()),this,SLOT(modify()));
 }
 

@@ -19,6 +19,7 @@
 #include <QTableView>
 #include <QHeaderView>
 #include <Patterns/patterncomplogbar.h>
+#include <QSplitter>
 class PatternsBasicWidget : public QWidget
 {
     Q_OBJECT
@@ -36,8 +37,8 @@ private:
     void initPatternEditor();
     void initPatternLogBar();
 public:
-    explicit PatternsBasicWidget(QWidget *parent = 0);
-    ~PatternsBasicWidget();
+    explicit PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent = 0);
+    QVector<QString> getChoosenPatterns();
 signals:
 
 public slots:
