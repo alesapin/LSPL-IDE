@@ -16,20 +16,20 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QPushButton>
-#include <Text/textmatchesmodel.h>
+#include <Text/textmatchestable.h>
 #include <QTableView>
 #include <QTabWidget>
 #include <QSplitter>
 #include <QHBoxLayout>
 #include <Engine/patterncompiler.h>
+#include <Text/matcheswidget.h>
 class TextTabEdit;
 class TextBasicWidget : public QWidget
 {
     Q_OBJECT
     TextTabEdit* textEdit;
     QPushButton* analyze;
-    TextMatchesModel* matchesModel;
-    QTableView* matchesTable;
+    MatchesWidget* matches;
     QTabWidget* matchTabs;
     PatternCompiler* compiler;
 
@@ -42,12 +42,14 @@ public:
     void openTextFile(const QString& filename);
     bool maybeSave(QString filename,int index);
     void newTextFile();
-    void setMatches(const QVector<PatternCompiler::MatchRepr>& matches);
+    void setMatches(const PatternViewMap& matches);
+    void highlighMatches(const PatternViewMap& matches);
     QString getText();
 signals:
     void buttonClicked();
 public slots:
     void analyzeText();
+    void selectFragment(int from,int to);
 };
 
 #endif // TEXTBASICWIDGET_H

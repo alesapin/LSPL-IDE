@@ -31,6 +31,18 @@ QString TextTabEdit::getIndexText(int index) const
     return current->toPlainText();
 }
 
+void TextTabEdit::highLightText(const QVector<QPair<int, int> > &frags)
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    current->highlightFragments(frags);
+}
+
+void TextTabEdit::selectText(int start, int end)
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    current->selectText(start,end);
+}
+
 void TextTabEdit::closeTab(int index)
 {
         MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));

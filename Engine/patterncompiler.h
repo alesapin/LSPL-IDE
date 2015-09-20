@@ -10,6 +10,7 @@
 #include <QVector>
 #include <QTextCodec>
 #include <algorithm>
+#include <QMap>
 class PatternCompiler
 {
 public:
@@ -17,11 +18,12 @@ public:
         QString text;
         QString context;
         QString params;
+        //QVector<QString> variants; Вопросец
         uint start;
         uint end;
     };
     PatternCompiler();
-    QVector<MatchRepr> analyzeText(const QVector<QString> &patternNames,const QString& text);
+    QMap<QString,QVector<PatternCompiler::MatchRepr>> analyzeText(const QVector<QString> &patternNames,const QString& text);
     QString compilePattern(const QString& pattern);
 private:
     lspl::NamespaceRef ns;
@@ -30,5 +32,6 @@ private:
     MatchRepr convertMatch(lspl::text::MatchRef ref);
     QTextCodec *codec;
 };
+typedef QMap<QString,QVector<PatternCompiler::MatchRepr>> PatternViewMap;
 
 #endif // PATTERNCOMPILER_H

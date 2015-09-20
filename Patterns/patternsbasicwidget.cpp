@@ -58,6 +58,11 @@ QVector<QString> PatternsBasicWidget::getChoosenPatterns()
     return tableModel->getChoosenPatterns();
 }
 
+void PatternsBasicWidget::setPatternValues(QString name, int segments, int matches, int variants)
+{
+    tableModel->setPatternValues(name,segments,matches,variants);
+}
+
 
 
 void PatternsBasicWidget::compilePattern()

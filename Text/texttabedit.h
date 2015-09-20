@@ -16,6 +16,8 @@ public:
     void addAnotherTab(const QString& filename,const QString& text);
     QString getCurrentText() const;
     QString getIndexText(int index) const;
+    void highLightText(const QVector<QPair<int,int>>& frags);
+    void selectText(int start,int end);
 public slots:
     void closeTab(int index);
 };

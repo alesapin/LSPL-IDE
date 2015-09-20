@@ -20,18 +20,22 @@ PatternCompiler::PatternCompiler()
     codec = QTextCodec::codecForName("Windows-1251");
 }
 
-QVector<PatternCompiler::MatchRepr> PatternCompiler::analyzeText(const QVector<QString> &patternNames, const QString &text)
+PatternViewMap PatternCompiler::analyzeText(const QVector<QString> &patternNames, const QString &text)
 {
     lspl::text::TextRef txt = reader.readFromString(text.toStdString(),"UTF-8");
-    QVector<MatchRepr> result;
+    PatternViewMap result;
     for(QString pattern: patternNames){
         lspl::patterns::PatternRef pat = ns->getPatternByName(pattern.toStdString());
         lspl::text::MatchList matches = txt->getMatches(pat);
+        QVector<MatchRepr> resultPattern;
         for(uint i = 0; i < matches.size(); ++i){
+            lspl::text::MatchRef ref = matches[i];
             MatchRepr rep = convertMatch(matches[i]);
-            rep.context = text.mid(std::max(rep.start-10,(uint)0),std::min(rep.end-rep.start+10,text.length()-rep.start));
-            result.append(rep);
+            rep.context = text.mid(std::max(rep.start-5,(uint)0),std::min((int)rep.end+5,text.length())).replace("\n"," ");
+
+            resultPattern.append(rep);
         }
+        result[pattern]=resultPattern;
     }
     return result;
 }

@@ -73,16 +73,35 @@ void TextBasicWidget::newTextFile()
     textEdit->addAnotherTab("Untilted","");
 }
 
-void TextBasicWidget::setMatches(const QVector<PatternCompiler::MatchRepr> &matches)
+void TextBasicWidget::setMatches(const PatternViewMap &matches)
 {
-    matchesModel->setMatches(matches);
+    this->matches->setPatterns(matches);
+
+
+
+}
+
+void TextBasicWidget::highlighMatches(const PatternViewMap &matches)
+{
+    QVector<QPair<int,int>> result;
+    for(const QVector<PatternCompiler::MatchRepr>& match : matches.values()){
+        for(int i = 0;i<match.size();++i){
+            PatternCompiler::MatchRepr m = match[i];
+            result.push_back(QPair<int,int>(m.start,m.end));
+        }
+    }
+    textEdit->highLightText(result);
 }
 
 QString TextBasicWidget::getText()
 {
     return textEdit->getCurrentText();
 }
-
+/**
+ * @brief TextBasicWidget::analyzeText
+ * Излучает сигнал наружу, единственная кнопка
+ * которая связывает 2 большие группы виджетов.
+ */
 void TextBasicWidget::analyzeText()
 {
 //    CentralWidget* par = static_cast<CentralWidget*>(this->parent());
@@ -90,23 +109,22 @@ void TextBasicWidget::analyzeText()
     emit buttonClicked();
 }
 
+void TextBasicWidget::selectFragment(int from, int to)
+{
+    textEdit->selectText(from,to);
+}
+
 void TextBasicWidget::initTable()
 {
     matchTabs = new QTabWidget(this);
-    matchesTable = new QTableView(this);
-    matchesModel = new TextMatchesModel(this);
-    matchesTable->setModel(matchesModel);
-    matchesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    for(int c = 0; c < matchesTable->horizontalHeader()->count();++c){
-        matchesTable->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-    }
-    matchTabs->addTab(matchesTable,"Matches View");
+    matches = new MatchesWidget(this);
+    matchTabs->addTab(matches,"Matches View");
+    connect(matches,SIGNAL(rowClicked(int,int)),this,SLOT(selectFragment(int,int)));
 }
 
 void TextBasicWidget::initEditor()
 {
     textEdit = new TextTabEdit(this);
-
 }
 
 void TextBasicWidget::initButton()

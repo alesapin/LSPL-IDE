@@ -29,6 +29,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     void addPattern(QString patternName,int segments = -1 ,int maches = -1, int variants = -1,bool checked = false);
     void addPatterns(QStringList patterns);
+    void setPatternValues(QString name,int segments,int matches,int variants);
     bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
     QVector<QString> getChoosenPatterns();
 };

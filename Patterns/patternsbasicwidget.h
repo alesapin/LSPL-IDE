@@ -39,6 +39,7 @@ private:
 public:
     explicit PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent = 0);
     QVector<QString> getChoosenPatterns();
+    void setPatternValues(QString name,int segments,int matches,int variants);
 signals:
 
 public slots:

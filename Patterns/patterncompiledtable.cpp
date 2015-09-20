@@ -145,6 +145,19 @@ void PatternCompiledTable::addPatterns(QStringList patterns)
     }
 }
 
+void PatternCompiledTable::setPatternValues(QString name, int segments, int matches, int variants)
+{
+    for(int i = 0 ; i<datum.size();++i){
+        if(datum[i].patternName == name){
+            datum[i].segments = segments;
+            datum[i].variants = variants;
+            datum[i].maches = matches;
+            emit(dataChanged(index(i,1),index(i,4)));
+            break;
+        }
+    }
+}
+
 bool PatternCompiledTable::insertRows(int start, int count, const QModelIndex &parent)
 {
      int end = datum.size()+count;
