@@ -33,6 +33,7 @@ class TextBasicWidget : public QWidget
     QTabWidget* matchTabs;
     PatternCompiler* compiler;
 
+
     void initTable();
     void initEditor();
     void initButton();
@@ -43,13 +44,17 @@ public:
     bool maybeSave(QString filename,int index);
     void newTextFile();
     void setMatches(const PatternViewMap& matches);
-    void highlighMatches(const PatternViewMap& matches);
-    QString getText();
+    void highlighPatterns(const QStringList& patterns);
+    void dehighlightPatterns(const QStringList& patterns);
+    QString getCurrentFile() const ;
+    QString getText() const ;
 signals:
     void buttonClicked();
 public slots:
     void analyzeText();
     void selectFragment(int from,int to);
+    void slotPatternUncheked(const QString& name);
+    void slotPatternChecked(const QString& name);
 };
 
 #endif // TEXTBASICWIDGET_H

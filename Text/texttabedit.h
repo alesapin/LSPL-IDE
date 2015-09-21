@@ -8,18 +8,26 @@
 #include <QList>
 #include <QMessageBox>
 #include <Text/textbasicwidget.h>
+#include <Engine/patterncompiler.h>
+#include <QMap>
 class TextTabEdit : public QTabWidget
 {
     Q_OBJECT
 public:
     TextTabEdit(QWidget* parent= 0);
-    void addAnotherTab(const QString& filename,const QString& text);
+    QString addAnotherTab(const QString& filename,const QString& text);
     QString getCurrentText() const;
+    QString getCurrentFile() const;
     QString getIndexText(int index) const;
-    void highLightText(const QVector<QPair<int,int>>& frags);
+    void highLightPatterns(const QStringList& patterns);
+    void deHighlightPatterns(const QStringList& patterns);
+    void setMatches(const PatternViewMap& m);
     void selectText(int start,int end);
+
 public slots:
     void closeTab(int index);
+private:
+    QMap<QString,QString> fileNamePath;
 };
 
 #endif // TEXTTABEDIT_H

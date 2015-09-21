@@ -11,12 +11,15 @@ TextTabEdit::TextTabEdit(QWidget* parent):QTabWidget(parent)
 
 }
 
-void TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
+QString TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
 {
+    QString name = filename.split("/").last();
     MainTextViewer* current = new MainTextViewer();
+    fileNamePath[name] = filename;
     current->setText(text);
-    addTab(current,filename);
+    addTab(current,name);
     setCurrentWidget(current);
+    return name;
 }
 
 QString TextTabEdit::getCurrentText() const
@@ -25,16 +28,40 @@ QString TextTabEdit::getCurrentText() const
     return current->toPlainText();
 }
 
+QString TextTabEdit::getCurrentFile() const
+{
+    int index = currentIndex();
+    return fileNamePath[tabText(index)];
+}
+
 QString TextTabEdit::getIndexText(int index) const
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));
     return current->toPlainText();
 }
 
-void TextTabEdit::highLightText(const QVector<QPair<int, int> > &frags)
+void TextTabEdit::highLightPatterns(const QStringList &patterns)
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
-    current->highlightFragments(frags);
+    current->highlightPatterns(patterns);
+}
+
+void TextTabEdit::deHighlightPatterns(const QStringList &patterns)
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    current->dehighlightPatterns(patterns);
+}
+
+//void TextTabEdit::highLightText(const QVector<QPair<int, int> > &frags)
+//{
+//    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+//    current->highlightFragments(frags);
+//}
+
+void TextTabEdit::setMatches(const PatternViewMap &m)
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    current->setMatches(m);
 }
 
 void TextTabEdit::selectText(int start, int end)

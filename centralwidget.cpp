@@ -30,11 +30,9 @@ QVector<QString> CentralWidget::getChoosenPatterns()
 
 void CentralWidget::analyze()
 {
-    qDebug() <<"Начинаю Анализ!";
     QVector<QString> patternNames = pattern->getChoosenPatterns();
     PatternViewMap result =  compiler->analyzeText(patternNames,txt->getText());
     txt->setMatches(result);
-    txt->highlighMatches(result);
     for(QString name:patternNames){
         QVector<PatternCompiler::MatchRepr> pattrnResult = result[name];
         pattern->setPatternValues(name,pattrnResult.size(),pattrnResult.size(),-1);

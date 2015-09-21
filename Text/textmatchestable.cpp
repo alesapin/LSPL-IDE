@@ -38,8 +38,10 @@ void TextMatchesTable::removePatternFromCurrent(const QString &name)
 
 void TextMatchesTable::onRowClick(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    int row = selected.first().top();
-    PatternCompiler::MatchRepr match = model->getRow(row);
-    emit rowClicked(match.start,match.end);
+    if(!selected.empty()){
+        int row = selected.first().top();
+        PatternCompiler::MatchRepr match = model->getRow(row);
+        emit rowClicked(match.start,match.end);
+    }
 }
 

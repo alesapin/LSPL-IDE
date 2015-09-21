@@ -58,10 +58,11 @@ void TopMenu::openFile()
 
 void TopMenu::saveFile()
 {
-    if(filename.isEmpty()){
+    QString fn = text->getCurrentFile();
+    if(fn.isEmpty() || fn == "Untilted"){
         saveFileAs();
     }else{
-        text->saveTextFile(filename);
+        text->saveTextFile(fn);
     }
 }
 

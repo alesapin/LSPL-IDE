@@ -71,6 +71,7 @@ bool TextMatchesModel::insertRows(int row, int count, const QModelIndex &parent)
 bool TextMatchesModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     beginRemoveRows( QModelIndex(), row, row + count - 1);
+    qDebug() <<"COUNT:"<< count;
     endRemoveRows();
     return true;
 
@@ -79,19 +80,20 @@ bool TextMatchesModel::removeRows(int row, int count, const QModelIndex &parent)
 
 bool TextMatchesModel::clearTable()
 {
-    return removeRows(0,datum.size());
+
+    return removeRows(0,rowCount());
 }
 
 void TextMatchesModel::setMatches(const PatternViewMap &maches)
 {
-    datum.clear();
     clearTable();
-
-    for(const QString& patternName:currentPatterns){
-        if(maches.find(patternName) == maches.end()){
-            currentPatterns.removeAll(patternName);
-        }
-    }
+    datum.clear();
+    currentPatterns.clear();
+//    for(const QString& patternName:currentPatterns){
+//        if(maches.find(patternName) == maches.end()){
+//            currentPatterns.removeAll(patternName);
+//        }
+//    }
     datum = maches;
     if(currentPatterns.isEmpty()){
         currentPatterns << maches.keys();

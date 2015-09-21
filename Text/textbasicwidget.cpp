@@ -37,7 +37,7 @@ void TextBasicWidget::openTextFile(const QString &filename)
 #ifndef QT_NO_CURSOR
     QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
-    textEdit->addAnotherTab(filename/*.split("/").last()*/,in.readAll());
+    textEdit->addAnotherTab(filename,in.readAll());
 #ifndef QT_NO_CURSOR
     QApplication::restoreOverrideCursor();
 #endif
@@ -46,7 +46,7 @@ void TextBasicWidget::openTextFile(const QString &filename)
 bool TextBasicWidget::maybeSave(QString filename,int index)
 {
     QMessageBox::StandardButton reply;
-     reply = QMessageBox::question(this, "Test", "Save file ?",
+     reply = QMessageBox::question(this, "Save", "Save file ?",
                                    QMessageBox::Yes| QMessageBox::Cancel |QMessageBox::No);
      if (reply == QMessageBox::Yes) {
          if(filename == "Untilted"){
@@ -75,25 +75,27 @@ void TextBasicWidget::newTextFile()
 
 void TextBasicWidget::setMatches(const PatternViewMap &matches)
 {
-    this->matches->setPatterns(matches);
-
-
-
+    this->matches->setMatches(matches);
+    this->textEdit->setMatches(matches);
 }
 
-void TextBasicWidget::highlighMatches(const PatternViewMap &matches)
+void TextBasicWidget::highlighPatterns(const QStringList &patterns)
 {
-    QVector<QPair<int,int>> result;
-    for(const QVector<PatternCompiler::MatchRepr>& match : matches.values()){
-        for(int i = 0;i<match.size();++i){
-            PatternCompiler::MatchRepr m = match[i];
-            result.push_back(QPair<int,int>(m.start,m.end));
-        }
-    }
-    textEdit->highLightText(result);
+    textEdit->highLightPatterns(patterns);
 }
 
-QString TextBasicWidget::getText()
+void TextBasicWidget::dehighlightPatterns(const QStringList &patterns)
+{
+    textEdit->deHighlightPatterns(patterns);
+}
+
+QString TextBasicWidget::getCurrentFile() const
+{
+    return textEdit->getCurrentFile();
+}
+
+
+QString TextBasicWidget::getText() const
 {
     return textEdit->getCurrentText();
 }
@@ -114,12 +116,24 @@ void TextBasicWidget::selectFragment(int from, int to)
     textEdit->selectText(from,to);
 }
 
+void TextBasicWidget::slotPatternUncheked(const QString &name)
+{
+    textEdit->deHighlightPatterns(QStringList() << name);
+}
+
+void TextBasicWidget::slotPatternChecked(const QString &name)
+{
+    textEdit->highLightPatterns(QStringList() << name);
+}
+
 void TextBasicWidget::initTable()
 {
     matchTabs = new QTabWidget(this);
     matches = new MatchesWidget(this);
     matchTabs->addTab(matches,"Matches View");
     connect(matches,SIGNAL(rowClicked(int,int)),this,SLOT(selectFragment(int,int)));
+    connect(matches,SIGNAL(patternWasChecked(QString)),this,SLOT(slotPatternChecked(QString)));
+    connect(matches,SIGNAL(patternWasUnchecked(QString)),this,SLOT(slotPatternUncheked(QString)));
 }
 
 void TextBasicWidget::initEditor()
