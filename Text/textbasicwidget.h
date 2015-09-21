@@ -55,6 +55,7 @@ public slots:
     void selectFragment(int from,int to);
     void slotPatternUncheked(const QString& name);
     void slotPatternChecked(const QString& name);
+    void slotTabChanged(int index);
 };
 
 #endif // TEXTBASICWIDGET_H

@@ -36,6 +36,21 @@ void TextMatchesTable::removePatternFromCurrent(const QString &name)
     model->removePatternFromCurrent(name);
 }
 
+void TextMatchesTable::changeTab(int index)
+{
+    model->changeTab(index);
+}
+
+QStringList TextMatchesTable::getCurrentPatterns() const
+{
+    return model->getCurrentPatterns();
+}
+
+QStringList TextMatchesTable::getAllPatterns() const
+{
+    return model->getAllPatterns();
+}
+
 void TextMatchesTable::onRowClick(const QItemSelection &selected, const QItemSelection &deselected)
 {
     if(!selected.empty()){

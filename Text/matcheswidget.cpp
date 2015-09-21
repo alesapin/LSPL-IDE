@@ -34,6 +34,14 @@ void MatchesWidget::setMatches(const PatternViewMap &patterns)
     list->setCheckedItems(patterns.keys());
 }
 
+void MatchesWidget::changeTab(int index)
+{
+    table->changeTab(index);
+    list->clear();
+    list->addItems(table->getAllPatterns());
+    list->setCheckedItems(table->getCurrentPatterns());
+}
+
 
 
 void MatchesWidget::slotTransferSignal(int s, int e)

@@ -16,8 +16,9 @@ class TextMatchesModel : public QAbstractTableModel
 {
     Q_OBJECT
 private:
-    PatternViewMap datum;
-    QStringList currentPatterns;
+    QVector<PatternViewMap> datum;
+    QVector<QStringList> currentPatterns;
+    int currentTab;
 public:
     TextMatchesModel(QWidget* parent = 0);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -33,6 +34,9 @@ public:
     void removePatternFromCurrent(const QString& name);
     void clearCurrent();
     PatternCompiler::MatchRepr getRow(int index) const;
+    void changeTab(int index);
+    QStringList getCurrentPatterns() const;
+    QStringList getAllPatterns() const;
 signals:
 
 public slots:

@@ -2,16 +2,17 @@
 #include <QDebug>
 
 
-TextMatchesModel::TextMatchesModel(QWidget *parent): QAbstractTableModel(parent)
+TextMatchesModel::TextMatchesModel(QWidget *parent): QAbstractTableModel(parent),currentTab(0)
 {
-
+    datum.resize(1);
+    currentPatterns.resize(1);
 }
 
 int TextMatchesModel::rowCount(const QModelIndex &parent) const
 {
     int result  = 0;
-    for(const QString& pattern:currentPatterns){
-        result+= datum[pattern].size();
+    for(const QString& pattern:currentPatterns[currentTab]){
+        result+= datum[currentTab][pattern].size();
     }
     return result;
 }
@@ -87,19 +88,14 @@ bool TextMatchesModel::clearTable()
 void TextMatchesModel::setMatches(const PatternViewMap &maches)
 {
     clearTable();
-    datum.clear();
-    currentPatterns.clear();
-//    for(const QString& patternName:currentPatterns){
-//        if(maches.find(patternName) == maches.end()){
-//            currentPatterns.removeAll(patternName);
-//        }
-//    }
-    datum = maches;
-    if(currentPatterns.isEmpty()){
-        currentPatterns << maches.keys();
+    datum[currentTab].clear();
+    currentPatterns[currentTab].clear();
+    datum[currentTab] = maches;
+    if(currentPatterns[currentTab].isEmpty()){
+        currentPatterns[currentTab] << maches.keys();
     }
     int counter = 0;
-    for(const QString& currentPattern:currentPatterns){
+    for(const QString& currentPattern:currentPatterns[currentTab]){
         insertRows(counter,maches[currentPattern].size());
         counter += maches[currentPattern].size();
     }
@@ -109,39 +105,39 @@ void TextMatchesModel::setMatches(const PatternViewMap &maches)
 
 void TextMatchesModel::setCurrentPatterns(const QStringList &name)
 {
-    currentPatterns = name;
+    currentPatterns[currentTab] = name;
 }
 
 void TextMatchesModel::addCurrentPattern(const QString &name)
 {
     int i = 0;
     int row = 0;
-    for(;i<currentPatterns.size();++i){
-            if(currentPatterns[i] > name ){
+    for(;i<currentPatterns[currentTab].size();++i){
+            if(currentPatterns[currentTab][i] > name ){
                 break;
             }
-            row += datum[currentPatterns[i]].size();
+            row += datum[currentTab][currentPatterns[currentTab][i]].size();
     }
-    insertRows(row,datum[name].size());
-    currentPatterns.insert(i,name);
+    insertRows(row,datum[currentTab][name].size());
+    currentPatterns[currentTab].insert(i,name);
 }
 
 void TextMatchesModel::removePatternFromCurrent(const QString &name)
 {
     int counter = 0;
-    for(const QString& pattern:currentPatterns){
+    for(const QString& pattern:currentPatterns[currentTab]){
         if(pattern == name){
             break;
         }
-        counter += datum[pattern].size();
+        counter += datum[currentTab][pattern].size();
     }
-   currentPatterns.removeAll(name);
-    removeRows(counter,datum[name].size());
+   currentPatterns[currentTab].removeAll(name);
+    removeRows(counter,datum[currentTab][name].size());
 }
 
 void TextMatchesModel::clearCurrent()
 {
-    currentPatterns.clear();
+    currentPatterns[currentTab].clear();
 }
 
 
@@ -149,12 +145,43 @@ void TextMatchesModel::clearCurrent()
 PatternCompiler::MatchRepr TextMatchesModel::getRow(int index) const
 {
     int counter = 0;
-    for(const QString& pattern:currentPatterns){
-        counter += datum[pattern].size();
+    for(const QString& pattern:currentPatterns[currentTab]){
+        counter += datum[currentTab][pattern].size();
         if(counter > index){
-            counter -= datum[pattern].size();
-            return datum[pattern][index-counter];
+            counter -= datum[currentTab][pattern].size();
+            return datum[currentTab][pattern][index-counter];
         }
     }
+}
+
+
+void TextMatchesModel::changeTab(int index)
+{
+    qDebug() <<"INDEX:"<< index;
+    if(index >= datum.size()){
+        clearTable();
+        datum.resize(index+1);
+        currentPatterns.resize(index+1);
+        currentTab = index;
+    }else{
+        clearTable();
+        currentTab = index;
+        int counter = 0;
+        for(const QString& currentPattern:currentPatterns[currentTab]){
+            insertRows(counter,datum[currentTab][currentPattern].size());
+            counter += datum[currentTab][currentPattern].size();
+        }
+    }
+
+}
+
+QStringList TextMatchesModel::getCurrentPatterns() const
+{
+    return currentPatterns[currentTab];
+}
+
+QStringList TextMatchesModel::getAllPatterns() const
+{
+    return datum[currentTab].keys();
 }
 

@@ -126,6 +126,11 @@ void TextBasicWidget::slotPatternChecked(const QString &name)
     textEdit->highLightPatterns(QStringList() << name);
 }
 
+void TextBasicWidget::slotTabChanged(int index)
+{
+    matches->changeTab(index);
+}
+
 void TextBasicWidget::initTable()
 {
     matchTabs = new QTabWidget(this);
@@ -139,6 +144,7 @@ void TextBasicWidget::initTable()
 void TextBasicWidget::initEditor()
 {
     textEdit = new TextTabEdit(this);
+    connect(textEdit,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
 }
 
 void TextBasicWidget::initButton()

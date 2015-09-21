@@ -15,6 +15,10 @@ public:
     void setCurrentPatterns(const QStringList& name);
     void addCurrentPattern(const QString& name);
     void removePatternFromCurrent(const QString& name);
+    void changeTab(int index);
+    QStringList getCurrentPatterns() const;
+    QStringList getAllPatterns() const;
+
 signals:
     void rowClicked(int,int);
 public slots:
