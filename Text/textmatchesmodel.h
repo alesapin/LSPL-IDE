@@ -35,6 +35,7 @@ public:
     void clearCurrent();
     PatternCompiler::MatchRepr getRow(int index) const;
     void changeTab(int index);
+    void closeTab(int index);
     QStringList getCurrentPatterns() const;
     QStringList getAllPatterns() const;
 signals:

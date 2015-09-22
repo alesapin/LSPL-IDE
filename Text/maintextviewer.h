@@ -13,7 +13,7 @@
 #include <QHelpEvent>
 #include <QToolTip>
 #include <Engine/patterncompiler.h>
-class MainTextViewer : public QTextEdit
+class MainTextViewer : public QPlainTextEdit
 {
     Q_OBJECT
 private:

@@ -6,9 +6,9 @@ TextMatchesTable::TextMatchesTable(QWidget *parent) : QTableView(parent)
     setModel(model);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
-    for(int c = 0; c < horizontalHeader()->count();++c){
-        horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-    }
+//    for(int c = 0; c < horizontalHeader()->count();++c){
+//        horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+//    }
     connect(this->selectionModel(),
                     SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                     this,
@@ -39,6 +39,11 @@ void TextMatchesTable::removePatternFromCurrent(const QString &name)
 void TextMatchesTable::changeTab(int index)
 {
     model->changeTab(index);
+}
+
+void TextMatchesTable::closeTab(int index)
+{
+    model->closeTab(index);
 }
 
 QStringList TextMatchesTable::getCurrentPatterns() const

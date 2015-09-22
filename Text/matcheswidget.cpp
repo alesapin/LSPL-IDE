@@ -42,6 +42,11 @@ void MatchesWidget::changeTab(int index)
     list->setCheckedItems(table->getCurrentPatterns());
 }
 
+void MatchesWidget::closeTab(int index)
+{
+    table->closeTab(index);
+}
+
 
 
 void MatchesWidget::slotTransferSignal(int s, int e)

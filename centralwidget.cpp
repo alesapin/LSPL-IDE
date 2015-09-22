@@ -5,7 +5,7 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
     compiler = new PatternCompiler();
     txt = new TextBasicWidget(compiler,this);
     pattern = new PatternsBasicWidget(compiler,this);
-    QGridLayout* lay = new QGridLayout(this);
+    QHBoxLayout* lay = new QHBoxLayout(this);
     QSplitter* split1 = new QSplitter();
     split1->addWidget(pattern);
     split1->addWidget(txt);

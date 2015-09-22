@@ -10,7 +10,7 @@ const QVector<QPair<int, int> > MainTextViewer::getIntervalsForPattern(const QSt
     return result;
 }
 
-MainTextViewer::MainTextViewer(QWidget *parent) : QTextEdit(parent),modified(false)
+MainTextViewer::MainTextViewer(QWidget *parent) : QPlainTextEdit(parent),modified(false)
 {
     //installEventFilter(this);
     fmtSelect = new QTextCharFormat();
@@ -19,7 +19,7 @@ MainTextViewer::MainTextViewer(QWidget *parent) : QTextEdit(parent),modified(fal
 
     fmtSelect->setBackground(Qt::yellow);
     converter = QTextCodec::codecForLocale();
-    setMinimumHeight(300);
+    //setMinimumHeight(300);
 //    setMinimumWidth(300);
     //setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     connect(this,SIGNAL(textChanged()),this,SLOT(modify()));
@@ -103,7 +103,7 @@ bool MainTextViewer::event(QEvent *e)
             }
             return true;
         }
-        return QTextEdit::event(e);
+        return QPlainTextEdit::event(e);
 }
 
 

@@ -13,9 +13,9 @@ void PatternsBasicWidget::initPatternTable()
     table = new QTableView();
     table->setModel(tableModel);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    for(int c = 0; c < table->horizontalHeader()->count();++c){
-        table->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-    }
+//    for(int c = 0; c < table->horizontalHeader()->count();++c){
+//        table->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+//    }
 }
 
 void PatternsBasicWidget::initPatternEditor()
@@ -32,23 +32,28 @@ void PatternsBasicWidget::initPatternLogBar()
 
 PatternsBasicWidget::PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent) : QWidget(parent)
 {
-    QSplitter *split1 = new QSplitter();
     QSplitter *split2 = new QSplitter();
     QSplitter *split3 = new QSplitter();
-    split1->setOrientation(Qt::Vertical);
 
-    QGridLayout * lay = new QGridLayout(this);
+    QHBoxLayout * lay = new QHBoxLayout(this);
     comp = compiler;
     initCompileButton();
     initPatternEditor();
     initPatternTable();
     initPatternLogBar();
-    split1->addWidget(compileButton);
-    split1->addWidget(editorTab);
-    split2->addWidget(split1);
+    QVBoxLayout* buttonEdit = new QVBoxLayout();
+    buttonEdit->addWidget(compileButton);
+    buttonEdit->addWidget(editorTab);
+    QWidget* container1 = new QWidget();
+    QWidget* container2 = new QWidget();
+    container1->setLayout(buttonEdit);
+    split2->addWidget(container1);
     split2->addWidget(table);
+    QVBoxLayout* containerLay = new QVBoxLayout();
+    containerLay->addWidget(split2);
+    container2->setLayout(containerLay);
     split3->setOrientation(Qt::Vertical);
-    split3->addWidget(split2);
+    split3->addWidget(container2);
     split3->addWidget(logtab);
     lay->addWidget(split3);
 }

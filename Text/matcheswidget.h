@@ -17,7 +17,6 @@ public:
     void setCheckedPatterns(const QStringList& patterns);
     void setCheckedAllPatterns();
     void changeTab(int);
-
 private:
     QLabel* selectPattern;
     PatternSelectionList* list;
@@ -30,6 +29,8 @@ private:
     void slotTransferSignal(int s,int e);
     void slotPatternUnchecked(const QString& s);
     void slotPatternChecked(const QString& s);
+    void closeTab(int);
+
 };
 
 #endif // MATCHESWIDGET_H

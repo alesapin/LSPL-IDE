@@ -145,6 +145,7 @@ void TextBasicWidget::initEditor()
 {
     textEdit = new TextTabEdit(this);
     connect(textEdit,SIGNAL(currentChanged(int)),this,SLOT(slotTabChanged(int)));
+    connect(textEdit,SIGNAL(tabWasClosed(int)),matches,SLOT(closeTab(int)));
 }
 
 void TextBasicWidget::initButton()
@@ -158,12 +159,17 @@ TextBasicWidget::TextBasicWidget(PatternCompiler* comp,QWidget *parent) : QWidge
 {
     QHBoxLayout * lay = new QHBoxLayout(this);
     QSplitter* split = new QSplitter(this);
-    initEditor();
     initTable();
+    initEditor();
     initButton();
+    QWidget* container = new QWidget();
+    QVBoxLayout* buttonEdit = new QVBoxLayout();
+    buttonEdit->addWidget(analyze);
+    buttonEdit->addWidget(textEdit);
+    container->setLayout(buttonEdit);
     split->setOrientation(Qt::Vertical);
-    split->addWidget(analyze);
-    split->addWidget(textEdit);
+
+    split->addWidget(container);
     split->addWidget(matchTabs);
 //    lay->addWidget(analyze,0,0);
 //    lay->addWidget(textEdit,1,0);

@@ -23,7 +23,14 @@ public:
     void deHighlightPatterns(const QStringList& patterns);
     void setMatches(const PatternViewMap& m);
     void selectText(int start,int end);
-
+signals:
+    /**
+     * @brief tabWasClosed
+     * Дополнительный сигнал для закрытия, т.к.
+     * ввиду особенностей  closeTab, стандартный сигнал можно излучить
+     * а вкладку не закрыть.
+     */
+    void tabWasClosed(int);
 public slots:
     void closeTab(int index);
 private:

@@ -16,7 +16,7 @@ QString TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
     QString name = filename.split("/").last();
     MainTextViewer* current = new MainTextViewer();
     fileNamePath[name] = filename;
-    current->setText(text);
+    current->setPlainText(text);
     addTab(current,name);
     setCurrentWidget(current);
     return name;
@@ -78,9 +78,11 @@ void TextTabEdit::closeTab(int index)
             TextBasicWidget* par = static_cast<TextBasicWidget*>(this->parent());
             if(par->maybeSave(name,index)){
                 this->removeTab(index);
+                emit tabWasClosed(index);
             }
         }else{
             this->removeTab(index);
+            emit tabWasClosed(index);
         }
 }
 

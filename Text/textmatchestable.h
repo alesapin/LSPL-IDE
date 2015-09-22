@@ -16,6 +16,7 @@ public:
     void addCurrentPattern(const QString& name);
     void removePatternFromCurrent(const QString& name);
     void changeTab(int index);
+    void closeTab(int index);
     QStringList getCurrentPatterns() const;
     QStringList getAllPatterns() const;
 

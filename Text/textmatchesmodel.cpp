@@ -11,8 +11,10 @@ TextMatchesModel::TextMatchesModel(QWidget *parent): QAbstractTableModel(parent)
 int TextMatchesModel::rowCount(const QModelIndex &parent) const
 {
     int result  = 0;
-    for(const QString& pattern:currentPatterns[currentTab]){
-        result+= datum[currentTab][pattern].size();
+    if(currentPatterns.size() > 0) {
+        for(const QString& pattern:currentPatterns[currentTab]){
+            result+= datum[currentTab][pattern].size();
+        }
     }
     return result;
 }
@@ -163,16 +165,29 @@ void TextMatchesModel::changeTab(int index)
         datum.resize(index+1);
         currentPatterns.resize(index+1);
         currentTab = index;
-    }else{
-        clearTable();
-        currentTab = index;
-        int counter = 0;
-        for(const QString& currentPattern:currentPatterns[currentTab]){
-            insertRows(counter,datum[currentTab][currentPattern].size());
-            counter += datum[currentTab][currentPattern].size();
+    }else if(index >= 0){
+        if(datum[index].isEmpty()){
+            clearTable();
+            currentTab = index;
+        }else if (currentTab != index){
+            currentTab = index;
+            int counter = 0;
+            for(const QString& currentPattern:currentPatterns[currentTab]){
+                insertRows(counter,datum[currentTab][currentPattern].size());
+                counter += datum[currentTab][currentPattern].size();
+            }
         }
+
     }
 
+}
+
+void TextMatchesModel::closeTab(int index)
+{
+    qDebug() << "REmove Index: " << index;
+    clearTable();
+    datum.remove(index);
+    currentPatterns.remove(index);
 }
 
 QStringList TextMatchesModel::getCurrentPatterns() const
