@@ -6,7 +6,7 @@
 
 PatternEditorTab::PatternEditorTab(QWidget *parent):QTabWidget(parent)
 {
-    editor = new PatterEditor();
+    editor = new PatternEditor();
     addTab(editor,"Pattern Editor");
     setCurrentWidget(editor);
 }

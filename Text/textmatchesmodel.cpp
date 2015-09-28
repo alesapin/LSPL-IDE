@@ -34,7 +34,9 @@ QVariant TextMatchesModel::data(const QModelIndex &index, int role) const
         case 0:
             return QString("[%1-%2] %3").arg(QString::number(current.start),QString::number(current.end),current.text);
         case 1:
-            return current.context;
+            return current.transform;
+         case 2:
+            return current.params;
          default:
             return QVariant();
         }
@@ -51,7 +53,7 @@ QVariant TextMatchesModel::headerData(int section, Qt::Orientation orientation, 
                case 0:
                    return QString("Текст сопоставления");
                case 1:
-                   return QString("Контекст");
+                   return QString("Результат трансформации");
                case 2:
                    return QString("Параметры");
             }

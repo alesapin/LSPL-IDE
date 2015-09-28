@@ -1,6 +1,8 @@
 #ifndef PATTERNCOMPILER_H
 #define PATTERNCOMPILER_H
 #include <lspl/Namespace.h>
+#include <lspl/transforms/TextTransformBuilder.h>
+#include <lspl/transforms/PatternTransformBuilder.h>
 #include <lspl/patterns/PatternBuilder.h>
 #include <lspl/patterns/Pattern.h>
 #include <lspl/text/readers/PlainTextReader.h>
@@ -11,25 +13,35 @@
 #include <QTextCodec>
 #include <algorithm>
 #include <QMap>
+#include <string>
+
+enum PatternType{
+    RIGHT_PART_TEXT,RIGHT_PART_PATTERN,NO_RIGHT_PART
+};
+
 class PatternCompiler
 {
 public:
     struct MatchRepr{
         QString text;
-        QString context;
         QString params;
-        //QVector<QString> variants; Вопросец
+        QString transform;
         uint start;
         uint end;
     };
     PatternCompiler();
-    QMap<QString,QVector<PatternCompiler::MatchRepr>> analyzeText(const QVector<QString> &patternNames,const QString& text);
+    QMap<QString,QVector<PatternCompiler::MatchRepr>> analyzeText(const QStringList &patternNames,const QString& text);
     QString compilePattern(const QString& pattern);
 private:
+    static const QString RIGHT_WITH_PATTERN;
+    static const QString RIGHT_WITH_TEXT;
+    QString convertToUtf(const std::string& str);
     lspl::NamespaceRef ns;
-    lspl::patterns::PatternBuilderRef builder;
     lspl::text::readers::PlainTextReader reader;
-    MatchRepr convertMatch(lspl::text::MatchRef ref);
+    lspl::patterns::PatternBuilderRef textTransfromBuilder;
+    lspl::patterns::PatternBuilderRef patternTransformBuilder;
+    lspl::patterns::PatternBuilderRef noRightPartBuilder;
+    MatchRepr convertMatch(lspl::text::MatchRef ref,PatternType t);
     QTextCodec *codec;
 };
 typedef QMap<QString,QVector<PatternCompiler::MatchRepr>> PatternViewMap;
