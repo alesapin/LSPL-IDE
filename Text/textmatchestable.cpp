@@ -6,9 +6,7 @@ TextMatchesTable::TextMatchesTable(QWidget *parent) : QTableView(parent)
     setModel(model);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
-//    for(int c = 0; c < horizontalHeader()->count();++c){
-//        horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-//    }
+    horizontalHeader()->setStretchLastSection(true);
     connect(this->selectionModel(),
                     SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                     this,
@@ -54,6 +52,29 @@ QStringList TextMatchesTable::getCurrentPatterns() const
 QStringList TextMatchesTable::getAllPatterns() const
 {
     return model->getAllPatterns();
+}
+
+PatternViewMap TextMatchesTable::getCurrentMatches() const
+{
+    return model->getCurrentMatches();
+}
+
+void TextMatchesTable::clear()
+{
+    model->clearTable();
+    model->clearCurrent();
+    model->clearDatum();
+}
+
+void TextMatchesTable::resizeEvent(QResizeEvent *event)
+{
+    if(event->oldSize().width() < event->size().width()){
+        setColumnWidth(0, this->width()/3);
+        setColumnWidth(1, this->width()/3);
+        setColumnWidth(2, this->width()/3);
+    }
+
+    QTableView::resizeEvent(event);
 }
 
 void TextMatchesTable::onRowClick(const QItemSelection &selected, const QItemSelection &deselected)

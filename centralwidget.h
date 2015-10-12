@@ -24,6 +24,7 @@ public:
     explicit CentralWidget(QWidget *parent = 0);
     ~CentralWidget();
     TextBasicWidget *getTextWidget();
+    PatternsBasicWidget *getPatternWidget();
     QStringList getChoosenPatterns();
 private:
     PatternCompiler* compiler;

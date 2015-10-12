@@ -44,6 +44,13 @@ void PatternSelectionList::setCheckedItems(const QStringList &items)
     repaint();
 }
 
+void PatternSelectionList::clearAll()
+{
+    mCheckedItems.clear();
+    mDisplayText.clear();
+    clear();
+}
+
 void PatternSelectionList::collectCheckedItems()
 {
     QStandardItemModel *standartModel = static_cast<QStandardItemModel*>(model());

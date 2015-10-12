@@ -69,7 +69,6 @@ PatternViewMap PatternCompiler::analyzeText(const QStringList &patternNames, con
         PatternType patternType;
         lspl::patterns::PatternRef pat = ns->getPatternByName(pattern.toStdString());
         QString patSource(pat->getSource().c_str());
-        qDebug() <<"Pattern Source:"<<patSource;
         if(patSource.contains(RIGHT_WITH_PATTERN)){
             patternType = RIGHT_PART_PATTERN;
         }else if (patSource.contains(RIGHT_WITH_TEXT)){
@@ -105,6 +104,14 @@ QString PatternCompiler::compilePattern(const QString& pattern)
     }catch(lspl::patterns::PatternBuildingException e){
         return e.what();
     }
+}
+
+void PatternCompiler::clear()
+{
+    ns = new lspl::Namespace();
+    noRightPartBuilder = new lspl::patterns::PatternBuilder(ns);
+    textTransfromBuilder = new lspl::patterns::PatternBuilder(ns, new lspl::transforms::TextTransformBuilder(ns));
+    patternTransformBuilder = new lspl::patterns::PatternBuilder(ns, new lspl::transforms::PatternTransformBuilder(ns));
 }
 
 QString PatternCompiler::convertToUtf(const std::string &str)

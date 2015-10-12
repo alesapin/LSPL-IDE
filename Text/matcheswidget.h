@@ -17,6 +17,8 @@ public:
     void setCheckedPatterns(const QStringList& patterns);
     void setCheckedAllPatterns();
     void changeTab(int);
+    PatternViewMap getSelectedMatches() const;
+    void clear();
 private:
     QLabel* selectPattern;
     PatternSelectionList* list;

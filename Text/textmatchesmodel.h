@@ -28,11 +28,13 @@ public:
     bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex());
     bool clearTable();
+    void clearDatum();
     void setMatches(const PatternViewMap& maches);
     void setCurrentPatterns(const QStringList& name);
     void addCurrentPattern(const QString& name);
     void removePatternFromCurrent(const QString& name);
     void clearCurrent();
+    PatternViewMap getCurrentMatches() const;
     PatternCompiler::MatchRepr getRow(int index) const;
     void changeTab(int index);
     void closeTab(int index);

@@ -19,7 +19,7 @@ MainTextViewer::MainTextViewer(QWidget *parent) : QPlainTextEdit(parent),modifie
 
     fmtSelect->setBackground(Qt::yellow);
     converter = QTextCodec::codecForLocale();
-    //setMinimumHeight(300);
+    setMinimumHeight(300);
 //    setMinimumWidth(300);
     //setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     connect(this,SIGNAL(textChanged()),this,SLOT(modify()));
@@ -78,6 +78,12 @@ void MainTextViewer::dehighlightPatterns(const QStringList &patternNames)
     for(const QString& pattern:patternNames){
         deHighlightFragments(getIntervalsForPattern(pattern));
     }
+}
+
+void MainTextViewer::clearSelection()
+{
+    dehighlightPatterns(matches.keys());
+    matches.clear();
 }
 
 void MainTextViewer::selectText(int begin, int end)

@@ -42,6 +42,17 @@ void MatchesWidget::changeTab(int index)
     list->setCheckedItems(table->getCurrentPatterns());
 }
 
+PatternViewMap MatchesWidget::getSelectedMatches() const
+{
+    return table->getCurrentMatches();
+}
+
+void MatchesWidget::clear()
+{
+    table->clear();
+    list->clearAll();
+}
+
 void MatchesWidget::closeTab(int index)
 {
     table->closeTab(index);

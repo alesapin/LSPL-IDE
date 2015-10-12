@@ -6,6 +6,7 @@
 #include <Text/textmatchesmodel.h>
 #include <QHeaderView>
 #include <QItemSelection>
+#include <QResizeEvent>
 class TextMatchesTable : public QTableView
 {
     Q_OBJECT
@@ -19,7 +20,10 @@ public:
     void closeTab(int index);
     QStringList getCurrentPatterns() const;
     QStringList getAllPatterns() const;
-
+    PatternViewMap getCurrentMatches() const;
+    void clear();
+protected:
+    void resizeEvent(QResizeEvent *event);
 signals:
     void rowClicked(int,int);
 public slots:

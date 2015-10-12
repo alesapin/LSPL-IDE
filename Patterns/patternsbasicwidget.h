@@ -41,10 +41,15 @@ public:
     explicit PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent = 0);
     QStringList getChoosenPatterns();
     void setPatternValues(QString name,int segments,int matches,int variants);
+    void importPatterns(QString filename);
+    void exportPatterns(QString filename);
+    void addLog(const QString& text);
 signals:
 
 public slots:
     void compilePattern();
+    void clearPatterns();
+
 };
 
 #endif // PATTERNSBASICWIDGET_H

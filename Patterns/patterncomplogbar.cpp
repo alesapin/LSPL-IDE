@@ -5,3 +5,8 @@ PatternCompLogBar::PatternCompLogBar(QWidget *parent):QTextEdit(parent)
     setReadOnly(true);
 }
 
+void PatternCompLogBar::clear()
+{
+    setText("");
+}
+

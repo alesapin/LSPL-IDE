@@ -15,6 +15,7 @@ public:
     virtual ~PatternSelectionList();
     QStringList checkedItems() const;
     void setCheckedItems(const QStringList &items);
+    void clearAll();
 private:
     QStringList mCheckedItems;
     QString mDisplayText;

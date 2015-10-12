@@ -23,8 +23,9 @@
 #include <QHBoxLayout>
 #include <Engine/patterncompiler.h>
 #include <Text/matcheswidget.h>
+#include <QDomDocument>
 class TextTabEdit;
-class TextBasicWidget : public QWidget
+class TextBasicWidget : public QMainWindow
 {
     Q_OBJECT
     TextTabEdit* textEdit;
@@ -37,12 +38,16 @@ class TextBasicWidget : public QWidget
     void initTable();
     void initEditor();
     void initButton();
+    QDomDocument toXml(PatternViewMap matches);
+
 public:
     explicit TextBasicWidget(PatternCompiler* comp,QWidget *parent = 0);
     void saveTextFile(QString filename,int index = -1);
     void openTextFile(const QString& filename);
     bool maybeSave(QString filename,int index);
     void newTextFile();
+    void saveMatches(QString filename);
+    QDomDocument getXml();
     void setMatches(const PatternViewMap& matches);
     void highlighPatterns(const QStringList& patterns);
     void dehighlightPatterns(const QStringList& patterns);
@@ -51,6 +56,7 @@ public:
 signals:
     void buttonClicked();
 public slots:
+    void clearMatches();
     void analyzeText();
     void selectFragment(int from,int to);
     void slotPatternUncheked(const QString& name);

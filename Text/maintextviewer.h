@@ -35,6 +35,7 @@ public:
     void setMatches(const PatternViewMap& m);
     void highlightPatterns(const QStringList& patternNames);
     void dehighlightPatterns(const QStringList& patternNames);
+    void clearSelection();
     void selectText(int begin,int end);
     bool event(QEvent *e);
 signals:

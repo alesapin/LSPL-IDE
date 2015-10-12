@@ -53,7 +53,7 @@ QVariant TextMatchesModel::headerData(int section, Qt::Orientation orientation, 
                case 0:
                    return QString("Текст сопоставления");
                case 1:
-                   return QString("Результат трансформации");
+                   return QString("Результат преобразования");
                case 2:
                    return QString("Параметры");
             }
@@ -87,6 +87,14 @@ bool TextMatchesModel::clearTable()
 {
 
     return removeRows(0,rowCount());
+}
+
+void TextMatchesModel::clearDatum()
+{
+    int oldSize = datum.size();
+    datum.clear();
+    datum.resize(oldSize);
+    currentPatterns.resize(oldSize);
 }
 
 void TextMatchesModel::setMatches(const PatternViewMap &maches)
@@ -144,6 +152,15 @@ void TextMatchesModel::clearCurrent()
     currentPatterns[currentTab].clear();
 }
 
+PatternViewMap TextMatchesModel::getCurrentMatches() const
+{
+    PatternViewMap result;
+    for(QString pattern:currentPatterns[currentTab]){
+        result [pattern] = datum[currentTab][pattern];
+    }
+    return result;
+}
+
 
 
 PatternCompiler::MatchRepr TextMatchesModel::getRow(int index) const
@@ -179,7 +196,6 @@ void TextMatchesModel::changeTab(int index)
                 counter += datum[currentTab][currentPattern].size();
             }
         }
-
     }
 
 }

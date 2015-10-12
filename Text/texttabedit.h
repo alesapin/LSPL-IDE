@@ -23,6 +23,7 @@ public:
     void deHighlightPatterns(const QStringList& patterns);
     void setMatches(const PatternViewMap& m);
     void selectText(int start,int end);
+    void clearSelection();
 signals:
     /**
      * @brief tabWasClosed

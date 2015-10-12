@@ -10,12 +10,14 @@
 #include "../centralwidget.h"
 class CentralWidget;
 class TextBasicWidget;
+class PatternsBasicWidget;
 class TopMenu : public QMenuBar
 {
     Q_OBJECT
 private:
     QMenu* fileMenu;
     QMenu* patternsMenu;
+    QMenu* matchesMenu;
     QMenu* windowMenu;
     QAction* newAct;
     QAction* openAct;
@@ -23,9 +25,18 @@ private:
     QAction* saveAsAct;
     QAction* saveAllAct;
     QAction* exitAct;
+    QAction* exportMatchesAct;
+    QAction* importPatternsAct;
+    QAction* exportPatternsAct;
+    QAction* clearPatternsAct;
     void setFileMenu();
     void setFileActions();
+    void setPatternMenu();
+    void setPatternActions();
+    void setMatchesMenu();
+    void setMatchesAction();
     TextBasicWidget* text;
+    PatternsBasicWidget* pattern;
     CentralWidget* cent;
     QString filename;
 public:
@@ -36,6 +47,12 @@ private slots:
     void saveFile();
     void saveFileAs();
     void saveAllFiles();
+
+    void importPatterns();
+    void exportPatterns();
+    void clearPatterns();
+
+    void exportMatches();
 };
 
 #endif // TOPMENU_H

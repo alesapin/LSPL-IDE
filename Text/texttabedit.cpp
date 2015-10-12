@@ -4,9 +4,7 @@ TextTabEdit::TextTabEdit(QWidget* parent):QTabWidget(parent)
 {
 
     this->setTabsClosable(true);
-    //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding );
     setMinimumHeight(300);
-//    setMinimumWidth(300);
     connect(this,SIGNAL(tabCloseRequested(int)),this,SLOT(closeTab(int)));
 
 }
@@ -25,7 +23,11 @@ QString TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
 QString TextTabEdit::getCurrentText() const
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
-    return current->toPlainText();
+    if(current){
+        return current->toPlainText();
+    } else {
+        return "";
+    }
 }
 
 QString TextTabEdit::getCurrentFile() const
@@ -37,37 +39,50 @@ QString TextTabEdit::getCurrentFile() const
 QString TextTabEdit::getIndexText(int index) const
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));
-    return current->toPlainText();
+    if(current){
+        return current->toPlainText();
+    }
 }
 
 void TextTabEdit::highLightPatterns(const QStringList &patterns)
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
-    current->highlightPatterns(patterns);
+    if(current){
+        current->highlightPatterns(patterns);
+    }
 }
 
 void TextTabEdit::deHighlightPatterns(const QStringList &patterns)
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
-    current->dehighlightPatterns(patterns);
+    if(current){
+        current->dehighlightPatterns(patterns);
+    }
 }
 
-//void TextTabEdit::highLightText(const QVector<QPair<int, int> > &frags)
-//{
-//    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
-//    current->highlightFragments(frags);
-//}
 
 void TextTabEdit::setMatches(const PatternViewMap &m)
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
-    current->setMatches(m);
+    if(current){
+        current->setMatches(m);
+    }
 }
 
 void TextTabEdit::selectText(int start, int end)
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
-    current->selectText(start,end);
+    if(current){
+        current->selectText(start,end);
+    }
+}
+
+void TextTabEdit::clearSelection()
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    if(current){
+        current->clearSelection();
+    }
 }
 
 void TextTabEdit::closeTab(int index)

@@ -25,7 +25,13 @@ void PatternsBasicWidget::initPatternEditor()
     QDockWidget* wrapper = new QDockWidget("PatternEditor",this);
     wrapper->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     editor = new PatternEditor(this);
+//    QTabWidget* editorTab = new QTabWidget();
+//    editorTab->addTab(editor,"Pattern Editor");
+//    QSizePolicy large(QSizePolicy::Expanding,QSizePolicy::Expanding);
+//    large.setVerticalStretch(5);
+//    editor->setSizePolicy(large);
     wrapper->setWidget(editor);
+
     addDockWidget(Qt::RightDockWidgetArea, wrapper);
 
 
@@ -38,6 +44,10 @@ void PatternsBasicWidget::initPatternLogBar()
     logBar = new PatternCompLogBar();
     logtab = new QTabWidget(this);
     logtab->addTab(logBar,"Compilation output");
+//    QSizePolicy small(QSizePolicy::Expanding,QSizePolicy::Expanding);
+//    small.setVerticalStretch(1);
+//    logtab->setSizePolicy(small);
+
     wrapper->setWidget(logtab);
     addDockWidget(Qt::RightDockWidgetArea,wrapper);
 }
@@ -48,6 +58,9 @@ PatternsBasicWidget::PatternsBasicWidget(PatternCompiler* compiler,QWidget *pare
 //    QSplitter *split3 = new QSplitter();
 
 //    QHBoxLayout * lay = new QHBoxLayout(this);
+//    this->setStyleSheet("QTabWidget::pane { /* The tab widget frame */ \
+//                        border-top: 0px;\
+//                    }");
     comp = compiler;
     initCompileButton();
     initPatternEditor();
@@ -79,6 +92,58 @@ void PatternsBasicWidget::setPatternValues(QString name, int segments, int match
     //tableModel->setPatternValues(name,segments,matches,variants);
 }
 
+void PatternsBasicWidget::importPatterns(QString filename)
+{
+    QFile file(filename);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+            QMessageBox::warning(this, tr("Application"),
+                                 tr("Cannot read file %1:\n%2.")
+                                 .arg(filename)
+                                 .arg(file.errorString()));
+            return;
+       }
+    QTextStream in(&file);
+#ifndef QT_NO_CURSOR
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+#endif
+    editor->setText(in.readAll());
+#ifndef QT_NO_CURSOR
+    QApplication::restoreOverrideCursor();
+#endif
+}
+
+void PatternsBasicWidget::exportPatterns(QString filename)
+{
+    QFile file(filename);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+            QMessageBox::warning(this, tr("Application"),
+                                 tr("Cannot write file %1:\n%2.")
+                                 .arg(filename)
+                                 .arg(file.errorString()));
+            return ;
+     }
+    QTextStream out(&file);
+   #ifndef QT_NO_CURSOR
+       QApplication::setOverrideCursor(Qt::WaitCursor);
+   #endif
+        out << editor->getText();
+   #ifndef QT_NO_CURSOR
+       QApplication::restoreOverrideCursor();
+#endif
+}
+
+void PatternsBasicWidget::addLog(const QString &text)
+{
+    logBar->append(text);
+}
+
+void PatternsBasicWidget::clearPatterns()
+{
+    comp->clear();
+    editor->clearAll();
+    logBar->clear();
+}
+
 
 
 void PatternsBasicWidget::compilePattern()
@@ -86,16 +151,19 @@ void PatternsBasicWidget::compilePattern()
     QString patternText = editor->toPlainText();
     QStringList patterns = patternText.split("\n");
     logBar->setText("");
+    QStringList compiledPatterns;
     for(QString pattern: patterns){
         QString patternName = pattern.split("=").at(0);
         QString res = comp->compilePattern(pattern);
         if(res.isEmpty()){
-            editor->addPattern(patternName.simplified());
+            compiledPatterns << pattern;
             logBar->append("Pattern " + patternName + " successfully compiled.");
         }else{
             logBar->append("Error in pattern: " + patternName.simplified());
             logBar->append("\t"+res);
         }
     }
+    editor->addPatterns(compiledPatterns);
+
 }
 
