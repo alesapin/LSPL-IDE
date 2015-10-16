@@ -89,9 +89,8 @@ PatternViewMap PatternCompiler::analyzeText(const QStringList &patternNames, con
 
 QString PatternCompiler::compilePattern(const QString& pattern)
 {
-    qDebug() << pattern;
+    //qDebug() << pattern;
 
-    this->textTransfromBuilder;
     try{
         if(pattern.contains(RIGHT_WITH_PATTERN)){
             patternTransformBuilder->build(pattern.toStdString());

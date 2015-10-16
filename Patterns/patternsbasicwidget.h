@@ -22,6 +22,7 @@
 #include <QDockWidget>
 #include <QToolBar>
 #include <QFrame>
+#include <QScrollArea>
 #include "patterncompiledlist.h"
 class PatternsBasicWidget : public QMainWindow
 {

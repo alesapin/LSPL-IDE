@@ -28,19 +28,23 @@ void PatternsBasicWidget::initPatternEditor()
     QVBoxLayout* lay = new QVBoxLayout(container);
     list = new PatternCompiledList(this);
     editor = new PatternEditor(this);
+    editor->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    QScrollArea* ar = new QScrollArea();
     //QSizePolicy listPolicy(QSizePolicy::Expanding,QSizePolicy::qt_static_metacall());
     //list->setSizePolicy(listPolicy);
     list->setMinimumHeight(0);
     lay->addWidget(list);
     lay->addWidget(editor);
-
     container->setLayout(lay);
+    ar->setWidget(container);
+    ar->setWidgetResizable(true);
+    ar->setContentsMargins(50,50,50,50);
 //    QTabWidget* editorTab = new QTabWidget();
 //    editorTab->addTab(editor,"Pattern Editor");
 //    QSizePolicy large(QSizePolicy::Expanding,QSizePolicy::Expanding);
 //    large.setVerticalStretch(5);
 //    editor->setSizePolicy(large);
-    wrapper->setWidget(container);
+    wrapper->setWidget(ar);
 
     addDockWidget(Qt::RightDockWidgetArea, wrapper);
 
@@ -116,7 +120,7 @@ void PatternsBasicWidget::importPatterns(QString filename)
 #ifndef QT_NO_CURSOR
     QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
-    editor->setText(in.readAll());
+    list->setUncompiledPatterns(in.readAll().split('\n'));
 #ifndef QT_NO_CURSOR
     QApplication::restoreOverrideCursor();
 #endif
@@ -136,7 +140,7 @@ void PatternsBasicWidget::exportPatterns(QString filename)
    #ifndef QT_NO_CURSOR
        QApplication::setOverrideCursor(Qt::WaitCursor);
    #endif
-        out << editor->getText();
+        out << list->getText();
    #ifndef QT_NO_CURSOR
        QApplication::restoreOverrideCursor();
 #endif
@@ -151,6 +155,7 @@ void PatternsBasicWidget::clearPatterns()
 {
     comp->clear();
     editor->clearAll();
+    list->clearAll();
     logBar->clear();
 }
 
@@ -160,7 +165,11 @@ void PatternsBasicWidget::compilePattern()
 {
 
     QStringList patterns = editor->getPatternsForCompile();
-    patterns << list->getPatternsForCompile();
+    QStringList recompiledPatterns =  list->getPatternsForCompile();
+    if(!recompiledPatterns.isEmpty()){
+        patterns << recompiledPatterns;
+        comp->clear();
+    }
     QStringList compiledPatterns;
     for(QString pattern: patterns){
         qDebug() << pattern;
@@ -174,7 +183,7 @@ void PatternsBasicWidget::compilePattern()
             logBar->append("\t"+res);
         }
     }
-    editor->addPatterns(compiledPatterns);
+    editor->clear();
     list->addPatterns(compiledPatterns);
 }
 

@@ -12,6 +12,9 @@
 #include <QListWidget>
 #include <QMap>
 #include <QLineEdit>
+#include <QSizePolicy>
+#include <QSize>
+#include <QFontMetrics>
 class PatternCompiledList : public QListWidget
 {
     Q_OBJECT
@@ -21,8 +24,9 @@ public:
     void addPatterns(const QStringList& patterns);
     QStringList getCompiledPatterns() const;
     QStringList getPatternsForCompile() const;
-protected:
-    void mousePressEvent(QMouseEvent *event);
+    void clearAll();
+    QString getText() const ;
+    void setUncompiledPatterns(const QStringList& patterns);
 signals:
 
 public slots:
@@ -31,13 +35,17 @@ public slots:
     void removePattern();
     void patternChanged(QListWidgetItem * item);
 private:
+    void addUncompiledPattern(const QString& name);
     QString getName(QString pattern);
+    int getItemHeight(QListWidgetItem* it);
+    void shrinkToFit();
     QListWidgetItem *getItem(QString pattern);
     QStringListModel* model;
     QStringList compiledPatterns;
     QMap<QString,QString> nonCompiledPatterns;
     QAction* editPatternAct;
     QAction* removePatternAct;
+    QFontMetrics* metric;
 
 };
 
