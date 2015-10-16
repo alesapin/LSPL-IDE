@@ -6,11 +6,11 @@
 
 PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), mDisplayRectDelta(4, 1, -25, 0)
 {
+
     connect(model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(slotModelRowsInserted(QModelIndex,int,int)));
     connect(model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(slotModelRowsRemoved(QModelIndex,int,int)));
     QStandardItemModel *standartModel = static_cast<QStandardItemModel*>(model());
     connect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
-    setStyleSheet("QComboBox { combobox-popup: 1px }");
 
 }
 
@@ -122,7 +122,8 @@ void PatternSelectionList::slotModelRowsInserted(const QModelIndex &parent, int 
         disconnect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
         for (int i = start; i <= end; ++i)
         {
-            standartModel->item(i)->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+            qDebug() << i;
+            standartModel->item(i)->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled );
             standartModel->item(i)->setData(Qt::Unchecked, Qt::CheckStateRole);
         }
         connect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));

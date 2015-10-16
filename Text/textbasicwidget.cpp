@@ -232,21 +232,7 @@ QDomDocument TextBasicWidget::toXml(PatternViewMap matches)
 
 TextBasicWidget::TextBasicWidget(PatternCompiler* comp,QWidget *parent) : QMainWindow(parent),compiler(comp)
 {
-//    QHBoxLayout * lay = new QHBoxLayout(this);
-//    QSplitter* split = new QSplitter(this);
-//    this->setStyleSheet("QDockWidget > QWidget { \
-//                                                border: 2px solid red;\
-//                                                border-top: 0px ; \
-//                                                padding: 5px; \
-//                                              }\
-//                                            QDockWidget::title{ \
-//                                                border: 2px solid red;\
-//                                                border-bottom: 0px;\
-//                                                padding: 5px;\
-//                                            }\
-//                                            QTabWidget {\
-//                                                border:2px solid purple;\
-//                                                }");
+    setStyleSheet("QComboBox > QWidget { combobox-popup: 1px; };");
     initButton();
     matches = new MatchesWidget(this);
     initEditor();

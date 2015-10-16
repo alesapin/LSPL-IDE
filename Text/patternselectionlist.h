@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QStringList>
 #include <QStandardItem>
+#include <QAbstractItemView>
 #include <QStylePainter>
 class PatternSelectionList:public QComboBox
 {

@@ -12,7 +12,14 @@ PatternEditor::PatternEditor(QWidget *parent):QTextEdit(parent)
     setUpdatesEnabled(true);
     setMinimumHeight(300);
     this->setAlignment(Qt::AlignLeft);
+    editPattern = new QAction("Edit Pattern",this);
+    editPattern->setStatusTip(tr("Make pattern editable"));
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(editPattern,SIGNAL(triggered()),this,SLOT(makePatternEditable()));
     connect(this,SIGNAL(cursorPositionChanged()),this,SLOT(checkEditable()));
+    connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),
+            this,SLOT(showContextMenu(const QPoint &)));
+
 }
 
 QStringList PatternEditor::getCompiledPatterns() const
@@ -22,6 +29,7 @@ QStringList PatternEditor::getCompiledPatterns() const
 
 void PatternEditor::addPatterns(const QStringList &patterns)
 {
+    QStringList text = toPlainText().split("\n");
     if(!patterns.empty()){
         for(const QString& pattern: patterns){
            addPattern(pattern);
@@ -30,6 +38,7 @@ void PatternEditor::addPatterns(const QStringList &patterns)
         colorizeText();
         append("");
     }
+    setText("");
     setFocus();
 }
 
@@ -64,12 +73,25 @@ QString PatternEditor::getText() const
     return result;
 }
 
+QStringList PatternEditor::getPatternsForCompile() const
+{
+    QStringList text = toPlainText().split("\n");
+    QStringList result;
+    for(QString pattern: text){
+        if(!pattern.isEmpty()){
+            result.append(pattern);
+        }
+    }
+    return result;
+}
+
 void PatternEditor::keyPressEvent(QKeyEvent *e)
 {
     if(isReadOnly()){
         if(toPlainText()[textCursor().position()].isNull()){
             qDebug() << e->key();
-            if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return || e->key() == Qt::Key_Left || e->key() == Qt::Key_Right){
+            if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return
+                    || e->key() == Qt::Key_Left || e->key() == Qt::Key_Right){
                 qDebug() << "Попало";
                 setTextColor(QColor("black"));
                 setReadOnly(false);
@@ -96,6 +118,23 @@ void PatternEditor::colorizeText()
         append(s);
     }
     setTextColor(normal);
+}
+
+void PatternEditor::showContextMenu(const QPoint& pt)
+{
+    qDebug() << "Request";
+    QMenu* current = createStandardContextMenu();
+    current->addAction(editPattern);
+    current->exec(mapToGlobal(pt));
+    //delete current;
+}
+
+void PatternEditor::mousePressEvent(QMouseEvent *e)
+{
+    if(e->button() == Qt::RightButton){
+         //setTextCursor(cursorForPosition(e->pos()));
+    }
+    e->accept();
 }
 
 QString PatternEditor::getPatternByLine(int num)
@@ -129,6 +168,19 @@ int PatternEditor::getCursorLine()
     return lines;
 }
 
+void PatternEditor::makePatternEditable()
+{
+    int line = getCursorLine();
+    qDebug() << line;
+    QString pattern = getPatternByLine(line);
+    compiledPatterns.remove(pattern);
+    setReadOnly(false);
+    qDebug() << textCursor().position();
+    QTextCursor crs = textCursor();
+    crs.setPosition(0);
+    setTextCursor(crs);
+}
+
 //void PatternEditor::paintEvent(QPaintEvent *_event)
 //{
 //    QPainter pnt(viewport());
@@ -145,7 +197,6 @@ int PatternEditor::getCursorLine()
 //    }
 //    //
 //    QTextEdit::paintEvent( _event );
-
 //}
 
 //int PatternEditor::getPatternPos(const QString &patternName)

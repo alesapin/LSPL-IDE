@@ -24,13 +24,23 @@ void PatternsBasicWidget::initPatternEditor()
 {
     QDockWidget* wrapper = new QDockWidget("PatternEditor",this);
     wrapper->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    QWidget* container =new QWidget(this);
+    QVBoxLayout* lay = new QVBoxLayout(container);
+    list = new PatternCompiledList(this);
     editor = new PatternEditor(this);
+    //QSizePolicy listPolicy(QSizePolicy::Expanding,QSizePolicy::qt_static_metacall());
+    //list->setSizePolicy(listPolicy);
+    list->setMinimumHeight(0);
+    lay->addWidget(list);
+    lay->addWidget(editor);
+
+    container->setLayout(lay);
 //    QTabWidget* editorTab = new QTabWidget();
 //    editorTab->addTab(editor,"Pattern Editor");
 //    QSizePolicy large(QSizePolicy::Expanding,QSizePolicy::Expanding);
 //    large.setVerticalStretch(5);
 //    editor->setSizePolicy(large);
-    wrapper->setWidget(editor);
+    wrapper->setWidget(container);
 
     addDockWidget(Qt::RightDockWidgetArea, wrapper);
 
@@ -84,7 +94,7 @@ PatternsBasicWidget::PatternsBasicWidget(PatternCompiler* compiler,QWidget *pare
 
 QStringList PatternsBasicWidget::getChoosenPatterns()
 {
-    return editor->getCompiledPatterns();
+    return list->getCompiledPatterns();
 }
 
 void PatternsBasicWidget::setPatternValues(QString name, int segments, int matches, int variants)
@@ -148,11 +158,12 @@ void PatternsBasicWidget::clearPatterns()
 
 void PatternsBasicWidget::compilePattern()
 {
-    QString patternText = editor->toPlainText();
-    QStringList patterns = patternText.split("\n");
-    logBar->setText("");
+
+    QStringList patterns = editor->getPatternsForCompile();
+    patterns << list->getPatternsForCompile();
     QStringList compiledPatterns;
     for(QString pattern: patterns){
+        qDebug() << pattern;
         QString patternName = pattern.split("=").at(0);
         QString res = comp->compilePattern(pattern);
         if(res.isEmpty()){
@@ -164,6 +175,6 @@ void PatternsBasicWidget::compilePattern()
         }
     }
     editor->addPatterns(compiledPatterns);
-
+    list->addPatterns(compiledPatterns);
 }
 

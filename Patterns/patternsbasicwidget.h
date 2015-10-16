@@ -22,6 +22,7 @@
 #include <QDockWidget>
 #include <QToolBar>
 #include <QFrame>
+#include "patterncompiledlist.h"
 class PatternsBasicWidget : public QMainWindow
 {
     Q_OBJECT
@@ -32,7 +33,7 @@ private:
     PatternCompLogBar* logBar;
     QTableView* table;
     QTabWidget* logtab;
-
+    PatternCompiledList* list;
     void initCompileButton();
     void initPatternTable();
     void initPatternEditor();
