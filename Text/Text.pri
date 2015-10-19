@@ -5,7 +5,8 @@ HEADERS += \
     $$PWD/textmatchesmodel.h \
     $$PWD/textmatchestable.h \
     $$PWD/patternselectionlist.h \
-    $$PWD/matcheswidget.h
+    $$PWD/matcheswidget.h \
+    $$PWD/statisticswindow.h
 
 SOURCES += \
     $$PWD/maintextviewer.cpp \
@@ -14,4 +15,5 @@ SOURCES += \
     $$PWD/textmatchesmodel.cpp \
     $$PWD/textmatchestable.cpp \
     $$PWD/patternselectionlist.cpp \
-    $$PWD/matcheswidget.cpp
+    $$PWD/matcheswidget.cpp \
+    $$PWD/statisticswindow.cpp

@@ -85,6 +85,19 @@ void TextTabEdit::clearSelection()
     }
 }
 
+void TextTabEdit::setReadOnly(bool f)
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    if(current){
+        if(f){
+            current->setStyleSheet("QPlainTextEdit {background-color: rgb(0, 255, 0,20%)}");
+        }else{
+            current->setStyleSheet("QPlainTextEdit {background-color: rgb(255, 255, 255)}");
+        }
+        current->setReadOnly(f);
+    }
+}
+
 void TextTabEdit::closeTab(int index)
 {
         MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));

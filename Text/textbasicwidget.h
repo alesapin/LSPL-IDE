@@ -16,20 +16,23 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QPushButton>
-#include <Text/textmatchestable.h>
+#include "Text/textmatchestable.h"
 #include <QTableView>
 #include <QTabWidget>
 #include <QSplitter>
 #include <QHBoxLayout>
-#include <Engine/patterncompiler.h>
-#include <Text/matcheswidget.h>
+#include "Engine/patterncompiler.h"
+#include "Text/matcheswidget.h"
 #include <QDomDocument>
+#include "statisticswindow.h"
 class TextTabEdit;
 class TextBasicWidget : public QMainWindow
 {
     Q_OBJECT
     TextTabEdit* textEdit;
     QPushButton* analyze;
+    QPushButton* statistics;
+    QPushButton* edit;
     MatchesWidget* matches;
     QTabWidget* matchTabs;
     PatternCompiler* compiler;
@@ -37,7 +40,7 @@ class TextBasicWidget : public QMainWindow
 
     void initTable();
     void initEditor();
-    void initButton();
+    void initButtons();
     QDomDocument toXml(PatternViewMap matches);
 
 public:
@@ -58,6 +61,8 @@ signals:
 public slots:
     void clearMatches();
     void analyzeText();
+    void editEnable();
+    void showStatistics();
     void selectFragment(int from,int to);
     void slotPatternUncheked(const QString& name);
     void slotPatternChecked(const QString& name);

@@ -8,6 +8,7 @@ PatternCompiler::MatchRepr PatternCompiler::convertMatch(lspl::text::MatchRef re
     QString text = convertToUtf(ref->getRangeString());
     QString transform;
     QString params;
+    int vars = ref->getVariantCount();
     lspl::text::Match::AttributesMap attrMap = ref->getAttributes();
     for(std::map<lspl::text::attributes::AttributeKey,lspl::text::attributes::AttributeValue>::iterator itr = attrMap.begin();
         itr != attrMap.end();++itr)
@@ -48,7 +49,8 @@ PatternCompiler::MatchRepr PatternCompiler::convertMatch(lspl::text::MatchRef re
         params,
         transform,
         ref->getRangeStart(),
-        ref->getRangeEnd()
+        ref->getRangeEnd(),
+        vars
     };
 }
 

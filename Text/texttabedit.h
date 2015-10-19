@@ -24,6 +24,8 @@ public:
     void setMatches(const PatternViewMap& m);
     void selectText(int start,int end);
     void clearSelection();
+    void setReadOnly(bool f);
+
 signals:
     /**
      * @brief tabWasClosed

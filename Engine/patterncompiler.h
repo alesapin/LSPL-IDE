@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <QMap>
 #include <string>
-
+#include <QStringList>
 enum PatternType{
     RIGHT_PART_TEXT,RIGHT_PART_PATTERN,NO_RIGHT_PART
 };
@@ -26,8 +26,10 @@ public:
         QString text;
         QString params;
         QString transform;
+        //QStringList patternNames;
         uint start;
         uint end;
+        uint variants;
     };
     PatternCompiler();
     QMap<QString,QVector<PatternCompiler::MatchRepr>> analyzeText(const QStringList &patternNames,const QString& text);

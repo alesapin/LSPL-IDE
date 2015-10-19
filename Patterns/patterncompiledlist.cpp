@@ -40,7 +40,7 @@ void PatternCompiledList::addPattern(const QString &pattern)
         }else{
             QListWidgetItem* it = getItem(pattern);
             this->blockSignals(true);
-            it->setBackground(QColor("green"));
+            it->setBackground(QColor(0,255,0,127));
             it->setFlags(it->flags() & ~Qt::ItemIsEditable);
             this->blockSignals(false);
         }

@@ -102,6 +102,7 @@ QDomDocument TextBasicWidget::getXml()
 
 void TextBasicWidget::setMatches(const PatternViewMap &matches)
 {
+    textEdit->setReadOnly(true);
     this->matches->setMatches(matches);
     this->textEdit->setMatches(matches);
 }
@@ -143,6 +144,19 @@ void TextBasicWidget::analyzeText()
 //    CentralWidget* par = static_cast<CentralWidget*>(this->parent());
 //    par->getChoosenPatterns();
     emit buttonClicked();
+}
+
+void TextBasicWidget::editEnable()
+{
+    matches->clear();
+    textEdit->clearSelection();
+    textEdit->setReadOnly(false);
+}
+
+void TextBasicWidget::showStatistics()
+{
+    StatisticsWindow* w = new StatisticsWindow(matches->getSelectedMatches(),this);
+    w->show();
 }
 
 void TextBasicWidget::selectFragment(int from, int to)
@@ -189,12 +203,18 @@ void TextBasicWidget::initEditor()
     connect(textEdit,SIGNAL(tabWasClosed(int)),matches,SLOT(closeTab(int)));
 }
 
-void TextBasicWidget::initButton()
+void TextBasicWidget::initButtons()
 {
     QToolBar* buttonBar = new QToolBar(this);
     analyze = new QPushButton("Analyze",this);
+    edit = new QPushButton("Edit",this);
+    statistics = new QPushButton("Statistics",this);
     connect(analyze,SIGNAL(clicked(bool)),this,SLOT(analyzeText()));
+    connect(edit,SIGNAL(clicked(bool)),this,SLOT(editEnable()));
+    connect(statistics,SIGNAL(clicked(bool)),this,SLOT(showStatistics()));
     buttonBar->addWidget(analyze);
+    buttonBar->addWidget(edit);
+    buttonBar->addWidget(statistics);
     this->addToolBar(buttonBar);
 
 }
@@ -233,7 +253,7 @@ QDomDocument TextBasicWidget::toXml(PatternViewMap matches)
 TextBasicWidget::TextBasicWidget(PatternCompiler* comp,QWidget *parent) : QMainWindow(parent),compiler(comp)
 {
     setStyleSheet("QComboBox > QWidget { combobox-popup: 1px; };");
-    initButton();
+    initButtons();
     matches = new MatchesWidget(this);
     initEditor();
     initTable();

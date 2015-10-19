@@ -41,6 +41,22 @@ QVariant TextMatchesModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     }
+    if(role == Qt::ToolTipRole){
+        PatternCompiler::MatchRepr current = getRow(row);
+        QString result = "<FONT COLOR=white> <strong> start:</strong> %1 <br> "
+                         "<strong> end:</strong> %2 <br> <strong> text: </strong> %3";
+        result = result.arg(QString::number(current.start),QString::number(current.end),current.text);
+        if(!current.transform.isEmpty()){
+            result += "<br> <strong>transform: </strong> %4";
+            result = result.arg(current.transform.replace("<","&lt;").replace(">","&gt;"));
+        }
+        if(!current.params.isEmpty()){
+            result += "<br> <strong>params: </strong> %5";
+            result = result.arg(current.params);
+        }
+        result+="</font>";
+        return result;
+    }
     return QVariant();
 
 }

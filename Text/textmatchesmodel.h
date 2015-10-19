@@ -19,6 +19,7 @@ private:
     QVector<PatternViewMap> datum;
     QVector<QStringList> currentPatterns;
     int currentTab;
+    QString getToolTipText();
 public:
     TextMatchesModel(QWidget* parent = 0);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
