@@ -42,14 +42,11 @@ QStringList CentralWidget::getChoosenPatterns()
 void CentralWidget::analyze()
 {
     QStringList patternNames = pattern->getChoosenPatterns();
-    try{
         PatternViewMap result =  compiler->analyzeText(patternNames,txt->getText());
         if(!result.empty() && !txt->getText().isEmpty()){
             txt->setMatches(result);
         }
-    }catch(lspl::patterns::PatternBuildingException e){
-        pattern->addLog("Exception while building generated pattern");
-    }
+        //pattern->addLog("Exception while building generated pattern");
 
 //    for(QString name:patternNames){
 //        QVector<PatternCompiler::MatchRepr> pattrnResult = result[name];

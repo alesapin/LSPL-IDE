@@ -183,7 +183,7 @@ void PatternsBasicWidget::compilePattern()
     for(QString pattern: recompiledPatterns){
         qDebug() << pattern;
         QString patternName = pattern.split("=").at(0);
-        QString res = comp->compilePattern(pattern);
+        QString res = comp->compilePatternNoException(pattern);
         if(res.isEmpty()){
             compiledPatterns << pattern;
             logBar->append("Pattern " + patternName + " successfully compiled.");

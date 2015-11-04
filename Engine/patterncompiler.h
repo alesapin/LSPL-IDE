@@ -38,6 +38,7 @@ public:
     PatternCompiler();
     QMap<QString,QVector<PatternCompiler::MatchRepr>> analyzeText(const QStringList &patternNames,const QString& text);
     QString compilePattern(const QString& pattern);
+    QString compilePatternNoException(const QString& pattern);
     void clear();
 private:
     static const QString RIGHT_WITH_PATTERN;

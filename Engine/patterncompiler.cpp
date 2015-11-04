@@ -131,6 +131,23 @@ QString PatternCompiler::compilePattern(const QString& pattern)
     }
 }
 
+QString PatternCompiler::compilePatternNoException(const QString &pattern)
+{
+    lspl::patterns::PatternBuilder::BuildInfo bi;
+    if(pattern.contains(RIGHT_WITH_PATTERN)){
+        bi=patternTransformBuilder->buildNoException(pattern.toStdString());
+    }else if (pattern.contains(RIGHT_WITH_TEXT)){
+        bi=textTransfromBuilder->buildNoException(pattern.toStdString());
+    }else{
+        bi=noRightPartBuilder->buildNoException(pattern.toStdString());
+    }
+    if(bi.parseLength == -1){
+        return QString::fromStdString(bi.errorMsg);
+    } else {
+        return "";
+    }
+}
+
 void PatternCompiler::clear()
 {
     ns = new lspl::Namespace();
