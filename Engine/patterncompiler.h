@@ -1,5 +1,6 @@
 #ifndef PATTERNCOMPILER_H
 #define PATTERNCOMPILER_H
+#include <QtGlobal>
 #include <lspl/Namespace.h>
 #include <lspl/transforms/TextTransformBuilder.h>
 #include <lspl/transforms/PatternTransformBuilder.h>
@@ -15,6 +16,9 @@
 #include <QMap>
 #include <string>
 #include <QStringList>
+#include <iostream>
+#include <QMessageBox>
+#include <fstream>
 enum PatternType{
     RIGHT_PART_TEXT,RIGHT_PART_PATTERN,NO_RIGHT_PART
 };
@@ -38,7 +42,7 @@ public:
 private:
     static const QString RIGHT_WITH_PATTERN;
     static const QString RIGHT_WITH_TEXT;
-    QString convertToUtf(const std::string& str);
+    QString convertToSystem(const std::string& str);
     lspl::NamespaceRef ns;
     lspl::text::readers::PlainTextReader reader;
     lspl::patterns::PatternBuilderRef textTransfromBuilder;

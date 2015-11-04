@@ -7,9 +7,10 @@
 #include <Text/maintextviewer.h>
 #include <QList>
 #include <QMessageBox>
-#include <Text/textbasicwidget.h>
+#include "Text/textbasicwidget.h"
 #include <Engine/patterncompiler.h>
 #include <QMap>
+class TextBasicWidget;
 class TextTabEdit : public QTabWidget
 {
     Q_OBJECT
@@ -38,6 +39,7 @@ public slots:
     void closeTab(int index);
 private:
     QMap<QString,QString> fileNamePath;
+    TextBasicWidget* par;
 };
 
 #endif // TEXTTABEDIT_H

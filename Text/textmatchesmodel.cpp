@@ -6,6 +6,7 @@ TextMatchesModel::TextMatchesModel(QWidget *parent): QAbstractTableModel(parent)
 {
     datum.resize(1);
     currentPatterns.resize(1);
+
 }
 
 int TextMatchesModel::rowCount(const QModelIndex &parent) const
@@ -194,7 +195,6 @@ PatternCompiler::MatchRepr TextMatchesModel::getRow(int index) const
 
 void TextMatchesModel::changeTab(int index)
 {
-    qDebug() <<"INDEX:"<< index;
     if(index >= datum.size()){
         clearTable();
         datum.resize(index+1);
@@ -220,6 +220,7 @@ void TextMatchesModel::closeTab(int index)
 {
     qDebug() << "REmove Index: " << index;
     clearTable();
+    if(datum.size() <= index) index = datum.size() -1;
     datum.remove(index);
     currentPatterns.remove(index);
 }

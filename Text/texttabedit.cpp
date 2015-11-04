@@ -2,7 +2,7 @@
 #include <QDebug>
 TextTabEdit::TextTabEdit(QWidget* parent):QTabWidget(parent)
 {
-
+    par = static_cast<TextBasicWidget*>(parent);
     this->setTabsClosable(true);
     setMinimumHeight(300);
     connect(this,SIGNAL(tabCloseRequested(int)),this,SLOT(closeTab(int)));
@@ -39,7 +39,7 @@ QString TextTabEdit::getCurrentFile() const
 QString TextTabEdit::getIndexText(int index) const
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));
-    if(current){
+    if (current) {
         return current->toPlainText();
     }
 }
@@ -103,8 +103,8 @@ void TextTabEdit::closeTab(int index)
         MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));
         if(current->isModified()){
             QString name = tabText(index);
-            TextBasicWidget* par = static_cast<TextBasicWidget*>(this->parent());
             if(par->maybeSave(name,index)){
+                qDebug() << "REMOVED";
                 this->removeTab(index);
                 emit tabWasClosed(index);
             }

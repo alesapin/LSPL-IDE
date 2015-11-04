@@ -11,8 +11,9 @@ PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), m
     connect(model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(slotModelRowsRemoved(QModelIndex,int,int)));
     QStandardItemModel *standartModel = static_cast<QStandardItemModel*>(model());
     connect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+#ifndef Q_OS_WIN
     setStyleSheet("QComboBox { combobox-popup: 1px }");
-
+#endif
 
 }
 

@@ -5,7 +5,7 @@ const QString PatternCompiler::RIGHT_WITH_TEXT =  "=text>";
 
 PatternCompiler::MatchRepr PatternCompiler::convertMatch(lspl::text::MatchRef ref,PatternType patternType)
 {
-    QString text = convertToUtf(ref->getRangeString());
+    QString text = convertToSystem(ref->getRangeString());
     QString transform;
     QString params;
     int vars = ref->getVariantCount();
@@ -13,11 +13,11 @@ PatternCompiler::MatchRepr PatternCompiler::convertMatch(lspl::text::MatchRef re
     for(std::map<lspl::text::attributes::AttributeKey,lspl::text::attributes::AttributeValue>::iterator itr = attrMap.begin();
         itr != attrMap.end();++itr)
     {
-        QString title = convertToUtf(itr->first.getTitle());
-        QString value = convertToUtf(itr->second.getTitle());
+        QString title = convertToSystem(itr->first.getTitle());
+        QString value = convertToSystem(itr->second.getTitle());
         QString otherValue;
         if(value == "неопределено"){
-            otherValue = convertToUtf(itr->second.getString());
+            otherValue = convertToSystem(itr->second.getString());
         }
         if(otherValue != ""){
             value = otherValue;
@@ -32,12 +32,12 @@ PatternCompiler::MatchRepr PatternCompiler::convertMatch(lspl::text::MatchRef re
     case RIGHT_PART_PATTERN:
     {
         lspl::patterns::PatternRef p = ref->getVariant(0)->getTransformResult<lspl::patterns::PatternRef>();
-        transform = convertToUtf(p->getName().c_str()) + " = " + convertToUtf(p->getSource().c_str());
+        transform = convertToSystem(p->getName().c_str()) + " = " + convertToSystem(p->getSource().c_str());
         break;
     }
     case RIGHT_PART_TEXT:
     {
-        transform = convertToUtf(ref->getVariant(0)->getTransformResult<std::string>().c_str());
+        transform = convertToSystem(ref->getVariant(0)->getTransformResult<std::string>().c_str());
         break;
     }
     default:
@@ -65,11 +65,28 @@ PatternCompiler::PatternCompiler()
 
 PatternViewMap PatternCompiler::analyzeText(const QStringList &patternNames, const QString &text)
 {
-    lspl::text::TextRef txt = reader.readFromString(text.toStdString(),"UTF-8");
+// QMessageBox messageBox;
+// messageBox.critical(0,"Error","An error has occured !");
+// messageBox.setFixedSize(500,200);
+// messageBox.critical(0,"Error",text.mid(0,20));
+
+////#ifndef defined(Q_OS_WIN)
+//    messageBox.critical(0,"Error","DROP NOW!");
+//    messageBox.setFixedSize(500,200);
+
+    QByteArray arr= codec->fromUnicode(text);
+    std::string res(arr.data());
+    lspl::text::TextRef txt = reader.readFromString(res);
+//    QMessageBox messageBox1;
+//    messageBox1.critical(0,"Error","TExT READING ERROR !");
+//    messageBox1.setFixedSize(500,200);
     PatternViewMap result;
     for(QString pattern: patternNames){
         PatternType patternType;
         lspl::patterns::PatternRef pat = ns->getPatternByName(pattern.toStdString());
+//        QMessageBox messageBox2;
+//        messageBox2.critical(0,"Error","PATTERN EXTRACTION ERROR !");
+//        messageBox2.setFixedSize(500,200);
         QString patSource(pat->getSource().c_str());
         if(patSource.contains(RIGHT_WITH_PATTERN)){
             patternType = RIGHT_PART_PATTERN;
@@ -79,6 +96,9 @@ PatternViewMap PatternCompiler::analyzeText(const QStringList &patternNames, con
             patternType = NO_RIGHT_PART;
         }
         lspl::text::MatchList matches = txt->getMatches(pat);
+//        QMessageBox messageBox3;
+//        messageBox3.critical(0,"Error","MATCH EXTRACTION ERROR !");
+//        messageBox3.setFixedSize(500,200);
         QVector<MatchRepr> resultPattern;
         for(uint i = 0; i < matches.size(); ++i){
             MatchRepr rep = convertMatch(matches[i],patternType);
@@ -92,7 +112,7 @@ PatternViewMap PatternCompiler::analyzeText(const QStringList &patternNames, con
 QString PatternCompiler::compilePattern(const QString& pattern)
 {
     //qDebug() << pattern;
-
+    std::cerr<<pattern.toStdString()<<"\n";
     try{
         if(pattern.contains(RIGHT_WITH_PATTERN)){
             patternTransformBuilder->build(pattern.toStdString());
@@ -102,8 +122,12 @@ QString PatternCompiler::compilePattern(const QString& pattern)
             noRightPartBuilder->build(pattern.toStdString());
         }
         return "";
-    }catch(lspl::patterns::PatternBuildingException e){
-        return e.what();
+    }catch(const lspl::patterns::PatternBuildingException& e){
+        std::cerr << "Catched!\n";
+        return "Something went wrong";
+    }catch(const std::exception & e){
+        std::cerr << "Catched here!\n";
+        return "Something went wrong...";
     }
 }
 
@@ -115,9 +139,10 @@ void PatternCompiler::clear()
     patternTransformBuilder = new lspl::patterns::PatternBuilder(ns, new lspl::transforms::PatternTransformBuilder(ns));
 }
 
-QString PatternCompiler::convertToUtf(const std::string &str)
+QString PatternCompiler::convertToSystem(const std::string &str)
 {
     QByteArray arr = QByteArray::fromStdString(str);
     return codec->toUnicode(arr);
+
 }
 

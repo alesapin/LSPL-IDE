@@ -11,6 +11,7 @@ TextMatchesTable::TextMatchesTable(QWidget *parent) : QTableView(parent)
                     SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                     this,
                     SLOT(onRowClick(QItemSelection,QItemSelection)));
+    setStyleSheet("QToolTip { color: #ffffff; background-color: #696969; border: 1px solid white; }");
 }
 
 void TextMatchesTable::setMatches(const PatternViewMap &maches)

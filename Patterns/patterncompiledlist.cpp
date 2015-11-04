@@ -20,7 +20,7 @@ PatternCompiledList::PatternCompiledList(QWidget *parent):QListWidget(parent)
             this,SLOT(showContextMenu(const QPoint &)));
     setWordWrap(true);
     setTextElideMode(Qt::ElideNone);
-    metric = new QFontMetrics(font());
+    metric = new QFontMetrics(this->fontMetrics());
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSizeAdjustPolicy(QListWidget::AdjustToContents);
     hide();
@@ -32,7 +32,6 @@ void PatternCompiledList::addPattern(const QString &pattern)
     if(isHidden()) show();
     QString name = getName(pattern);
     if(!compiledPatterns.contains(pattern)){
-
         if(!nonCompiledPatterns.contains(name)){
             QListWidgetItem* it =new QListWidgetItem(pattern);
             it->setBackgroundColor(QColor(0,255,0,127));
@@ -50,6 +49,7 @@ void PatternCompiledList::addPattern(const QString &pattern)
 
 void PatternCompiledList::addPatterns(const QStringList &patterns)
 {
+    clearAll();
     for(const QString& pat:patterns){
         addPattern(pat);
     }
@@ -84,6 +84,9 @@ QStringList PatternCompiledList::getPatternsForCompile() const
     QStringList result;
     for(QString name: nonCompiledPatterns.keys()){
         result << name+" = "+nonCompiledPatterns[name];
+    }
+    for(QString s :compiledPatterns){
+        result << s;
     }
     return result;
 }
@@ -214,10 +217,9 @@ int PatternCompiledList::getItemHeight(QListWidgetItem *it)
     int numberOfLines =w/width()+1;
     qDebug() << numberOfLines;
     if(numberOfLines > 1){
-        return numberOfLines*(metric->height()+1);
+        return numberOfLines*(metric->height()+4);
     }else{
-        return numberOfLines*(metric->height()+2);
-
+        return numberOfLines*(metric->height()+5);
     }
 }
 
@@ -227,7 +229,16 @@ void PatternCompiledList::shrinkToFit()
     for(int i = 0;i<count();++i){
         height+= getItemHeight(item(i));
     }
-    setFixedHeight(height);
+    if(count() ==1){
+        setFixedHeight(height*1.5);
+    }else{
+        setFixedHeight(height);
+    }
+
+
+//    QRect current = frameRect();
+//    current.setBottom(height);
+//    setFrameRect(current);
 }
 
 

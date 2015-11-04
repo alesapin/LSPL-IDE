@@ -14,7 +14,7 @@ void TextBasicWidget::saveTextFile(QString filename,int index)
        QApplication::setOverrideCursor(Qt::WaitCursor);
    #endif
        if(index == -1){
-            out << textEdit->getCurrentText();
+           out << textEdit->getCurrentText();
        }else{
            out << textEdit->getIndexText(index);
        }

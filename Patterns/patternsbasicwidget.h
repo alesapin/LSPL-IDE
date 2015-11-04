@@ -39,6 +39,7 @@ private:
     void initPatternTable();
     void initPatternEditor();
     void initPatternLogBar();
+    void clearDuplicates(QStringList& listPatterns,QStringList& editorPatterns);
 public:
     explicit PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent = 0);
     QStringList getChoosenPatterns();

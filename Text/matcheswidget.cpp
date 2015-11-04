@@ -1,5 +1,5 @@
 #include "matcheswidget.h"
-
+#include <QDebug>
 
 
 
@@ -36,10 +36,15 @@ void MatchesWidget::setMatches(const PatternViewMap &patterns)
 
 void MatchesWidget::changeTab(int index)
 {
-    table->changeTab(index);
-    list->clear();
-    list->addItems(table->getAllPatterns());
-    list->setCheckedItems(table->getCurrentPatterns());
+    if(index != -1){
+        table->changeTab(index);
+        list->clear();
+        list->addItems(table->getAllPatterns());
+        list->setCheckedItems(table->getCurrentPatterns());
+    } else {
+        table->clear();
+        list->clearAll();
+    }
 }
 
 PatternViewMap MatchesWidget::getSelectedMatches() const
@@ -56,6 +61,7 @@ void MatchesWidget::clear()
 void MatchesWidget::closeTab(int index)
 {
     table->closeTab(index);
+    //changeTab(index+1);
 }
 
 

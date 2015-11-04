@@ -66,6 +66,17 @@ void PatternsBasicWidget::initPatternLogBar()
     addDockWidget(Qt::RightDockWidgetArea,wrapper);
 }
 
+void PatternsBasicWidget::clearDuplicates(QStringList &listPatterns, QStringList &editorPatterns)
+{
+    for(int i = 0; i < editorPatterns.size();++i){
+        QString edPatName = editorPatterns[i].split("=")[0].trimmed();
+        for(int j = 0;j<listPatterns.size();++j){
+            QString lPatName = listPatterns[j].split("=")[0].trimmed();
+            if(edPatName == lPatName) listPatterns.removeAt(j);
+        }
+    }
+}
+
 PatternsBasicWidget::PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent) : QMainWindow(parent)
 {
 //    QSplitter *split2 = new QSplitter();
@@ -163,15 +174,13 @@ void PatternsBasicWidget::clearPatterns()
 
 void PatternsBasicWidget::compilePattern()
 {
-
     QStringList patterns = editor->getPatternsForCompile();
     QStringList recompiledPatterns =  list->getPatternsForCompile();
-    if(!recompiledPatterns.isEmpty()){
-        patterns << recompiledPatterns;
-        comp->clear();
-    }
+    clearDuplicates(recompiledPatterns,patterns);
+    recompiledPatterns << patterns;
+    comp->clear();
     QStringList compiledPatterns;
-    for(QString pattern: patterns){
+    for(QString pattern: recompiledPatterns){
         qDebug() << pattern;
         QString patternName = pattern.split("=").at(0);
         QString res = comp->compilePattern(pattern);
