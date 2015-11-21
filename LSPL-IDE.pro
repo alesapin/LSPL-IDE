@@ -15,10 +15,12 @@ LIBS = -llspl
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    centralwidget.cpp
+    centralwidget.cpp \
+    basicwidget.cpp
 
 HEADERS  += mainwindow.h \
-    centralwidget.h
+    centralwidget.h \
+    basicwidget.h
 
 include(Text/Text.pri)
 include(Interface/Interface.pri)

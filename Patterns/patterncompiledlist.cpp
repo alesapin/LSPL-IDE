@@ -165,10 +165,13 @@ void PatternCompiledList::removePattern()
 {
     qDebug() <<"Было:" <<count();
     QListWidgetItem* current = currentItem();
-    compiledPatterns.removeAll(current->text());
+    QString txt = current->text();
+    compiledPatterns.removeAll(txt);
+    QString name = getName(txt);
     patternChanged(current);
     removeItemWidget(current);
     delete current;
+    nonCompiledPatterns.remove(name);
     if(count() == 0){
         hide();
     }
