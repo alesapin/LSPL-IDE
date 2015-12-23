@@ -1,17 +1,21 @@
-#ifndef TEXTMATCHESTABLE_H
-#define TEXTMATCHESTABLE_H
+#ifndef MATCHESTABLE_H
+#define MATCHESTABLE_H
 
-#include <QWidget>
 #include <QTableView>
-#include <Text/textmatchesmodel.h>
+#include "Engine/patterncompiler.h"
+#include "matchesmodel.h"
 #include <QHeaderView>
-#include <QItemSelection>
 #include <QResizeEvent>
-class TextMatchesTable : public QTableView
+class MatchesTable : public QTableView
 {
     Q_OBJECT
+private:
+    MatchesModel* myModel() const{
+        return static_cast<MatchesModel*>(model());
+    }
+
 public:
-    explicit TextMatchesTable(QWidget *parent = 0);
+    MatchesTable(QWidget *parent = 0);
     void setMatches(const PatternViewMap& maches);
     void setCurrentPatterns(const QStringList& name);
     void addCurrentPattern(const QString& name);
@@ -28,9 +32,6 @@ signals:
     void rowClicked(int,int);
 public slots:
     void onRowClick(const QItemSelection & selected, const QItemSelection & deselected);
-private:
-    TextMatchesModel* model;
-
 };
 
-#endif // TEXTMATCHESTABLE_H
+#endif // MATCHESTABLE_H

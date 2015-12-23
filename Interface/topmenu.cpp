@@ -132,7 +132,7 @@ void TopMenu::importPatterns()
     QString filter = "Pattern Files (*.pat)";
     QString filename = QFileDialog::getOpenFileName(this,"Import pattern","",filter,&filter);
     if(!filename.isEmpty()){
-        clearPatterns();
+        //clearPatterns();
         pattern->importPatterns(filename);
     }
 }
@@ -153,8 +153,8 @@ void TopMenu::exportPatterns()
 
 void TopMenu::clearPatterns()
 {
-    text->clearMatches();
-    pattern->clearPatterns();
+    text->slotClearMatches();
+    pattern->slotClearPatterns();
 }
 
 void TopMenu::exportMatches()
@@ -166,7 +166,7 @@ void TopMenu::exportMatches()
         if(!filePath.endsWith(".xml")){
             filePath = filePath.append(".xml");
         }
-        text->saveMatches(filePath);
+       matches->saveMatches(filePath);
     }
 }
 
@@ -174,6 +174,7 @@ TopMenu::TopMenu(QWidget* parent,CentralWidget* c):QMenuBar(parent),cent(c)
 {
     text = c->getTextWidget();
     pattern = c->getPatternWidget();
+    matches = c->getMatchesWidget();
     setDefaultUp(true);
     setNativeMenuBar(true);
     setFileMenu();

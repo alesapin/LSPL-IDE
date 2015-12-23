@@ -1,18 +1,13 @@
-#ifndef TEXTMATCHESMODEL_H
-#define TEXTMATCHESMODEL_H
-
-#include <QWidget>
+#ifndef MATCHESMODEL_H
+#define MATCHESMODEL_H
 #include <QAbstractTableModel>
-#include <Engine/patterncompiler.h>
 #include <QModelIndex>
 #include <QVariant>
 #include <QBrush>
 #include <QFont>
 #include <QVector>
-#include <lspl/text/Text.h>
-#include <lspl/text/Match.h>
-#define MATCH_COLUMNS 3
-class TextMatchesModel : public QAbstractTableModel
+#include "Engine/patterncompiler.h"
+class MatchesModel:public QAbstractTableModel
 {
     Q_OBJECT
 private:
@@ -21,7 +16,7 @@ private:
     int currentTab;
     QString getToolTipText();
 public:
-    TextMatchesModel(QWidget* parent = 0);
+    MatchesModel(QWidget* parent = 0);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -36,14 +31,12 @@ public:
     void removePatternFromCurrent(const QString& name);
     void clearCurrent();
     PatternViewMap getCurrentMatches() const;
-    PatternCompiler::MatchRepr getRow(int index) const;
     void changeTab(int index);
     void closeTab(int index);
     QStringList getCurrentPatterns() const;
     QStringList getAllPatterns() const;
-signals:
-
-public slots:
+    PatternCompiler::MatchRepr getRow(int index) const;
+    static const int MATCHES_COLUMNS = 3;
 };
 
-#endif // TEXTMATCHESMODEL_H
+#endif // MATCHESMODEL_H

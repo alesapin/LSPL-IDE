@@ -26,3 +26,7 @@ include(Text/Text.pri)
 include(Interface/Interface.pri)
 include(Patterns/Patterns.pri)
 include(Engine/Engine.pri)
+include(Matches/Matches.pri)
+include(Utils/Utils.pri)
+RESOURCES += \
+    stylesheet.qrc

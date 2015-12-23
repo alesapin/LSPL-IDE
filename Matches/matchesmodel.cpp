@@ -1,15 +1,13 @@
-#include "textmatchesmodel.h"
+#include "matchesmodel.h"
 #include <QDebug>
-
-
-TextMatchesModel::TextMatchesModel(QWidget *parent): QAbstractTableModel(parent),currentTab(0)
+MatchesModel::MatchesModel(QWidget *parent): QAbstractTableModel(parent),currentTab(0)
 {
     datum.resize(1);
     currentPatterns.resize(1);
 
 }
 
-int TextMatchesModel::rowCount(const QModelIndex &parent) const
+int MatchesModel::rowCount(const QModelIndex &parent) const
 {
     int result  = 0;
     if(currentPatterns.size() > 0) {
@@ -20,12 +18,12 @@ int TextMatchesModel::rowCount(const QModelIndex &parent) const
     return result;
 }
 
-int TextMatchesModel::columnCount(const QModelIndex &parent) const
+int MatchesModel::columnCount(const QModelIndex &parent) const
 {
-    return MATCH_COLUMNS;
+    return MATCHES_COLUMNS;
 }
 
-QVariant TextMatchesModel::data(const QModelIndex &index, int role) const
+QVariant MatchesModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     int col = index.column();
@@ -62,7 +60,7 @@ QVariant TextMatchesModel::data(const QModelIndex &index, int role) const
 
 }
 
-QVariant TextMatchesModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant MatchesModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole){
            if (orientation == Qt::Horizontal) {
@@ -79,7 +77,7 @@ QVariant TextMatchesModel::headerData(int section, Qt::Orientation orientation, 
     return QVariant();
 }
 
-bool TextMatchesModel::insertRows(int row, int count, const QModelIndex &parent)
+bool MatchesModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     int end = row + count;
     qDebug() << end;
@@ -90,7 +88,7 @@ bool TextMatchesModel::insertRows(int row, int count, const QModelIndex &parent)
 
 }
 
-bool TextMatchesModel::removeRows(int row, int count, const QModelIndex &parent)
+bool MatchesModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     beginRemoveRows( QModelIndex(), row, row + count - 1);
     qDebug() <<"COUNT:"<< count;
@@ -100,13 +98,13 @@ bool TextMatchesModel::removeRows(int row, int count, const QModelIndex &parent)
 
 }
 
-bool TextMatchesModel::clearTable()
+bool MatchesModel::clearTable()
 {
 
     return removeRows(0,rowCount());
 }
 
-void TextMatchesModel::clearDatum()
+void MatchesModel::clearDatum()
 {
     int oldSize = datum.size();
     datum.clear();
@@ -114,7 +112,7 @@ void TextMatchesModel::clearDatum()
     currentPatterns.resize(oldSize);
 }
 
-void TextMatchesModel::setMatches(const PatternViewMap &maches)
+void MatchesModel::setMatches(const PatternViewMap &maches)
 {
     clearTable();
     datum[currentTab].clear();
@@ -132,12 +130,12 @@ void TextMatchesModel::setMatches(const PatternViewMap &maches)
 
 }
 
-void TextMatchesModel::setCurrentPatterns(const QStringList &name)
+void MatchesModel::setCurrentPatterns(const QStringList &name)
 {
     currentPatterns[currentTab] = name;
 }
 
-void TextMatchesModel::addCurrentPattern(const QString &name)
+void MatchesModel::addCurrentPattern(const QString &name)
 {
     int i = 0;
     int row = 0;
@@ -151,7 +149,7 @@ void TextMatchesModel::addCurrentPattern(const QString &name)
     currentPatterns[currentTab].insert(i,name);
 }
 
-void TextMatchesModel::removePatternFromCurrent(const QString &name)
+void MatchesModel::removePatternFromCurrent(const QString &name)
 {
     int counter = 0;
     for(const QString& pattern:currentPatterns[currentTab]){
@@ -164,12 +162,12 @@ void TextMatchesModel::removePatternFromCurrent(const QString &name)
     removeRows(counter,datum[currentTab][name].size());
 }
 
-void TextMatchesModel::clearCurrent()
+void MatchesModel::clearCurrent()
 {
     currentPatterns[currentTab].clear();
 }
 
-PatternViewMap TextMatchesModel::getCurrentMatches() const
+PatternViewMap MatchesModel::getCurrentMatches() const
 {
     PatternViewMap result;
     for(QString pattern:currentPatterns[currentTab]){
@@ -180,7 +178,7 @@ PatternViewMap TextMatchesModel::getCurrentMatches() const
 
 
 
-PatternCompiler::MatchRepr TextMatchesModel::getRow(int index) const
+PatternCompiler::MatchRepr MatchesModel::getRow(int index) const
 {
     int counter = 0;
     for(const QString& pattern:currentPatterns[currentTab]){
@@ -193,7 +191,7 @@ PatternCompiler::MatchRepr TextMatchesModel::getRow(int index) const
 }
 
 
-void TextMatchesModel::changeTab(int index)
+void MatchesModel::changeTab(int index)
 {
     if(index >= datum.size()){
         clearTable();
@@ -216,7 +214,7 @@ void TextMatchesModel::changeTab(int index)
 
 }
 
-void TextMatchesModel::closeTab(int index)
+void MatchesModel::closeTab(int index)
 {
     qDebug() << "REmove Index: " << index;
     clearTable();
@@ -225,13 +223,12 @@ void TextMatchesModel::closeTab(int index)
     currentPatterns.remove(index);
 }
 
-QStringList TextMatchesModel::getCurrentPatterns() const
+QStringList MatchesModel::getCurrentPatterns() const
 {
     return currentPatterns[currentTab];
 }
 
-QStringList TextMatchesModel::getAllPatterns() const
+QStringList MatchesModel::getAllPatterns() const
 {
     return datum[currentTab].keys();
 }
-

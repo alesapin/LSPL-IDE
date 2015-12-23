@@ -10,6 +10,38 @@ const QVector<QPair<int, int> > MainTextViewer::getIntervalsForPattern(const QSt
     return result;
 }
 
+void MainTextViewer::convertMatchesToInnerRepr(const PatternViewMap &m)
+{
+    intervalMatches.clear();
+    for(auto it = m.begin();it!=m.end();++it){
+        QString patternName = it.key();
+        QVector<PatternCompiler::MatchRepr> mts = it.value();
+        for(PatternCompiler::MatchRepr match:mts){
+            if(intervalMatches.containsEqualInterval(match.start,match.end)){
+                QVector<QPair<QString,QString>> &pm = intervalMatches.getEqualInterval(match.start,match.end);
+                pm.append(qMakePair<QString,QString>(patternName,match.text));
+            } else{
+                QVector<QPair<QString,QString>> current;
+                current.append(qMakePair<QString,QString>(patternName,match.text));
+                intervalMatches.addInterval(match.start,match.end,current);
+            }
+        }
+    }
+}
+
+QString MainTextViewer::getToolTip(int start, int end) const
+{
+    QVector<QVector<QPair<QString,QString>>> mInterval = intervalMatches.getAllIntersections(start,end);
+    QString result = "";
+    for(int i = 0 ;i<mInterval.size();++i){
+        for(int j =0;j<mInterval[i].size();++j){
+            result +=   mInterval[i][j].first;
+            result += " - " + mInterval[i][j].second + '\n';
+        }
+    }
+    return result;
+}
+
 MainTextViewer::MainTextViewer(QWidget *parent) : QPlainTextEdit(parent),modified(false)
 {
     //installEventFilter(this);
@@ -63,6 +95,7 @@ void MainTextViewer::setMatches(const PatternViewMap &m)
 {
     dehighlightPatterns(matches.keys());
     matches = m;
+    convertMatchesToInnerRepr(matches);
     highlightPatterns(matches.keys());
 }
 
@@ -102,8 +135,8 @@ bool MainTextViewer::event(QEvent *e)
             QHelpEvent* helpEvent = static_cast<QHelpEvent*>(e);
             QTextCursor cursor = cursorForPosition(helpEvent->pos());
             cursor.select(QTextCursor::WordUnderCursor);
-            if (!cursor.selectedText().isEmpty()){
-                QToolTip::showText(helpEvent->globalPos(), cursor.selectedText());
+            if (!cursor.selectedText().isEmpty()) {
+                QToolTip::showText(helpEvent->globalPos(), getToolTip(cursor.selectionStart(),cursor.selectionEnd()));
             }else{
                 QToolTip::hideText();
             }

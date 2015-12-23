@@ -6,10 +6,10 @@
 #include <QStandardItem>
 #include <QAbstractItemView>
 #include <QStylePainter>
-class PatternSelectionList:public QComboBox
+
+class PatternSelectionList : public QComboBox
 {
     Q_OBJECT
-
     Q_PROPERTY(QStringList checkedItems READ checkedItems WRITE setCheckedItems)
 public:
     PatternSelectionList(QWidget* parent = 0);

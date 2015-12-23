@@ -1,9 +1,5 @@
 #include "patternselectionlist.h"
 #include <QDebug>
-
-
-
-
 PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), mDisplayRectDelta(4, 1, -25, 0)
 {
 
@@ -92,6 +88,7 @@ void PatternSelectionList::updateDisplayText()
 
 void PatternSelectionList::paintEvent(QPaintEvent *event)
 {
+
     (void)event;
 
     QStylePainter painter(this);
@@ -151,3 +148,5 @@ void PatternSelectionList::slotModelItemChanged(QStandardItem *item)
     collectCheckedItems();
     setCheckedItems(mCheckedItems);
 }
+
+

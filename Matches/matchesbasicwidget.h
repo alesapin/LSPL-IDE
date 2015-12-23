@@ -1,28 +1,35 @@
-#ifndef MATCHESWIDGET_H
-#define MATCHESWIDGET_H
-
-
-#include <QWidget>
-#include <Text/patternselectionlist.h>
-#include <Text/textmatchestable.h>
+#ifndef MATCHESBASICWIDGET_H
+#define MATCHESBASICWIDGET_H
+#include "basicwidget.h"
+#include "patternselectionlist.h"
+#include "matchestable.h"
+#include "Engine/patterncompiler.h"
+#include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <Engine/patterncompiler.h>
+#include <QSizePolicy>
+#include <QDomDocument>
+#include <QFile>
 #include <QLabel>
-class MatchesWidget:public QWidget
+#include <QTextStream>
+#include <QApplication>
+class MatchesBasicWidget : public BasicWidget
 {
     Q_OBJECT
 public:
-    MatchesWidget(QWidget* parent = 0);
+    MatchesBasicWidget(QWidget* parent = 0);
     void setMatches(const PatternViewMap& patterns);
     void setCheckedPatterns(const QStringList& patterns);
     void setCheckedAllPatterns();
-    void changeTab(int);
     PatternViewMap getSelectedMatches() const;
     void clear();
+    QDomDocument getXml();
+    static QDomDocument toXml(PatternViewMap matches);
+    void saveMatches(QString filename);
+
 private:
     QLabel* selectPattern;
     PatternSelectionList* list;
-    TextMatchesTable* table;
+    MatchesTable* table;
  signals:
     void rowClicked(int,int);
     void patternWasUnchecked(const QString& name);
@@ -31,8 +38,9 @@ private:
     void slotTransferSignal(int s,int e);
     void slotPatternUnchecked(const QString& s);
     void slotPatternChecked(const QString& s);
-    void closeTab(int);
+    void slotCloseTab(int);
+    void slotChangeTab(int);
 
 };
 
-#endif // MATCHESWIDGET_H
+#endif // MATCHESBASICWIDGET_H

@@ -13,6 +13,7 @@
 #include <QHelpEvent>
 #include <QToolTip>
 #include <Engine/patterncompiler.h>
+#include "Utils/intervalrbtree.h"
 class MainTextViewer : public QPlainTextEdit
 {
     Q_OBJECT
@@ -23,7 +24,10 @@ private:
     QTextCharFormat* fmtDeSelect;
     QTextCursor* cursor;
     PatternViewMap matches;
+    IntervalRBTree<QVector<QPair<QString,QString>>> intervalMatches;
     const QVector<QPair<int,int>> getIntervalsForPattern(const QString& patternName);
+    void convertMatchesToInnerRepr(const PatternViewMap& m);
+    QString getToolTip(int start,int end) const;
 public:
     explicit MainTextViewer(QWidget *parent = 0);
    // void insertFromMimeData(const QMimeData *source);

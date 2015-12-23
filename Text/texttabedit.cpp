@@ -104,7 +104,6 @@ void TextTabEdit::closeTab(int index)
         if(current->isModified()){
             QString name = tabText(index);
             if(par->maybeSave(name,index)){
-                qDebug() << "REMOVED";
                 this->removeTab(index);
                 emit tabWasClosed(index);
             }

@@ -17,24 +17,23 @@
 #include <Engine/patterncompiler.h>
 #include <QTableView>
 #include <QHeaderView>
-#include <Patterns/patterncomplogbar.h>
 #include <QSplitter>
 #include <QDockWidget>
 #include <QToolBar>
 #include <QFrame>
 #include <QScrollArea>
-#include "patterncompiledlist.h"
-class PatternsBasicWidget : public QMainWindow
+#include "basicwidget.h"
+#include "patternslist.h"
+class PatternsBasicWidget : public BasicWidget
 {
     Q_OBJECT
 private:
     PatternEditor* editor;
     QPushButton* compileButton;
+    QPushButton* addButton;
     PatternCompiler* comp;
-    PatternCompLogBar* logBar;
-    QTableView* table;
     QTabWidget* logtab;
-    PatternCompiledList* list;
+    PatternsList* list;
     void initCompileButton();
     void initPatternTable();
     void initPatternEditor();
@@ -51,8 +50,8 @@ signals:
 
 public slots:
     void compilePattern();
-    void clearPatterns();
-
+    void slotClearPatterns();
+    void slotAddPattern();
 };
 
 #endif // PATTERNSBASICWIDGET_H

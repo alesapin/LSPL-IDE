@@ -4,6 +4,7 @@
 #include <Text/textbasicwidget.h>
 #include <Patterns/patternsbasicwidget.h>
 #include <Engine/patterncompiler.h>
+#include "Matches/matchesbasicwidget.h"
 #include <QMainWindow>
 #include <QGridLayout>
 #include <Interface/topmenu.h>
@@ -16,7 +17,7 @@
 #include <QVector>
 #include <QString>
 class TextBasicWidget;
-class CentralWidget : public QWidget
+class CentralWidget : public QMainWindow
 {
     Q_OBJECT
 public:
@@ -25,11 +26,13 @@ public:
     ~CentralWidget();
     TextBasicWidget *getTextWidget();
     PatternsBasicWidget *getPatternWidget();
+    MatchesBasicWidget *getMatchesWidget();
     QStringList getChoosenPatterns();
 private:
     PatternCompiler* compiler;
     TextBasicWidget* txt;
     PatternsBasicWidget* pattern;
+    MatchesBasicWidget* matches;
 signals:
 
 public slots:

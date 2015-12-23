@@ -8,6 +8,8 @@
 
 #include "mainwindow.h"
 #include "../centralwidget.h"
+#include "Matches/matchesbasicwidget.h"
+
 class CentralWidget;
 class TextBasicWidget;
 class PatternsBasicWidget;
@@ -37,6 +39,7 @@ private:
     void setMatchesAction();
     TextBasicWidget* text;
     PatternsBasicWidget* pattern;
+    MatchesBasicWidget* matches;
     CentralWidget* cent;
     QString filename;
 public:

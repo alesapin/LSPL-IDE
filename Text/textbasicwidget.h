@@ -16,41 +16,35 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QPushButton>
-#include "Text/textmatchestable.h"
 #include <QTableView>
 #include <QTabWidget>
 #include <QSplitter>
 #include <QHBoxLayout>
 #include "Engine/patterncompiler.h"
-#include "Text/matcheswidget.h"
 #include <QDomDocument>
 #include "statisticswindow.h"
+#include "basicwidget.h"
 class TextTabEdit;
-class TextBasicWidget : public QMainWindow
+class TextBasicWidget : public BasicWidget
 {
     Q_OBJECT
     TextTabEdit* textEdit;
     QPushButton* analyze;
     QPushButton* statistics;
     QPushButton* edit;
-    MatchesWidget* matches;
-    QTabWidget* matchTabs;
-    PatternCompiler* compiler;
 
 
-    void initTable();
-    void initEditor();
-    void initButtons();
-    QDomDocument toXml(PatternViewMap matches);
+
+    void initEditor(QMainWindow* wrapper);
+    void initButtons(QMainWindow *wrapper);
 
 public:
-    explicit TextBasicWidget(PatternCompiler* comp,QWidget *parent = 0);
+    explicit TextBasicWidget(QWidget *parent = 0);
     void saveTextFile(QString filename,int index = -1);
     void openTextFile(const QString& filename);
     bool maybeSave(QString filename,int index);
     void newTextFile();
     void saveMatches(QString filename);
-    QDomDocument getXml();
     void setMatches(const PatternViewMap& matches);
     void highlighPatterns(const QStringList& patterns);
     void dehighlightPatterns(const QStringList& patterns);
@@ -58,15 +52,16 @@ public:
     QString getText() const ;
 signals:
     void buttonClicked();
+    void tabClosed(int);
+    void tabChanged(int);
 public slots:
-    void clearMatches();
-    void analyzeText();
-    void editEnable();
-    void showStatistics();
-    void selectFragment(int from,int to);
+    void slotClearMatches();
+    void slotAnalyzeText();
+    void slotEditEnable();
+    void slotShowStatistics();
+    void slotSelectFragment(int from,int to);
     void slotPatternUncheked(const QString& name);
     void slotPatternChecked(const QString& name);
-    void slotTabChanged(int index);
 };
 
 #endif // TEXTBASICWIDGET_H

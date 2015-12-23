@@ -1,22 +1,30 @@
 #include "centralwidget.h"
 #include <QDebug>
-CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
+CentralWidget::CentralWidget(QWidget *parent) : QMainWindow(parent)
 {
     compiler = new PatternCompiler();
-    txt = new TextBasicWidget(compiler,this);
+    txt = new TextBasicWidget(this);
     pattern = new PatternsBasicWidget(compiler,this);
-    QSizePolicy large(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    large.setHorizontalStretch(3);
-    txt->setSizePolicy(large);
-    QSizePolicy small(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    small.setHorizontalStretch(1);
-    pattern->setSizePolicy(small);
-    QHBoxLayout* lay = new QHBoxLayout(this);
-    QSplitter* split1 = new QSplitter();
-    split1->addWidget(txt);
-    split1->addWidget(pattern);
+    matches = new MatchesBasicWidget(this);
+    setDockNestingEnabled(true);
+    //    connect(txt,SIGNAL(currentChanged(int)),matches,SLOT(changeTab(int)));
+    //QDockWidget* dummy = new QDockWidget;
+    //addDockWidget(Qt::BottomDockWidgetArea, dummy);
+    //removeDockWidget(dummy);
+//    setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
+//    setCorner(Qt::TopRightCorner,Qt::RightDockWidgetArea);
+    addDockWidget(Qt::BottomDockWidgetArea,matches);
+    addDockWidget(Qt::LeftDockWidgetArea,txt);
+    addDockWidget(Qt::RightDockWidgetArea,pattern);
+//    tabifyDockWidget(matches,txt);
+//    tabifyDockWidget(matches,pattern);
+
     connect(txt,SIGNAL(buttonClicked()),this,SLOT(analyze()));
-    lay->addWidget(split1);
+    connect(matches,SIGNAL(patternWasUnchecked(QString)),txt,SLOT(slotPatternUncheked(QString)));
+    connect(matches,SIGNAL(patternWasChecked(QString)),txt,SLOT(slotPatternChecked(QString)));
+    connect(matches,SIGNAL(rowClicked(int,int)),txt,SLOT(slotSelectFragment(int,int)));
+    connect(txt,SIGNAL(tabChanged(int)),matches,SLOT(slotChangeTab(int)));
+    connect(txt,SIGNAL(tabClosed(int)),matches,SLOT(slotCloseTab(int)));
 }
 
 CentralWidget::~CentralWidget()
@@ -34,6 +42,11 @@ PatternsBasicWidget *CentralWidget::getPatternWidget()
     return pattern;
 }
 
+MatchesBasicWidget *CentralWidget::getMatchesWidget()
+{
+    return matches;
+}
+
 QStringList CentralWidget::getChoosenPatterns()
 {
     return pattern->getChoosenPatterns();
@@ -45,12 +58,7 @@ void CentralWidget::analyze()
         PatternViewMap result =  compiler->analyzeText(patternNames,txt->getText());
         if(!result.empty() && !txt->getText().isEmpty()){
             txt->setMatches(result);
+            matches->setMatches(result);
         }
-        //pattern->addLog("Exception while building generated pattern");
-
-//    for(QString name:patternNames){
-//        QVector<PatternCompiler::MatchRepr> pattrnResult = result[name];
-//        pattern->setPatternValues(name,pattrnResult.size(),pattrnResult.size(),-1);
-//    }
 }
 
