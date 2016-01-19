@@ -14,7 +14,7 @@ QLabel[class=dockHeader] {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     padding: 2px;
-    background : #BEE9F7;
+    background : qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BEE9F7, stop: 1  #99c1ff);
 }
 QToolTip
 {
@@ -22,7 +22,15 @@ QToolTip
     background-color: #696969;
     border: 1px solid white;
 }
-
+QTreeView {
+    show-decoration-selected: 1;
+}
+QTreeView::item:selected:active{
+    background:   qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #cbcc00, stop: 1  #989900);
+}
+QTreeView::item {
+    border: 1px solid #d9d9d9;
+}
 /*QListView::item {
     border: 1px solid red;
     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #99ff33, stop: 1 #408000);

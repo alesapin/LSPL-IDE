@@ -1,42 +1,17 @@
 #include "maintextviewer.h"
 #include <QDebug>
-const QVector<QPair<int, int> > MainTextViewer::getIntervalsForPattern(const QString &patternName)
-{
-    QVector<PatternCompiler::MatchRepr> pattern = matches[patternName];
-    QVector<QPair<int,int>> result(pattern.size());
-    for(int i = 0 ; i < pattern.size();++i){
-        result[i] = QPair<int,int>(pattern[i].start,pattern[i].end);
-    }
-    return result;
-}
-
-void MainTextViewer::convertMatchesToInnerRepr(const PatternViewMap &m)
-{
-    intervalMatches.clear();
-    for(auto it = m.begin();it!=m.end();++it){
-        QString patternName = it.key();
-        QVector<PatternCompiler::MatchRepr> mts = it.value();
-        for(PatternCompiler::MatchRepr match:mts){
-            if(intervalMatches.containsEqualInterval(match.start,match.end)){
-                QVector<QPair<QString,QString>> &pm = intervalMatches.getEqualInterval(match.start,match.end);
-                pm.append(qMakePair<QString,QString>(patternName,match.text));
-            } else{
-                QVector<QPair<QString,QString>> current;
-                current.append(qMakePair<QString,QString>(patternName,match.text));
-                intervalMatches.addInterval(match.start,match.end,current);
-            }
-        }
-    }
-}
 
 QString MainTextViewer::getToolTip(int start, int end) const
 {
-    QVector<QVector<QPair<QString,QString>>> mInterval = intervalMatches.getAllIntersections(start,end);
+    QVector<utility::IntervalMatch> mInterval = intervalMatches->getAllIntersections(start,end);
     QString result = "";
+
     for(int i = 0 ;i<mInterval.size();++i){
-        for(int j =0;j<mInterval[i].size();++j){
-            result +=   mInterval[i][j].first;
-            result += " - " + mInterval[i][j].second + '\n';
+        for(int j =0;j<mInterval[i].patterns.size();++j){
+            if(!offPatterns.contains(mInterval[i].patterns[j])){
+                result +=   mInterval[i].patterns[j];
+                result += " - " + mInterval[i].text + '\n';
+            }
         }
     }
     return result;
@@ -44,16 +19,13 @@ QString MainTextViewer::getToolTip(int start, int end) const
 
 MainTextViewer::MainTextViewer(QWidget *parent) : QPlainTextEdit(parent),modified(false)
 {
-    //installEventFilter(this);
     fmtSelect = new QTextCharFormat();
     fmtDeSelect = new QTextCharFormat();
     cursor = new QTextCursor(this->document());
-
+    intervalMatches = QSharedPointer<utility::IntervalViewMap>(new utility::IntervalViewMap());
     fmtSelect->setBackground(Qt::yellow);
     converter = QTextCodec::codecForLocale();
     setMinimumHeight(300);
-//    setMinimumWidth(300);
-    //setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     connect(this,SIGNAL(textChanged()),this,SLOT(modify()));
 }
 
@@ -70,54 +42,78 @@ void MainTextViewer::highlightFragment(int begin, int end)
 
 }
 
-void MainTextViewer::highlightFragments(const QVector<QPair<int, int> > &frags)
-{
-    for(QPair<int,int> par:frags){
-        highlightFragment(par.first,par.second);
-    }
-}
 
 void MainTextViewer::deHighlightFragment(int begin, int end)
 {
+    qDebug() << begin << "---" << end;
     cursor->setPosition(begin,QTextCursor::MoveAnchor);
     cursor->setPosition(end,QTextCursor::KeepAnchor);
     cursor->setCharFormat(*fmtDeSelect);
 }
 
-void MainTextViewer::deHighlightFragments(const QVector<QPair<int, int> > &frags)
+void MainTextViewer::dehighlightAll()
 {
-    for(QPair<int,int> par:frags){
-        deHighlightFragment(par.first,par.second);
-    }
+    cursor->setPosition(0,QTextCursor::MoveAnchor);
+    cursor->setPosition(this->toPlainText().length(),QTextCursor::KeepAnchor);
+    cursor->setCharFormat(*fmtDeSelect);
 }
 
-void MainTextViewer::setMatches(const PatternViewMap &m)
+
+void MainTextViewer::setMatches(QSharedPointer<utility::IntervalViewMap> m)
 {
-    dehighlightPatterns(matches.keys());
-    matches = m;
-    convertMatchesToInnerRepr(matches);
-    highlightPatterns(matches.keys());
+    offPatterns.clear();
+    dehighlightAll();
+    intervalMatches = m;//utility::convertMatchesToIntervals(m);
+    highlightAll();
+
 }
 
 void MainTextViewer::highlightPatterns(const QStringList &patternNames)
 {
-    for(const QString& pattern:patternNames){
-        highlightFragments(getIntervalsForPattern(pattern));
+    for(const QString& patrn : patternNames){
+        offPatterns.remove(patrn);
+    }
+    for(utility::IntervalViewMap::iterator it = intervalMatches->begin();it!=intervalMatches->end();++it){
+        for(const QString& pattern: patternNames){
+            if(it->value.patterns.contains(pattern)){
+                highlightFragment(it->low,it->high);
+                break;
+            }
+        }
     }
 }
 
-void MainTextViewer::dehighlightPatterns(const QStringList &patternNames)
+void MainTextViewer::highlightAll()
 {
-    for(const QString& pattern:patternNames){
-        deHighlightFragments(getIntervalsForPattern(pattern));
+    for(utility::IntervalViewMap::iterator it = intervalMatches->begin();it!=intervalMatches->end();++it){
+        highlightFragment(it->low,it->high);
     }
 }
 
-void MainTextViewer::clearSelection()
+
+void MainTextViewer::dehighlightPattern(const QString &pattern)
 {
-    dehighlightPatterns(matches.keys());
-    matches.clear();
+    int prevHigh=0;
+    if(!offPatterns.contains(pattern)){
+        offPatterns.insert(pattern);
+        for(utility::IntervalViewMap::iterator it = intervalMatches->begin();it!=intervalMatches->end();++it){
+            bool turnOff = true;
+            for(const QString& inner: it->value.patterns){
+                if(!offPatterns.contains(inner)){
+                    turnOff = false;
+                    break;
+                }
+            }
+            if(turnOff){
+                deHighlightFragment(it->low > prevHigh ? it->low:prevHigh, it->high);
+            }else{
+                prevHigh = it->high;
+                highlightFragment(it->low,it->high);
+            }
+        }
+    }
 }
+
 
 void MainTextViewer::selectText(int begin, int end)
 {

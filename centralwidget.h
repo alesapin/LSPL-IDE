@@ -16,8 +16,9 @@
 #include <QTextStream>
 #include <QVector>
 #include <QString>
+#include <QSplitter>
 class TextBasicWidget;
-class CentralWidget : public QMainWindow
+class CentralWidget : public QWidget
 {
     Q_OBJECT
 public:

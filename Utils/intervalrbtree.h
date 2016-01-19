@@ -24,20 +24,38 @@ class IntervalRBTree
 {
 
 public:
-    struct IntervalNode{
+    struct Interval{
+        friend class IntervalRBTree;
         int low;
         int high;
-        int max;
         T value;
-        IntervalNode* parent;
-        IntervalNode* left;
-        IntervalNode* right;
+    private:
+        int max;
+        Interval* parent;
+        Interval *left;
+        Interval* right;
         Color color;
-        IntervalNode():low(0),high(0),max(0),parent(0),left(0),right(0),color(BLACK){}
-        IntervalNode(int l,int h,const T& v):low(l),high(h),max(h),value(v),parent(0),left(0),right(0),color(BLACK){}
+        Interval():low(0),high(0),max(0),parent(0),left(0),right(0),color(BLACK){}
+        Interval(int l,int h,const T& v):low(l),high(h),max(h),value(v),parent(0),left(0),right(0),color(BLACK){}
     };
+    typedef Interval* Pointer;
+    class iterator{
+        friend class IntervalRBTree;
+    public:
+        iterator():current(NIL_NODE){}
+        iterator(const iterator&o){current = o.current;}
+        ~iterator(){}
+        iterator operator=(const iterator&o){current = o.current;return *this;}
+        iterator operator++(){current = treeSuccessor(current); return *this;}
+        bool operator==(const iterator& o){return current == o.current;}
+        bool operator!=(const iterator& o){return current != o.current;}
+        Interval operator*() const {return *current;}
+        Interval* operator->() const {return current;}
+    private:
+        Pointer current;
+    };
+friend class iterator;
 private:
-    typedef IntervalNode* Pointer;
     static Pointer NIL_NODE;
     Pointer root;
     unsigned _size;
@@ -48,7 +66,7 @@ private:
     void insert(Pointer z);
     Pointer remove(Pointer z);
     Pointer intervalSearch(int i,int j, Pointer r) const;
-    Pointer treeSuccessor(Pointer x) const;
+    static Pointer treeSuccessor(Pointer x);
     Pointer findEqual(int low,int high) const;
     void clearTree(Pointer r);
     Pointer initTree(Pointer myParent,Pointer myRoot,Pointer otherRoot);
@@ -68,6 +86,7 @@ public:
     T& getFirstIntersection(int point) const throw(IntervalNotFoundException);
     T& getEqualInterval(int low,int high) const throw(IntervalNotFoundException);
     QVector<T> getAllIntersections(int low,int high) const;
+    QVector<Interval> getAllIntervals() const;
     bool addInterval(int low,int high, const T& value);
     bool erase(int low,int high);
     void clear();
@@ -75,10 +94,25 @@ public:
     bool containsEqualInterval(int low,int high) const;
     unsigned size() const;
     virtual ~IntervalRBTree();
+    iterator begin() const{
+
+        Pointer tmp = root;
+        while(tmp->left != NIL_NODE){
+            tmp = tmp->left;
+        }
+        iterator it;
+        it.current = tmp;
+        return it;
+    }
+    iterator end() const{
+        iterator it;
+        it.current = NIL_NODE;
+        return it;
+    }
 };
 
 template <typename T>
-typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::NIL_NODE = new IntervalRBTree<T>::IntervalNode();
+typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::NIL_NODE = new IntervalRBTree<T>::Interval();
 template <typename T>
 IntervalRBTree<T>::IntervalRBTree():root(NIL_NODE),_size(0)
 {
@@ -149,7 +183,7 @@ bool IntervalRBTree<T>::addInterval(int low, int high, const T &value)
         current->value = value;
         return true;
     }else{
-        Pointer current = new IntervalNode(low,high,value);
+        Pointer current = new Interval(low,high,value);
         current->left = NIL_NODE;
         current->right = NIL_NODE;
         current->parent = NIL_NODE;
@@ -344,7 +378,7 @@ void IntervalRBTree<T>::fixRemove(IntervalRBTree<T>::Pointer x)
 template<typename T>
 void IntervalRBTree<T>::insert(IntervalRBTree<T>::Pointer z)
 {
-    qDebug() << z->value;
+    //qDebug() << z->value;
     Pointer y = NIL_NODE;
     Pointer x = root;
     while (x != NIL_NODE){
@@ -402,7 +436,7 @@ typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::remove(IntervalRBTree<T>:
     return y;
 }
 template<typename T>
-typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::treeSuccessor(IntervalRBTree<T>::Pointer x) const
+typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::treeSuccessor(IntervalRBTree<T>::Pointer x)
 {
     if(x->right != NIL_NODE){
         Pointer result = x->right;
@@ -451,7 +485,7 @@ void IntervalRBTree<T>::clearTree(IntervalRBTree<T>::Pointer r)
 template<typename T>
 typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::initTree(IntervalRBTree<T>::Pointer myParent, IntervalRBTree<T>::Pointer myRoot, IntervalRBTree<T>::Pointer otherRoot)
 {
-    myRoot = new IntervalNode(otherRoot->low,otherRoot->high,otherRoot->value);
+    myRoot = new Interval(otherRoot->low,otherRoot->high,otherRoot->value);
     myRoot->max = otherRoot->max;
     myRoot->color = otherRoot->color;
     myRoot->left = NIL_NODE;

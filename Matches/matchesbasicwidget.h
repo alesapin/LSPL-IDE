@@ -17,11 +17,10 @@ class MatchesBasicWidget : public BasicWidget
     Q_OBJECT
 public:
     MatchesBasicWidget(QWidget* parent = 0);
-    void setMatches(const PatternViewMap& patterns);
+    void setMatches(QSharedPointer<utility::IntervalViewMap> patterns, const QStringList &all);
     void setCheckedPatterns(const QStringList& patterns);
     void setCheckedAllPatterns();
     PatternViewMap getSelectedMatches() const;
-    void clear();
     QDomDocument getXml();
     static QDomDocument toXml(PatternViewMap matches);
     void saveMatches(QString filename);
@@ -35,6 +34,7 @@ private:
     void patternWasUnchecked(const QString& name);
     void patternWasChecked(const QString& name);
  public slots:
+    void slotClear();
     void slotTransferSignal(int s,int e);
     void slotPatternUnchecked(const QString& s);
     void slotPatternChecked(const QString& s);

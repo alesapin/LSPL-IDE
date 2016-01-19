@@ -9,6 +9,7 @@
 #include <QDragMoveEvent>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QAction>
 class PatternsList : public QListView
 {
     Q_OBJECT
@@ -25,8 +26,14 @@ private:
     void dropEvent( QDropEvent* pEvent);
     PatternListModel* myModel;
     PatternCompiler* compiler;
+    QAction *removeAction;
+    QAction *editAction;
 public slots:
     void slotCompilePatterns();
+    void slotRemovePattern();
+    void slotEditPattern();
+signals:
+    void editPatternSignal(const QString& text);
 };
 
 #endif // PATTERNSLIST_H

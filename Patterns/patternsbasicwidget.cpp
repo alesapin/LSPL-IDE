@@ -35,6 +35,7 @@ void PatternsBasicWidget::initPatternEditor()
     editor = new PatternEditor(this);
     connect(compileButton,SIGNAL(clicked(bool)),list,SLOT(slotCompilePatterns()));
     connect(addButton,SIGNAL(clicked(bool)),this,SLOT(slotAddPattern()));
+    connect(list,SIGNAL(editPatternSignal(QString)),editor,SLOT(setText(QString)));
     QHBoxLayout* line = new QHBoxLayout();
     line->addWidget(editor);
     line->addWidget(addButton);
@@ -174,7 +175,7 @@ void PatternsBasicWidget::slotClearPatterns()
 void PatternsBasicWidget::slotAddPattern()
 {
     list->addPattern(editor->getText());
-    editor->clear();
+    editor->clean();
 }
 
 

@@ -1,11 +1,12 @@
 #include "matchestable.h"
 
-MatchesTable::MatchesTable(QWidget *parent) : QTableView(parent)
+MatchesTable::MatchesTable(QWidget *parent) : QTreeView(parent)
 {
-    setModel(new MatchesModel(this));
+    setModel(new MatchesTreeModel(this));
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
-    horizontalHeader()->setStretchLastSection(true);
+
+    //horizontalHeader()->setStretchLastSection(true);
     connect(this->selectionModel(),
                     SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                     this,
@@ -13,57 +14,60 @@ MatchesTable::MatchesTable(QWidget *parent) : QTableView(parent)
     setStyleSheet("QToolTip { color: #ffffff; background-color: #696969; border: 1px solid white; }");
 }
 
-void MatchesTable::setMatches(const PatternViewMap &maches)
+void MatchesTable::setMatches(QSharedPointer<utility::IntervalViewMap> matches)
 {
-    myModel()->setMatches(maches);
-    setCurrentPatterns(maches.keys());
+    myModel()->setMatches(matches);
+    //setCurrentPatterns(names);
 }
 
 void MatchesTable::setCurrentPatterns(const QStringList &name)
 {
-    myModel()->setCurrentPatterns(name);
+    //myModel()->setCurrentPatterns(name);
 }
 
 void MatchesTable::addCurrentPattern(const QString &name)
 {
-    myModel()->addCurrentPattern(name);
+    //myModel()->addCurrentPattern(name);
 }
 
 void MatchesTable::removePatternFromCurrent(const QString &name)
 {
-    myModel()->removePatternFromCurrent(name);
+    //myModel()->removePatternFromCurrent(name);
 }
 
 void MatchesTable::changeTab(int index)
 {
-    myModel()->changeTab(index);
+    //myModel()->changeTab(index);
 }
 
 void MatchesTable::closeTab(int index)
 {
-    myModel()->closeTab(index);
+    //myModel()->closeTab(index);
 }
 
 QStringList MatchesTable::getCurrentPatterns() const
 {
-    return myModel()->getCurrentPatterns();
+    return QStringList() << "NOPE";
+    //return myModel()->getCurrentPatterns();
 }
 
 QStringList MatchesTable::getAllPatterns() const
 {
-    return myModel()->getAllPatterns();
+    return QStringList() <<"NONE";
+    //return myModel()->getAllPatterns();
 }
 
 PatternViewMap MatchesTable::getCurrentMatches() const
 {
-    return myModel()->getCurrentMatches();
+    return PatternViewMap();
+    //return myModel()->getCurrentMatches();
 }
 
 void MatchesTable::clear()
 {
-    myModel()->clearTable();
-    myModel()->clearCurrent();
-    myModel()->clearDatum();
+//    myModel()->clearTable();
+//    myModel()->clearCurrent();
+//    myModel()->clearDatum();
 }
 
 void MatchesTable::resizeEvent(QResizeEvent *event)
@@ -74,15 +78,15 @@ void MatchesTable::resizeEvent(QResizeEvent *event)
         setColumnWidth(2, this->width()/3);
     }
 
-    QTableView::resizeEvent(event);
+    QTreeView::resizeEvent(event);
 }
 
 void MatchesTable::onRowClick(const QItemSelection &selected, const QItemSelection &deselected)
 {
     if(!selected.empty()){
         int row = selected.first().top();
-        PatternCompiler::MatchRepr match = myModel()->getRow(row);
-        emit rowClicked(match.start,match.end);
+//        PatternCompiler::MatchRepr match = myModel()->getRow(row);
+//        emit rowClicked(match.start,match.end);
     }
 }
 

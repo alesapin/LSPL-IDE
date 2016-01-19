@@ -6,17 +6,19 @@
 #include "matchesmodel.h"
 #include <QHeaderView>
 #include <QResizeEvent>
-class MatchesTable : public QTableView
+#include <QTreeView>
+#include "matchestreemodel.h"
+class MatchesTable : public QTreeView
 {
     Q_OBJECT
 private:
-    MatchesModel* myModel() const{
-        return static_cast<MatchesModel*>(model());
+    MatchesTreeModel* myModel() const{
+        return static_cast<MatchesTreeModel*>(model());
     }
 
 public:
     MatchesTable(QWidget *parent = 0);
-    void setMatches(const PatternViewMap& maches);
+    void setMatches(QSharedPointer<utility::IntervalViewMap> maches);
     void setCurrentPatterns(const QStringList& name);
     void addCurrentPattern(const QString& name);
     void removePatternFromCurrent(const QString& name);

@@ -122,7 +122,6 @@ void PatternSelectionList::slotModelRowsInserted(const QModelIndex &parent, int 
         disconnect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
         for (int i = start; i <= end; ++i)
         {
-            qDebug() << i;
             standartModel->item(i)->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled );
             standartModel->item(i)->setData(Qt::Unchecked, Qt::CheckStateRole);
         }

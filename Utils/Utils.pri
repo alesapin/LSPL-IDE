@@ -1,5 +1,7 @@
 HEADERS += \
     $$PWD/rbtree.h \
-    $$PWD/intervalrbtree.h
+    $$PWD/intervalrbtree.h \
+    $$PWD/util.hpp
 
-SOURCES +=
+SOURCES += \
+    $$PWD/util.cpp

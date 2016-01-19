@@ -12,8 +12,10 @@
 #include <QVector>
 #include <QHelpEvent>
 #include <QToolTip>
-#include <Engine/patterncompiler.h>
+#include "Engine/patterncompiler.h"
 #include "Utils/intervalrbtree.h"
+#include <QSharedPointer>
+#include "Utils/util.hpp"
 class MainTextViewer : public QPlainTextEdit
 {
     Q_OBJECT
@@ -23,23 +25,21 @@ private:
     QTextCharFormat* fmtSelect;
     QTextCharFormat* fmtDeSelect;
     QTextCursor* cursor;
-    PatternViewMap matches;
-    IntervalRBTree<QVector<QPair<QString,QString>>> intervalMatches;
-    const QVector<QPair<int,int>> getIntervalsForPattern(const QString& patternName);
-    void convertMatchesToInnerRepr(const PatternViewMap& m);
+    QSharedPointer<utility::IntervalViewMap> intervalMatches;
+    QSet<QString> offPatterns;
     QString getToolTip(int start,int end) const;
 public:
     explicit MainTextViewer(QWidget *parent = 0);
    // void insertFromMimeData(const QMimeData *source);
     bool isModified();
     void highlightFragment(int begin,int end);
-    void highlightFragments(const QVector<QPair<int,int>>& frags);
     void deHighlightFragment(int begin,int end);
-    void deHighlightFragments(const QVector<QPair<int,int>>& frags);
-    void setMatches(const PatternViewMap& m);
+    void dehighlightAll();
+    void setMatches(QSharedPointer<utility::IntervalViewMap> m);
     void highlightPatterns(const QStringList& patternNames);
-    void dehighlightPatterns(const QStringList& patternNames);
-    void clearSelection();
+    void highlightAll();
+    //void dehighlightPatterns(const QStringList& patternNames);
+    void dehighlightPattern(const QString& pattern);
     void selectText(int begin,int end);
     bool event(QEvent *e);
 signals:

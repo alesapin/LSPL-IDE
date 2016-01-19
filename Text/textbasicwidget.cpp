@@ -73,7 +73,7 @@ void TextBasicWidget::newTextFile()
     textEdit->addAnotherTab("Untilted","");
 }
 
-void TextBasicWidget::setMatches(const PatternViewMap &matches)
+void TextBasicWidget::setMatches(QSharedPointer<utility::IntervalViewMap> matches)
 {
     textEdit->setReadOnly(true);
     this->textEdit->setMatches(matches);
@@ -84,10 +84,10 @@ void TextBasicWidget::highlighPatterns(const QStringList &patterns)
     textEdit->highLightPatterns(patterns);
 }
 
-void TextBasicWidget::dehighlightPatterns(const QStringList &patterns)
-{
-    textEdit->deHighlightPatterns(patterns);
-}
+//void TextBasicWidget::dehighlightPatterns(const QStringList &patterns)
+//{
+//    textEdit->deHighlightPatterns(patterns);
+//}
 
 QString TextBasicWidget::getCurrentFile() const
 {
@@ -113,6 +113,7 @@ void TextBasicWidget::slotEditEnable()
 {
     textEdit->clearSelection();
     textEdit->setReadOnly(false);
+    emit editEnabled();
 }
 
 void TextBasicWidget::slotShowStatistics()
@@ -128,7 +129,7 @@ void TextBasicWidget::slotSelectFragment(int from, int to)
 
 void TextBasicWidget::slotPatternUncheked(const QString &name)
 {
-    textEdit->deHighlightPatterns(QStringList() << name);
+    textEdit->deHighlightPattern(name);
 }
 
 void TextBasicWidget::slotPatternChecked(const QString &name)

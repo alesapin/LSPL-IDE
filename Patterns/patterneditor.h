@@ -10,15 +10,22 @@
 #include <QMenu>
 #include <QAction>
 #include <QSizePolicy>
+#include "patternhighlighter.h"
 class PatternEditor:public QTextEdit
 {
     Q_OBJECT
 public:
     PatternEditor(QWidget* parent=0);
     QString getText() const;
-    QStringList getPatternsForCompile() const;
+    void clean();
+protected:
+    virtual void keyPressEvent(QKeyEvent *e);
 public slots:
     void clearAll();
+private:
+    PatternHighlighter* highlighter;
+    QVector<QString> textCache;
+    int cachePosition;
 };
 
 #endif // PATTEREDITOR_H

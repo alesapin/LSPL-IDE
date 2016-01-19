@@ -52,16 +52,16 @@ void TextTabEdit::highLightPatterns(const QStringList &patterns)
     }
 }
 
-void TextTabEdit::deHighlightPatterns(const QStringList &patterns)
+void TextTabEdit::deHighlightPattern(const QString &pattern)
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
     if(current){
-        current->dehighlightPatterns(patterns);
+        current->dehighlightPattern(pattern);
     }
 }
 
 
-void TextTabEdit::setMatches(const PatternViewMap &m)
+void TextTabEdit::setMatches(QSharedPointer<utility::IntervalViewMap> m)
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
     if(current){
@@ -81,7 +81,7 @@ void TextTabEdit::clearSelection()
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
     if(current){
-        current->clearSelection();
+        current->dehighlightAll();
     }
 }
 

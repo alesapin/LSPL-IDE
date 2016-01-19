@@ -45,13 +45,14 @@ public:
     bool maybeSave(QString filename,int index);
     void newTextFile();
     void saveMatches(QString filename);
-    void setMatches(const PatternViewMap& matches);
+    void setMatches(QSharedPointer<utility::IntervalViewMap> matches);
     void highlighPatterns(const QStringList& patterns);
-    void dehighlightPatterns(const QStringList& patterns);
+    //void dehighlightPatterns(const QStringList& patterns);
     QString getCurrentFile() const ;
     QString getText() const ;
 signals:
     void buttonClicked();
+    void editEnabled();
     void tabClosed(int);
     void tabChanged(int);
 public slots:

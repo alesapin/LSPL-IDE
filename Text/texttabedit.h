@@ -21,8 +21,8 @@ public:
     QString getCurrentFile() const;
     QString getIndexText(int index) const;
     void highLightPatterns(const QStringList& patterns);
-    void deHighlightPatterns(const QStringList& patterns);
-    void setMatches(const PatternViewMap& m);
+    void deHighlightPattern(const QString& pattern);
+    void setMatches(QSharedPointer<utility::IntervalViewMap> m);
     void selectText(int start,int end);
     void clearSelection();
     void setReadOnly(bool f);

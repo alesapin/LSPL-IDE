@@ -27,12 +27,12 @@ MatchesBasicWidget::MatchesBasicWidget(QWidget* parent) : BasicWidget(parent,"С
     connect(list,SIGNAL(patternChecked(QString)),this,SLOT(slotPatternChecked(QString)));
 }
 
-void MatchesBasicWidget::setMatches(const PatternViewMap &patterns)
+void MatchesBasicWidget::setMatches(QSharedPointer<utility::IntervalViewMap> patterns,const QStringList& names)
 {
     table->setMatches(patterns);
     list->clear();
-    list->addItems(patterns.keys());
-    list->setCheckedItems(patterns.keys());
+    list->addItems(names);
+    list->setCheckedItems(names);
 }
 
 void MatchesBasicWidget::slotChangeTab(int index)
@@ -74,7 +74,7 @@ PatternViewMap MatchesBasicWidget::getSelectedMatches() const
     return table->getCurrentMatches();
 }
 
-void MatchesBasicWidget::clear()
+void MatchesBasicWidget::slotClear()
 {
     table->clear();
     list->clearAll();

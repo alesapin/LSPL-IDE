@@ -14,7 +14,13 @@ PatternsList::PatternsList(PatternCompiler* compiler,QWidget *parent):QListView(
     setDropIndicatorShown(true);
     setDragDropOverwriteMode(true);
     setResizeMode(QListView::Adjust);
-
+    setContextMenuPolicy(Qt::ActionsContextMenu);
+    removeAction = new QAction("Удалить",this);
+    editAction = new QAction("Изменить", this);
+    addAction(removeAction);
+    addAction(editAction);
+    connect(removeAction,SIGNAL(triggered()),this,SLOT(slotRemovePattern()));
+    connect(editAction,SIGNAL(triggered()),this,SLOT(slotEditPattern()));
 
 }
 
@@ -74,6 +80,25 @@ void PatternsList::slotCompilePatterns()
     for(const QString& pattern:patterns){
         QString compilationResult = compiler->compilePatternNoException(pattern);
         myModel->updatePattern(pattern,compilationResult);
+    }
+}
+
+void PatternsList::slotRemovePattern()
+{
+    QModelIndexList indexes = selectionModel()->selectedIndexes();
+    for(const QModelIndex& ind: indexes){
+        myModel->removeRows(ind.row(),1,ind);
+    }
+}
+
+void PatternsList::slotEditPattern()
+{
+    QModelIndexList indexes = selectionModel()->selectedIndexes();
+    if(!indexes.isEmpty()) {
+        QModelIndex ind = indexes[0];
+        PatternListModel::ListItem dat = qvariant_cast<PatternListModel::ListItem>(ind.data(Qt::DisplayRole));
+        emit editPatternSignal(dat.name+" = "+dat.text);
+        myModel->removeRows(ind.row(),1,ind);
     }
 }
 

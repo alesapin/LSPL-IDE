@@ -98,6 +98,7 @@ bool MatchesModel::removeRows(int row, int count, const QModelIndex &parent)
 
 }
 
+
 bool MatchesModel::clearTable()
 {
 
