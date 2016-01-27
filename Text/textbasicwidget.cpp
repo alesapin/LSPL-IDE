@@ -33,7 +33,10 @@ void TextBasicWidget::openTextFile(const QString &filename)
                                  .arg(file.errorString()));
             return;
        }
+    qDebug() << utility::codecNameForText(file);
     QTextStream in(&file);
+    in.setCodec(utility::codecNameForText(file));
+
 #ifndef QT_NO_CURSOR
     QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
@@ -76,13 +79,14 @@ void TextBasicWidget::newTextFile()
 void TextBasicWidget::setMatches(QSharedPointer<utility::IntervalViewMap> matches)
 {
     textEdit->setReadOnly(true);
-    this->textEdit->setMatches(matches);
+    textEdit->setMatches(matches);
 }
 
-void TextBasicWidget::highlighPatterns(const QStringList &patterns)
+void TextBasicWidget::setReadOnly(bool)
 {
-    textEdit->highLightPatterns(patterns);
+    textEdit->setReadOnly(true);
 }
+
 
 //void TextBasicWidget::dehighlightPatterns(const QStringList &patterns)
 //{
@@ -173,6 +177,6 @@ TextBasicWidget::TextBasicWidget(QWidget *parent) : BasicWidget(parent,"Текс
     initButtons(wrapper);
     initEditor(wrapper);
     setWidget(wrapper);
-
+    connect(textEdit,SIGNAL(checkingEnabled()),this,SIGNAL(checkingEnabled()));
 }
 

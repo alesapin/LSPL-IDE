@@ -45,8 +45,8 @@ public:
         iterator():current(NIL_NODE){}
         iterator(const iterator&o){current = o.current;}
         ~iterator(){}
-        iterator operator=(const iterator&o){current = o.current;return *this;}
-        iterator operator++(){current = treeSuccessor(current); return *this;}
+        iterator& operator=(const iterator&o){current = o.current;return *this;}
+        iterator& operator++(){current = treeSuccessor(current); return *this;}
         bool operator==(const iterator& o){return current == o.current;}
         bool operator!=(const iterator& o){return current != o.current;}
         Interval operator*() const {return *current;}
@@ -93,9 +93,9 @@ public:
     bool containsIntersection(int low,int high) const;
     bool containsEqualInterval(int low,int high) const;
     unsigned size() const;
+    bool empty() const {return size() == 0;}
     virtual ~IntervalRBTree();
     iterator begin() const{
-
         Pointer tmp = root;
         while(tmp->left != NIL_NODE){
             tmp = tmp->left;
@@ -448,7 +448,7 @@ typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::treeSuccessor(IntervalRBT
     Pointer y = x->parent;
     while( y != NIL_NODE && x == y->right){
         x = y;
-        y= y->parent;
+        y = y->parent;
     }
     return y;
 }
@@ -510,8 +510,8 @@ void IntervalRBTree<T>::recalcMax(IntervalRBTree<T>::Pointer p)
 template<typename T>
 void IntervalRBTree<T>::findAllIntersection(Pointer rt, int low, int high, QVector<Pointer> *result) const
 {
-    qDebug() << "Searchin for: [" << low<<"," << high<<"]";
-    qDebug() << "Current Node:["<<rt->low<<","<<rt->high<<"]";
+//    qDebug() << "Searchin for: [" << low<<"," << high<<"]";
+//    qDebug() << "Current Node:["<<rt->low<<","<<rt->high<<"]";
     if(rt == NIL_NODE) return;
 //    if(low > rt->max){
 //        return;

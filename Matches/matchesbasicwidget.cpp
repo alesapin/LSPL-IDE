@@ -22,7 +22,7 @@ MatchesBasicWidget::MatchesBasicWidget(QWidget* parent) : BasicWidget(parent,"С
     wrapper->setLayout(lay);
     wrapper->setContentsMargins(10,10,10,10);
     setWidget(wrapper);
-    connect(table,SIGNAL(rowClicked(int,int)),this,SLOT(slotTransferSignal(int,int)));
+    connect(table,SIGNAL(rowClicked(int,int)),this,SLOT(slotRowClicked(int,int)));
     connect(list,SIGNAL(patternUncheked(QString)),this,SLOT(slotPatternUnchecked(QString)));
     connect(list,SIGNAL(patternChecked(QString)),this,SLOT(slotPatternChecked(QString)));
 }
@@ -32,20 +32,29 @@ void MatchesBasicWidget::setMatches(QSharedPointer<utility::IntervalViewMap> pat
     table->setMatches(patterns);
     list->clear();
     list->addItems(names);
-    list->setCheckedItems(names);
+    blockSignals(true);
+    list->checkAll();
+    blockSignals(false);
 }
 
 void MatchesBasicWidget::slotChangeTab(int index)
 {
     if(index != -1){
         table->changeTab(index);
-        list->clear();
-        list->addItems(table->getAllPatterns());
-        list->setCheckedItems(table->getCurrentPatterns());
+        list->changeTab(index);
+        for(const QString& pattern:list->unchekedItems()) {
+            table->hidePattern(pattern);
+        }
     } else {
         table->clear();
         list->clearAll();
     }
+}
+
+void MatchesBasicWidget::slotEnableChecking()
+{
+    qDebug() << "CALLED";
+    list->setUserCheckable(true);
 }
 
 void MatchesBasicWidget::saveMatches(QString filename)
@@ -69,7 +78,7 @@ void MatchesBasicWidget::saveMatches(QString filename)
 }
 
 
-PatternViewMap MatchesBasicWidget::getSelectedMatches() const
+QSharedPointer<utility::IntervalViewMap> MatchesBasicWidget::getSelectedMatches() const
 {
     return table->getCurrentMatches();
 }
@@ -82,62 +91,34 @@ void MatchesBasicWidget::slotClear()
 
 QDomDocument MatchesBasicWidget::getXml()
 {
-    return toXml(getSelectedMatches());
-
+    return utility::toXml(table->getCurrentMatches());
 }
 
-QDomDocument MatchesBasicWidget::toXml(PatternViewMap matches)
-{
-        QDomDocument doc;
-        QDomElement header1 = doc.createElement("texts");
-        QDomElement text = doc.createElement("text");
-        for(QString pattern:matches.keys()){
-            QDomElement ptrn = doc.createElement("goal");
-            ptrn.setAttribute("name",pattern);
-            for(PatternCompiler::MatchRepr m: matches[pattern]){
-               QDomElement mtch = doc.createElement("match");
-               mtch.setAttribute("startPos",m.start);
-               mtch.setAttribute("endPos",m.end);
-               QDomElement frag = doc.createElement("fragment");
-               QDomText text = doc.createTextNode(m.text);
-               frag.appendChild(text);
-               mtch.appendChild(frag);
-               if(!m.transform.isEmpty()){
-                    QDomElement res = doc.createElement("result");
-                    QDomText trns = doc.createTextNode(m.transform);
-                    res.appendChild(trns);
-                    mtch.appendChild(res);
-               }
-               ptrn.appendChild(mtch);
-            }
-            text.appendChild(ptrn);
-        }
-        header1.appendChild(text);
-        doc.appendChild(header1);
-        return doc;
-}
 
 void MatchesBasicWidget::slotCloseTab(int index)
 {
     table->closeTab(index);
-    //changeTab(index+1);
+    list->closeTab(index);
+    for(const QString& pattern:list->unchekedItems()) {
+        table->hidePattern(pattern);
+    }
 }
 
 
 
-void MatchesBasicWidget::slotTransferSignal(int s, int e)
+void MatchesBasicWidget::slotRowClicked(int s, int e)
 {
     emit rowClicked(s,e);
 }
 
 void MatchesBasicWidget::slotPatternUnchecked(const QString &s)
 {
-    table->removePatternFromCurrent(s);
+    table->hidePattern(s);
     emit patternWasUnchecked(s);
 }
 
 void MatchesBasicWidget::slotPatternChecked(const QString &s)
 {
-    table->addCurrentPattern(s);
+    table->showPattern(s);
     emit patternWasChecked(s);
 }

@@ -63,30 +63,16 @@ PatternCompiler::PatternCompiler()
     codec = QTextCodec::codecForName("Windows-1251");
 }
 
-PatternViewMap PatternCompiler::analyzeText(const QStringList &patternNames, const QString &text)
+QSharedPointer<PatternViewMap> PatternCompiler::analyzeText(const QStringList &patternNames, const QString &text)
 {
-// QMessageBox messageBox;
-// messageBox.critical(0,"Error","An error has occured !");
-// messageBox.setFixedSize(500,200);
-// messageBox.critical(0,"Error",text.mid(0,20));
 
-////#ifndef defined(Q_OS_WIN)
-//    messageBox.critical(0,"Error","DROP NOW!");
-//    messageBox.setFixedSize(500,200);
-
-    QByteArray arr= codec->fromUnicode(text);
+    QByteArray arr = codec->fromUnicode(text);
     std::string res(arr.data());
     lspl::text::TextRef txt = reader.readFromString(res);
-//    QMessageBox messageBox1;
-//    messageBox1.critical(0,"Error","TExT READING ERROR !");
-//    messageBox1.setFixedSize(500,200);
-    PatternViewMap result;
+    PatternViewMap* result = new PatternViewMap;
     for(QString pattern: patternNames){
         PatternType patternType;
         lspl::patterns::PatternRef pat = ns->getPatternByName(pattern.toStdString());
-//        QMessageBox messageBox2;
-//        messageBox2.critical(0,"Error","PATTERN EXTRACTION ERROR !");
-//        messageBox2.setFixedSize(500,200);
         QString patSource(pat->getSource().c_str());
         if(patSource.contains(RIGHT_WITH_PATTERN)){
             patternType = RIGHT_PART_PATTERN;
@@ -96,17 +82,14 @@ PatternViewMap PatternCompiler::analyzeText(const QStringList &patternNames, con
             patternType = NO_RIGHT_PART;
         }
         lspl::text::MatchList matches = txt->getMatches(pat);
-//        QMessageBox messageBox3;
-//        messageBox3.critical(0,"Error","MATCH EXTRACTION ERROR !");
-//        messageBox3.setFixedSize(500,200);
         QVector<MatchRepr> resultPattern;
         for(uint i = 0; i < matches.size(); ++i){
             MatchRepr rep = convertMatch(matches[i],patternType);
             resultPattern.append(rep);
         }
-        result[pattern]=resultPattern;
+        (*result)[pattern]=resultPattern;
     }
-    return result;
+    return QSharedPointer<PatternViewMap>(result);
 }
 
 QString PatternCompiler::compilePattern(const QString& pattern)
@@ -159,7 +142,7 @@ void PatternCompiler::clear()
 QString PatternCompiler::convertToSystem(const std::string &str)
 {
     QByteArray arr = QByteArray::fromStdString(str);
-    return codec->toUnicode(arr);
+    return codec->toUnicode(arr).toLower();
 
 }
 

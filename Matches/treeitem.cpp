@@ -46,9 +46,7 @@ TreeItem *TreeItem::parentItem()
 
 void TreeItem::clearChilds()
 {
-    for(int i =0;i<childItems.size();++i){
-        delete childItems[i];
-    }
+    childItems.clear();
 }
 int TreeItem::getMatchNumber() const
 {

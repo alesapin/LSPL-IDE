@@ -35,6 +35,7 @@ signals:
      * а вкладку не закрыть.
      */
     void tabWasClosed(int);
+    void checkingEnabled();
 public slots:
     void closeTab(int index);
 private:

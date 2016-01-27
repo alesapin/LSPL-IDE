@@ -1,6 +1,5 @@
 #ifndef TEXTBASICWIDGET_H
 #define TEXTBASICWIDGET_H
-
 #include <QWidget>
 #include <Text/maintextviewer.h>
 #include <QMainWindow>
@@ -46,8 +45,7 @@ public:
     void newTextFile();
     void saveMatches(QString filename);
     void setMatches(QSharedPointer<utility::IntervalViewMap> matches);
-    void highlighPatterns(const QStringList& patterns);
-    //void dehighlightPatterns(const QStringList& patterns);
+    void setReadOnly(bool);
     QString getCurrentFile() const ;
     QString getText() const ;
 signals:
@@ -55,6 +53,7 @@ signals:
     void editEnabled();
     void tabClosed(int);
     void tabChanged(int);
+    void checkingEnabled();
 public slots:
     void slotClearMatches();
     void slotAnalyzeText();

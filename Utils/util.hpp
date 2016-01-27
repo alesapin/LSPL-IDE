@@ -6,6 +6,9 @@
 #include <QVector>
 #include <QPair>
 #include <QString>
+#include <QDomDocument>
+#include <charsetdetect.h>
+#include <QFile>
 namespace utility{
     struct IntervalMatch{
         QString text;
@@ -16,8 +19,10 @@ namespace utility{
     };
 
     typedef IntervalRBTree<IntervalMatch> IntervalViewMap;
-
+    QDomDocument toXml(const PatternViewMap& matches);
+    QDomDocument toXml(QSharedPointer<IntervalViewMap> matches);
     QSharedPointer<IntervalViewMap> convertMatchesToIntervals(const PatternViewMap& m);
+    const char *codecNameForText(QFile& arr);
 }
 #endif // UTIL_HPP
 

@@ -19,6 +19,7 @@
 #include <iostream>
 #include <QMessageBox>
 #include <fstream>
+#include <QTime>
 enum PatternType{
     RIGHT_PART_TEXT,RIGHT_PART_PATTERN,NO_RIGHT_PART
 };
@@ -36,7 +37,7 @@ public:
         uint variants;
     };
     PatternCompiler();
-    QMap<QString,QVector<PatternCompiler::MatchRepr>> analyzeText(const QStringList &patternNames,const QString& text);
+    QSharedPointer<QMap<QString,QVector<PatternCompiler::MatchRepr>>> analyzeText(const QStringList &patternNames,const QString& text) ;
     QString compilePattern(const QString& pattern);
     QString compilePatternNoException(const QString& pattern);
     void clear();

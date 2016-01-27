@@ -17,6 +17,11 @@
 #include <QVector>
 #include <QString>
 #include <QSplitter>
+#include <QTime>
+#include <QtConcurrent/QtConcurrent>
+#include <QFuture>
+#include <QFutureWatcher>
+#include "Interface/bottombar.h"
 class TextBasicWidget;
 class CentralWidget : public QWidget
 {
@@ -34,10 +39,18 @@ private:
     TextBasicWidget* txt;
     PatternsBasicWidget* pattern;
     MatchesBasicWidget* matches;
+    QFutureWatcher<QSharedPointer<PatternViewMap>>* watcher;
 signals:
-
+    void statusReady();
+    void statusEngine();
+    void statusHighlighting();
+    void statusCompiling();
+    void statusCanceled();
 public slots:
-    void analyze();
+    void slotAnalyze();
+    void slotDisplay();
+    void slotEdit();
+    void slotProgress(int val);
 };
 
 #endif // CENTRALWIDGET_H

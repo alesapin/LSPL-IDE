@@ -17,6 +17,7 @@ QString TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
     current->setPlainText(text);
     addTab(current,name);
     setCurrentWidget(current);
+    connect(current,SIGNAL(chekingEnabled()),this,SIGNAL(checkingEnabled()));
     return name;
 }
 
@@ -81,6 +82,7 @@ void TextTabEdit::clearSelection()
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
     if(current){
+        current->stopCalcing();
         current->dehighlightAll();
     }
 }

@@ -1,16 +1,14 @@
 #include "patternselectionlist.h"
 #include <QDebug>
-PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), mDisplayRectDelta(4, 1, -25, 0)
+PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), mDisplayRectDelta(4, 1, -25, 0),currentTab(0)
 {
-
-    connect(model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(slotModelRowsInserted(QModelIndex,int,int)));
-    connect(model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(slotModelRowsRemoved(QModelIndex,int,int)));
-    QStandardItemModel *standartModel = static_cast<QStandardItemModel*>(model());
-    connect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+    labelList.append("");
+    models.append(new ComboSelectionModel());
+    setModel(models[currentTab]);
+    connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
 #ifndef Q_OS_WIN
     setStyleSheet("QComboBox { combobox-popup: 1px }");
 #endif
-
 }
 
 PatternSelectionList::~PatternSelectionList()
@@ -20,50 +18,84 @@ PatternSelectionList::~PatternSelectionList()
 
 QStringList PatternSelectionList::checkedItems() const
 {
-    return mCheckedItems;
+    return models[currentTab]->getCheckedItems();
 }
 
-void PatternSelectionList::setCheckedItems(const QStringList &items)
+QStringList PatternSelectionList::unchekedItems() const
 {
-    QStandardItemModel *standartModel = qobject_cast<QStandardItemModel*>(model());
-    disconnect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
-
-    for (int i = 0; i < items.count(); ++i)
-    {
-        int index = findText(items.at(i));
-        if (index != -1)
-        {
-            standartModel->item(index)->setData(Qt::Checked, Qt::CheckStateRole);
-        }
-    }
-
-    connect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
-    collectCheckedItems();
-    updateDisplayText();
-    repaint();
+    return models[currentTab]->getUnchekedItems();
 }
+
+void PatternSelectionList::checkAll()
+{
+    myModel()->checkAll();
+}
+
 
 void PatternSelectionList::clearAll()
 {
-    mCheckedItems.clear();
-    mDisplayText.clear();
+    disconnect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+    models.clear();
+    labelList.clear();
+    models.append(new ComboSelectionModel());
+    setModel(models[0]);
+    connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+    labelList.append("");
     clear();
 }
 
-void PatternSelectionList::collectCheckedItems()
+void PatternSelectionList::changeTab(int index)
 {
-    QStandardItemModel *standartModel = static_cast<QStandardItemModel*>(model());
-    mCheckedItems.clear();
-    for (int i = 0; i < count(); ++i)
-    {
-            QStandardItem *currentItem = standartModel->item(i);
-            Qt::CheckState checkState = static_cast<Qt::CheckState>(currentItem->data(Qt::CheckStateRole).toInt());
-            if (checkState == Qt::Checked)
-            {
-                mCheckedItems.push_back(currentItem->text());
-            }
+    if(currentTab != index){
+        disconnect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+        if(index < models.size()){
+            ComboSelectionModel* m = models[index];
+            setModel(m);
+            currentTab = index;
+        }else{
+            models.append(new ComboSelectionModel());
+            labelList.append("");
+            currentTab = models.length() - 1;
+            setModel(models[currentTab]);
+        }
+        connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+        updateDisplayText();
+        repaint();
     }
 }
+
+void PatternSelectionList::closeTab(int index)
+{
+    if(index != -1){
+        disconnect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+        int newCurrent = index + 1;
+        if(newCurrent < models.length()){
+            setModel(models[newCurrent]);
+            models.remove(index);
+            currentTab = index;
+        }else{
+             newCurrent = index - 1;
+             if(newCurrent >= 0){
+                 setModel(models[newCurrent]);
+                 models.remove(index);
+                 currentTab = newCurrent;
+             }else{
+                 models[0]->clear();
+                 currentTab = 0;
+             }
+        }
+        connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+        updateDisplayText();
+        repaint();
+    }
+}
+
+void PatternSelectionList::setUserCheckable(bool v)
+{
+    qDebug() << v;
+    myModel()->setChekable(v);
+}
+
 
 void PatternSelectionList::updateDisplayText()
 {
@@ -71,19 +103,16 @@ void PatternSelectionList::updateDisplayText()
                                      mDisplayRectDelta.right(), mDisplayRectDelta.bottom());
 
     QFontMetrics fontMetrics(font());
-
-    mDisplayText = mCheckedItems.join(", ");
-
-    if (fontMetrics.size(Qt::TextSingleLine, mDisplayText).width() > textRect.width())
+    labelList[currentTab] = myModel()->getCheckedItems().join(", ");
+    if (fontMetrics.size(Qt::TextSingleLine, labelList[currentTab]).width() > textRect.width())
     {
-        while (mDisplayText != "" && fontMetrics.size(Qt::TextSingleLine, mDisplayText + "...").width() > textRect.width())
+        while (labelList[currentTab] != "" && fontMetrics.size(Qt::TextSingleLine, labelList[currentTab] + "...").width() > textRect.width())
         {
-            mDisplayText.remove(mDisplayText.length() - 1, 1);
+            labelList[currentTab].remove(labelList[currentTab].length() - 1, 1);
         }
 
-        mDisplayText += "...";
+        labelList[currentTab] += "...";
     }
-    //qDebug() << "DISPLAY TEXT: " << mDisplayText;
 }
 
 void PatternSelectionList::paintEvent(QPaintEvent *event)
@@ -104,7 +133,7 @@ void PatternSelectionList::paintEvent(QPaintEvent *event)
     QRect textRect = rect().adjusted(mDisplayRectDelta.left(), mDisplayRectDelta.top(),
                                      mDisplayRectDelta.right(), mDisplayRectDelta.bottom());
 
-    painter.drawText(textRect, Qt::AlignVCenter, mDisplayText);
+    painter.drawText(textRect, Qt::AlignVCenter, labelList[currentTab]);
 }
 
 void PatternSelectionList::resizeEvent(QResizeEvent *event)
@@ -114,38 +143,18 @@ void PatternSelectionList::resizeEvent(QResizeEvent *event)
     updateDisplayText();
 }
 
-void PatternSelectionList::slotModelRowsInserted(const QModelIndex &parent, int start, int end)
-{
-        (void)parent;
-
-        QStandardItemModel *standartModel = static_cast<QStandardItemModel*>(model());
-        disconnect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
-        for (int i = start; i <= end; ++i)
-        {
-            standartModel->item(i)->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled );
-            standartModel->item(i)->setData(Qt::Unchecked, Qt::CheckStateRole);
-        }
-        connect(standartModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
-}
-
-void PatternSelectionList::slotModelRowsRemoved(const QModelIndex &parent, int start, int end)
-{
-    (void)parent;
-    (void)start;
-    (void)end;
-
-    collectCheckedItems();
-}
 
 void PatternSelectionList::slotModelItemChanged(QStandardItem *item)
 {
+
     if(item->checkState()==Qt::Checked){
         emit patternChecked(item->text());
     }else if (item->checkState() == Qt::Unchecked){
         emit patternUncheked(item->text());
     }
-    collectCheckedItems();
-    setCheckedItems(mCheckedItems);
+    updateDisplayText();
+    repaint();
+    myModel()->setChekable(false);
 }
 
 

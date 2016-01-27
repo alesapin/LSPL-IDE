@@ -25,14 +25,15 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     void setMatches(const QSharedPointer<utility::IntervalViewMap> maches);
-
+    void clear();
+    QStringList getRowPattern(int rowNum) const;
+    QSharedPointer<utility::IntervalViewMap> getMatches() const;
 private:
     QString getToolTipText(int start,int low,int pos) const;
-    QVector<TreeItem*> roots;
-    QVector<QSharedPointer<utility::IntervalViewMap>> datum;
-    QVector<QSet<QString>> offPatterns;
+    TreeItem* root;
+    QSharedPointer<utility::IntervalViewMap> datum;
     QStringList header;
-    int currentTab;
+    
     QVariant getData(TreeItem* it,int column) const;
     const static QString TOOLTIP_BASIC_PATTERN;
     const static QString TOOLTIP_TRANSFORM_PATTERN;

@@ -10,20 +10,15 @@
   const QString MatchesTreeModel::TOOLTIP_PARAMS_PATTERN =  "<br><strong>params:</strong> %1";
 
 
-MatchesTreeModel::MatchesTreeModel(QObject *parent): QAbstractItemModel(parent)
+MatchesTreeModel::MatchesTreeModel(QObject *parent): QAbstractItemModel(parent),datum()
 {
        header<<"Сопоставление" <<"Преобразование" <<"Параметры";
-       currentTab = 0;
-       offPatterns.append(QSet<QString>());
-       roots.append(new TreeItem(0,0,0));
-       datum.resize(1);
+       root = new TreeItem(0,0,0);
 }
 
 MatchesTreeModel::~MatchesTreeModel()
 {
-    for(int i = 0; i<roots.size();++i){
-        delete roots[i];
-    }
+    delete root;
 }
 
 QVariant MatchesTreeModel::data(const QModelIndex &index, int role) const
@@ -34,7 +29,7 @@ QVariant MatchesTreeModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
     {
-        if(item == roots[currentTab]){
+        if(item == root){
             return header[index.column()];
         }
         return getData(item,index.column());
@@ -74,7 +69,7 @@ QModelIndex MatchesTreeModel::index(int row, int column, const QModelIndex &pare
        TreeItem *parentItem;
 
        if (!parent.isValid())
-           parentItem = roots[currentTab];
+           parentItem = root;
        else
            parentItem = static_cast<TreeItem*>(parent.internalPointer());
 
@@ -93,7 +88,7 @@ QModelIndex MatchesTreeModel::parent(const QModelIndex &index) const
     TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
     TreeItem *parentItem = childItem->parentItem();
 
-    if (parentItem == roots[currentTab])
+    if (parentItem == root)
         return QModelIndex();
 
     return createIndex(parentItem->row(), 0, parentItem);
@@ -106,7 +101,7 @@ int MatchesTreeModel::rowCount(const QModelIndex &parent) const
         return 0;
 
     if (!parent.isValid())
-        parentItem = roots[currentTab];
+        parentItem = root;
     else
         parentItem = static_cast<TreeItem*>(parent.internalPointer());
 
@@ -118,18 +113,17 @@ int MatchesTreeModel::columnCount(const QModelIndex &parent) const
     if (parent.isValid())
           return static_cast<TreeItem*>(parent.internalPointer())->columnCount();
       else
-        return roots[currentTab]->columnCount();
+        return root->columnCount();
 }
 
 
 void MatchesTreeModel::setMatches(const QSharedPointer<utility::IntervalViewMap> maches)
 {
     int rc = 0;
-    offPatterns[currentTab].clear();
     removeRows(0,rowCount());
-    roots[currentTab]->clearChilds();
-    datum[currentTab] = maches;
-    TreeItem* currentRoot = roots[currentTab];
+    root->clearChilds();
+    datum = maches;
+    TreeItem* currentRoot = root;
     beginInsertRows(QModelIndex(),0,maches->size());
     for(utility::IntervalViewMap::iterator it = maches->begin(); it!= maches->end();++it){
         int start = it->low;
@@ -150,9 +144,37 @@ void MatchesTreeModel::setMatches(const QSharedPointer<utility::IntervalViewMap>
     endInsertRows();
 }
 
+void MatchesTreeModel::clear()
+{
+    root->clearChilds();
+}
+
+QStringList MatchesTreeModel::getRowPattern(int rowNum) const
+{
+    QModelIndex currentIndex = index(rowNum,0);
+
+    TreeItem* currentItem = static_cast<TreeItem*>(currentIndex.internalPointer());
+    if(!currentIndex.isValid() || currentItem == 0) return QStringList();
+    try {
+        utility::IntervalMatch m = datum->getEqualInterval(currentItem->getStart(),currentItem->getEnd());
+        if(currentItem->getMatchNumber() == -1){
+            return m.patterns.toList();
+        } else {
+            return QStringList() << m.patterns[currentItem->getMatchNumber()];
+        }
+    } catch (IntervalNotFoundException e) {
+        return QStringList();
+    }
+}
+
+QSharedPointer<utility::IntervalViewMap> MatchesTreeModel::getMatches() const
+{
+    return datum;
+}
+
 QString MatchesTreeModel::getToolTipText(int start, int end, int pos) const
 {
-    utility::IntervalMatch m = datum[currentTab]->getEqualInterval(start,end);
+    utility::IntervalMatch m = datum->getEqualInterval(start,end);
     QString patterns,transform,params;
     if(pos == -1){
         patterns = "[";
@@ -179,7 +201,7 @@ QVariant MatchesTreeModel::getData(TreeItem *it, int column) const
     int end = it->getEnd();
     int pos = it->getMatchNumber();
     try {
-        utility::IntervalMatch m = datum[currentTab]->getEqualInterval(start,end);
+        utility::IntervalMatch m = datum->getEqualInterval(start,end);
         switch(column){
         case INTERVAL_COLUMN:
             if(m.transforms.size() == 1 ||  pos == -1){

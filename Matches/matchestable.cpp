@@ -1,8 +1,9 @@
 #include "matchestable.h"
 
-MatchesTable::MatchesTable(QWidget *parent) : QTreeView(parent)
+MatchesTable::MatchesTable(QWidget *parent) : QTreeView(parent), currentTab(0)
 {
-    setModel(new MatchesTreeModel(this));
+    models.append(new MatchesTreeModel(this));
+    setModel(models[currentTab]);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
 
@@ -10,64 +11,106 @@ MatchesTable::MatchesTable(QWidget *parent) : QTreeView(parent)
     connect(this->selectionModel(),
                     SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                     this,
-                    SLOT(onRowClick(QItemSelection,QItemSelection)));
+                    SLOT(slotOnRowClick(QItemSelection,QItemSelection)));
     setStyleSheet("QToolTip { color: #ffffff; background-color: #696969; border: 1px solid white; }");
 }
 
 void MatchesTable::setMatches(QSharedPointer<utility::IntervalViewMap> matches)
 {
     myModel()->setMatches(matches);
-    //setCurrentPatterns(names);
 }
 
-void MatchesTable::setCurrentPatterns(const QStringList &name)
+void MatchesTable::patternVisibility(const QString &patternName, bool hide)
 {
-    //myModel()->setCurrentPatterns(name);
+    QModelIndex ri = rootIndex();
+    for(int i = 0;i<myModel()->rowCount(ri);++i){
+        QStringList itemPatterns = myModel()->getRowPattern(i);
+        if(itemPatterns.isEmpty()){
+            continue;
+        }else if(itemPatterns.size() == 1){
+            if(itemPatterns[0] == patternName){
+                setRowHidden(i,ri,hide);
+            }
+        }else {
+            int ind = itemPatterns.indexOf(patternName);
+            QModelIndex currentParent = myModel()->index(i,0,ri);
+            while(ind != -1){
+                setRowHidden(ind,currentParent,hide);
+                ind = itemPatterns.indexOf(patternName,ind+1);
+            }
+            bool allHidden = true;
+            for(int j = 0; j<myModel()->rowCount(currentParent);++j){
+                if(!isRowHidden(j,currentParent)){
+                    allHidden = false;
+                    break;
+                }
+            }
+            if(allHidden) setRowHidden(i,ri,true);
+            else setRowHidden(i,ri,false);
+        }
+    }
+
 }
 
-void MatchesTable::addCurrentPattern(const QString &name)
+void MatchesTable::hidePattern(const QString &patternName)
 {
-    //myModel()->addCurrentPattern(name);
+    patternVisibility(patternName,true);
 }
 
-void MatchesTable::removePatternFromCurrent(const QString &name)
+void MatchesTable::showPattern(const QString &patternName)
 {
-    //myModel()->removePatternFromCurrent(name);
+    patternVisibility(patternName,false);
 }
+
 
 void MatchesTable::changeTab(int index)
 {
-    //myModel()->changeTab(index);
+    if(index < models.size()){
+        currentTab = index;
+        setModel(models[currentTab]);
+        emit dataChanged(myModel()->index(0,0),myModel()->index(myModel()->rowCount(),myModel()->columnCount()));
+    }else{
+        models.append(new MatchesTreeModel(this));
+        currentTab = models.size() - 1;
+        setModel(models[currentTab]);
+        emit dataChanged(myModel()->index(0,0),myModel()->index(myModel()->rowCount(),myModel()->columnCount()));
+    }
 }
 
 void MatchesTable::closeTab(int index)
 {
-    //myModel()->closeTab(index);
+    if(index != -1){
+        int newCurrent = index + 1;
+        if(newCurrent < models.length()){
+            setModel(models[newCurrent]);
+            models.remove(index);
+            currentTab = index;
+        }else{
+             newCurrent = index - 1;
+             if(newCurrent >= 0){
+                 setModel(models[newCurrent]);
+                 models.remove(index);
+                 currentTab = newCurrent;
+             }else{
+                 models[0]->clear();
+                 currentTab = 0;
+             }
+        }
+        emit dataChanged(myModel()->index(0,0),myModel()->index(myModel()->rowCount(),myModel()->columnCount()));
+    }
 }
 
-QStringList MatchesTable::getCurrentPatterns() const
-{
-    return QStringList() << "NOPE";
-    //return myModel()->getCurrentPatterns();
-}
 
-QStringList MatchesTable::getAllPatterns() const
+QSharedPointer<utility::IntervalViewMap> MatchesTable::getCurrentMatches() const
 {
-    return QStringList() <<"NONE";
-    //return myModel()->getAllPatterns();
-}
-
-PatternViewMap MatchesTable::getCurrentMatches() const
-{
-    return PatternViewMap();
+    return myModel()->getMatches();
     //return myModel()->getCurrentMatches();
 }
 
 void MatchesTable::clear()
 {
-//    myModel()->clearTable();
-//    myModel()->clearCurrent();
-//    myModel()->clearDatum();
+    myModel()->clear();
+    emit dataChanged(myModel()->index(0,0),myModel()->index(myModel()->rowCount(),myModel()->columnCount()));
 }
 
 void MatchesTable::resizeEvent(QResizeEvent *event)
@@ -81,12 +124,12 @@ void MatchesTable::resizeEvent(QResizeEvent *event)
     QTreeView::resizeEvent(event);
 }
 
-void MatchesTable::onRowClick(const QItemSelection &selected, const QItemSelection &deselected)
+void MatchesTable::slotOnRowClick(const QItemSelection &selected, const QItemSelection &deselected)
 {
     if(!selected.empty()){
-        int row = selected.first().top();
-//        PatternCompiler::MatchRepr match = myModel()->getRow(row);
-//        emit rowClicked(match.start,match.end);
+        QModelIndex cur = selected.first().indexes()[0];
+        TreeItem* it = static_cast<TreeItem*>(cur.internalPointer());
+        emit rowClicked(it->getStart(),it->getEnd());
     }
 }
 

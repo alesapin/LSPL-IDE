@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = LSPL-IDE
 TEMPLATE = app
 CONFIG += c++11 exceptions
-LIBS = -llspl
+LIBS = -llspl -lcharsetdetect
 
 SOURCES += main.cpp\
         mainwindow.cpp \

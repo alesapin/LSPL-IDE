@@ -20,9 +20,9 @@ public:
     void setMatches(QSharedPointer<utility::IntervalViewMap> patterns, const QStringList &all);
     void setCheckedPatterns(const QStringList& patterns);
     void setCheckedAllPatterns();
-    PatternViewMap getSelectedMatches() const;
+    QSharedPointer<utility::IntervalViewMap> getSelectedMatches() const;
     QDomDocument getXml();
-    static QDomDocument toXml(PatternViewMap matches);
+
     void saveMatches(QString filename);
 
 private:
@@ -35,11 +35,12 @@ private:
     void patternWasChecked(const QString& name);
  public slots:
     void slotClear();
-    void slotTransferSignal(int s,int e);
+    void slotRowClicked(int s,int e);
     void slotPatternUnchecked(const QString& s);
     void slotPatternChecked(const QString& s);
     void slotCloseTab(int);
     void slotChangeTab(int);
+    void slotEnableChecking();
 
 };
 

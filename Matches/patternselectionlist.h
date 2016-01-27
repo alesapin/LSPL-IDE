@@ -6,29 +6,35 @@
 #include <QStandardItem>
 #include <QAbstractItemView>
 #include <QStylePainter>
-
+#include "comboselectionmodel.h"
 class PatternSelectionList : public QComboBox
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList checkedItems READ checkedItems WRITE setCheckedItems)
+    Q_PROPERTY(QStringList checkedItems READ checkedItems)
 public:
     PatternSelectionList(QWidget* parent = 0);
     virtual ~PatternSelectionList();
     QStringList checkedItems() const;
-    void setCheckedItems(const QStringList &items);
+    QStringList unchekedItems() const;
+    void checkAll();
     void clearAll();
+    void changeTab(int index);
+    void closeTab(int index);
+    void setUserCheckable(bool);
 private:
-    QStringList mCheckedItems;
-    QString mDisplayText;
+    ComboSelectionModel* myModel(){
+        return models[currentTab];
+    }
+
+    int currentTab;
+    QStringList labelList;
+    QVector<ComboSelectionModel*> models;
     const QRect mDisplayRectDelta;
-    void collectCheckedItems();
     void updateDisplayText();
 protected:
     virtual void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
 private slots:
-    void slotModelRowsInserted(const QModelIndex &parent, int start, int end);
-    void slotModelRowsRemoved(const QModelIndex &parent, int start, int end);
     void slotModelItemChanged(QStandardItem *item);
 signals:
     void patternUncheked(const QString& name);

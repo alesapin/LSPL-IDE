@@ -4,7 +4,8 @@ HEADERS += \
     $$PWD/patternselectionlist.h \
     $$PWD/matchesbasicwidget.h \
     $$PWD/treeitem.h \
-    $$PWD/matchestreemodel.h
+    $$PWD/matchestreemodel.h \
+    $$PWD/comboselectionmodel.h
 
 SOURCES += \
     $$PWD/matchesmodel.cpp \
@@ -12,4 +13,5 @@ SOURCES += \
     $$PWD/patternselectionlist.cpp \
     $$PWD/matchesbasicwidget.cpp \
     $$PWD/treeitem.cpp \
-    $$PWD/matchestreemodel.cpp
+    $$PWD/matchestreemodel.cpp \
+    $$PWD/comboselectionmodel.cpp

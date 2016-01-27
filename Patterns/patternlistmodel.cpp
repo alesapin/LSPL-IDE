@@ -142,7 +142,7 @@ Qt::ItemFlags PatternListModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
      if (index.isValid()){
-            return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
+            return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags/* | Qt::ItemIsEditable*/;
       }else{
             return Qt::ItemIsDropEnabled | defaultFlags;
      }

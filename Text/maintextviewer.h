@@ -16,36 +16,53 @@
 #include "Utils/intervalrbtree.h"
 #include <QSharedPointer>
 #include "Utils/util.hpp"
+#include <QThread>
+#include <QtConcurrent/QtConcurrent>
+#include <QFutureWatcher>
 class MainTextViewer : public QPlainTextEdit
 {
     Q_OBJECT
 private:
     QTextCodec* converter;
     int modified;
-    QTextCharFormat* fmtSelect;
     QTextCharFormat* fmtDeSelect;
+    QTextCharFormat* fmtSelect;
     QTextCursor* cursor;
+    QTextCursor* selectionCursor;
     QSharedPointer<utility::IntervalViewMap> intervalMatches;
     QSet<QString> offPatterns;
+    QList<QTextEdit::ExtraSelection> tmpSelections;
+    QFutureWatcher<void>* watcher;
+    QSet<QString> highlightedPatterns;
+
+    void parallelHighlightAll();
+    void parallelHighlightPatterns();
+    void parallelDehighlightPattern();
+
     QString getToolTip(int start,int end) const;
+
 public:
     explicit MainTextViewer(QWidget *parent = 0);
    // void insertFromMimeData(const QMimeData *source);
     bool isModified();
-    void highlightFragment(int begin,int end);
-    void deHighlightFragment(int begin,int end);
     void dehighlightAll();
     void setMatches(QSharedPointer<utility::IntervalViewMap> m);
     void highlightPatterns(const QStringList& patternNames);
     void highlightAll();
-    //void dehighlightPatterns(const QStringList& patternNames);
     void dehighlightPattern(const QString& pattern);
     void selectText(int begin,int end);
+    void stopCalcing();
     bool event(QEvent *e);
 signals:
-
+    void highlightIt(int,int,bool);
+    void chekingEnabled();
 public slots:
-    void modify();
+    void slotHighlightPatterns();
+    void slotDehighlightPattern();
+    void slotHighlightAll();
+    void slotModify();
+    void slotHighlighFragment(int,int,bool);
+
 };
 
 #endif // MAINTEXTVIEWER_H

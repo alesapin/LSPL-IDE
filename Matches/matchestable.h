@@ -13,27 +13,27 @@ class MatchesTable : public QTreeView
     Q_OBJECT
 private:
     MatchesTreeModel* myModel() const{
-        return static_cast<MatchesTreeModel*>(model());
+        return models[currentTab];
     }
-
+    int currentTab;
+    QVector<MatchesTreeModel*> models;
 public:
     MatchesTable(QWidget *parent = 0);
     void setMatches(QSharedPointer<utility::IntervalViewMap> maches);
-    void setCurrentPatterns(const QStringList& name);
-    void addCurrentPattern(const QString& name);
-    void removePatternFromCurrent(const QString& name);
+    void patternVisibility(const QString& patternName,bool hide);
+    void hidePattern(const QString& patternName);
+    void showPattern(const QString& patternName);
     void changeTab(int index);
     void closeTab(int index);
-    QStringList getCurrentPatterns() const;
-    QStringList getAllPatterns() const;
-    PatternViewMap getCurrentMatches() const;
+
+    QSharedPointer<utility::IntervalViewMap> getCurrentMatches() const;
     void clear();
 protected:
     void resizeEvent(QResizeEvent *event);
 signals:
     void rowClicked(int,int);
 public slots:
-    void onRowClick(const QItemSelection & selected, const QItemSelection & deselected);
+    void slotOnRowClick(const QItemSelection & selected, const QItemSelection & deselected);
 };
 
 #endif // MATCHESTABLE_H
