@@ -15,9 +15,10 @@ namespace utility{
         QVector<QString> patterns;
         QVector<QString> transforms;
         QVector<QString> params;
+        QVector<int> variants;
 
     };
-
+    QPair<QString, QString> splitPattern(const QString &pattern);
     typedef IntervalRBTree<IntervalMatch> IntervalViewMap;
     QDomDocument toXml(const PatternViewMap& matches);
     QDomDocument toXml(QSharedPointer<IntervalViewMap> matches);

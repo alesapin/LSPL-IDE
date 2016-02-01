@@ -5,7 +5,7 @@ TextTabEdit::TextTabEdit(QWidget* parent):QTabWidget(parent)
     par = static_cast<TextBasicWidget*>(parent);
     this->setTabsClosable(true);
     setMinimumHeight(300);
-    connect(this,SIGNAL(tabCloseRequested(int)),this,SLOT(closeTab(int)));
+    connect(this,SIGNAL(tabCloseRequested(int)),this,SLOT(slotCloseTab(int)));
 
 }
 
@@ -17,7 +17,7 @@ QString TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
     current->setPlainText(text);
     addTab(current,name);
     setCurrentWidget(current);
-    connect(current,SIGNAL(chekingEnabled()),this,SIGNAL(checkingEnabled()));
+    connect(current,SIGNAL(jobDone()),this,SIGNAL(checkingEnabled()));
     return name;
 }
 
@@ -43,6 +43,7 @@ QString TextTabEdit::getIndexText(int index) const
     if (current) {
         return current->toPlainText();
     }
+    return "";
 }
 
 void TextTabEdit::highLightPatterns(const QStringList &patterns)
@@ -70,6 +71,15 @@ void TextTabEdit::setMatches(QSharedPointer<utility::IntervalViewMap> m)
     }
 }
 
+QSharedPointer<utility::IntervalViewMap> TextTabEdit::getMatches() const
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    if(current){
+        return current->getMatches();
+    }
+    return QSharedPointer<utility::IntervalViewMap>(new utility::IntervalViewMap());
+}
+
 void TextTabEdit::selectText(int start, int end)
 {
     MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
@@ -95,12 +105,25 @@ void TextTabEdit::setReadOnly(bool f)
             current->setStyleSheet("QPlainTextEdit {background-color: rgb(0, 255, 0,20%)}");
         }else{
             current->setStyleSheet("QPlainTextEdit {background-color: rgb(255, 255, 255)}");
+            current->setMatches(QSharedPointer<utility::IntervalViewMap>(new utility::IntervalViewMap));
         }
         current->setReadOnly(f);
     }
 }
 
-void TextTabEdit::closeTab(int index)
+void TextTabEdit::dehighlightAll()
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    current->dehighlightAll();
+}
+
+void TextTabEdit::highlightAll()
+{
+    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    current->highlightAll();
+}
+
+void TextTabEdit::slotCloseTab(int index)
 {
         MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));
         if(current->isModified()){
@@ -113,5 +136,12 @@ void TextTabEdit::closeTab(int index)
             this->removeTab(index);
             emit tabWasClosed(index);
         }
+}
+
+void TextTabEdit::slotRenameCurrentTab(const QString &filename)
+{
+    QString name = filename.split("/").last();
+    fileNamePath[name] = filename;
+    setTabText(this->currentIndex(),name);
 }
 

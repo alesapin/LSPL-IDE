@@ -1,5 +1,17 @@
 #include "matchestable.h"
 
+void MatchesTable::showOrHideAll(bool val)
+{
+    QModelIndex ri = rootIndex();
+    for(int i = 0;i<myModel()->rowCount(ri);++i){
+        QModelIndex current = myModel()->index(i,0,ri);
+        for(int j = 0; j < myModel()->rowCount(current);++j){
+            setRowHidden(j,current,val);
+        }
+        setRowHidden(i,ri,val);
+    }
+}
+
 MatchesTable::MatchesTable(QWidget *parent) : QTreeView(parent), currentTab(0)
 {
     models.append(new MatchesTreeModel(this));
@@ -7,7 +19,6 @@ MatchesTable::MatchesTable(QWidget *parent) : QTreeView(parent), currentTab(0)
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
 
-    //horizontalHeader()->setStretchLastSection(true);
     connect(this->selectionModel(),
                     SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                     this,
@@ -104,7 +115,6 @@ void MatchesTable::closeTab(int index)
 QSharedPointer<utility::IntervalViewMap> MatchesTable::getCurrentMatches() const
 {
     return myModel()->getMatches();
-    //return myModel()->getCurrentMatches();
 }
 
 void MatchesTable::clear()
@@ -126,10 +136,21 @@ void MatchesTable::resizeEvent(QResizeEvent *event)
 
 void MatchesTable::slotOnRowClick(const QItemSelection &selected, const QItemSelection &deselected)
 {
+    Q_UNUSED(deselected);
     if(!selected.empty()){
         QModelIndex cur = selected.first().indexes()[0];
         TreeItem* it = static_cast<TreeItem*>(cur.internalPointer());
         emit rowClicked(it->getStart(),it->getEnd());
     }
+}
+
+void MatchesTable::slotShowAll()
+{
+    showOrHideAll(false);
+}
+
+void MatchesTable::slotHideAll()
+{
+    showOrHideAll(true);
 }
 

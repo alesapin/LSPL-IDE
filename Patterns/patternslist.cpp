@@ -3,9 +3,10 @@
 PatternsList::PatternsList(PatternCompiler* compiler,QWidget *parent):QListView(parent),compiler(compiler)
 {
     myModel = new PatternListModel(this);
+    delegate = new PatternItemDelegate(this);
     setModel(myModel);
     setSizeAdjustPolicy(QListView::AdjustToContents);
-    setItemDelegate(new PatternItemDelegate(this));
+    setItemDelegate(delegate);
     setUniformItemSizes(false);
     setSelectionMode(QListView::SingleSelection);
     setDragEnabled(true);
@@ -21,12 +22,13 @@ PatternsList::PatternsList(PatternCompiler* compiler,QWidget *parent):QListView(
     addAction(editAction);
     connect(removeAction,SIGNAL(triggered()),this,SLOT(slotRemovePattern()));
     connect(editAction,SIGNAL(triggered()),this,SLOT(slotEditPattern()));
-
+    connect(delegate,SIGNAL(textUpdated()),this,SLOT(slotTextEntered()));
 }
 
 QStringList PatternsList::getCompiledPatterns() const
 {
 
+    qDebug() << myModel->getCompiledPatterns();
     return myModel->getCompiledPatterns();
 }
 
@@ -47,12 +49,16 @@ void PatternsList::addPatterns(const QStringList &patterns)
     }
 }
 
+void PatternsList::resizeEvent(QResizeEvent *e)
+{
+    if(e->size().width() == e->oldSize().width()){
+        //Тут был грязный хак.
+    }
+    QListView::resizeEvent(e);
+}
+
 void PatternsList::dragMoveEvent(QDragMoveEvent *pEvent)
 {
-//    qDebug() << "CALLED DRAG";
-//    pEvent->
-    QModelIndex index = indexAt(pEvent->pos());
-
     pEvent->acceptProposedAction();
 }
 
@@ -72,14 +78,15 @@ void PatternsList::dropEvent(QDropEvent *pEvent)
 }
 
 
-
-
 void PatternsList::slotCompilePatterns()
 {
     QStringList patterns = myModel->getUncompiledPatterns();
-    for(const QString& pattern:patterns){
-        QString compilationResult = compiler->compilePatternNoException(pattern);
-        myModel->updatePattern(pattern,compilationResult);
+    if(!patterns.isEmpty()){
+        compiler->clear();
+        for(const QString& pattern:patterns){
+            QString compilationResult = compiler->compilePatternNoException(pattern);
+            myModel->updatePattern(pattern,compilationResult);
+        }
     }
 }
 
@@ -100,5 +107,11 @@ void PatternsList::slotEditPattern()
         emit editPatternSignal(dat.name+" = "+dat.text);
         myModel->removeRows(ind.row(),1,ind);
     }
+}
+
+
+void PatternsList::slotTextEntered()
+{
+    resize(this->width(),this->height()+1);
 }
 

@@ -7,6 +7,11 @@
 #include <QFont>
 #include <QVector>
 #include "Engine/patterncompiler.h"
+/**
+ * @brief The MatchesModel class
+ * Устаревший неиспользуемый класс
+ * Возможно понадобиться в будущем
+ */
 class MatchesModel:public QAbstractTableModel
 {
     Q_OBJECT

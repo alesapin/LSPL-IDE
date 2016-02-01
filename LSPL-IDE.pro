@@ -29,4 +29,8 @@ include(Engine/Engine.pri)
 include(Matches/Matches.pri)
 include(Utils/Utils.pri)
 RESOURCES += \
-    stylesheet.qrc
+    stylesheet.qrc \
+    images.qrc
+win64:RC_ICONS += lsplico.png
+win32:RC_ICONS += lsplico.png
+ICON = lsplico.png

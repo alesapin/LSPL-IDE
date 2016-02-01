@@ -17,6 +17,7 @@ private:
     }
     int currentTab;
     QVector<MatchesTreeModel*> models;
+    void showOrHideAll(bool val);
 public:
     MatchesTable(QWidget *parent = 0);
     void setMatches(QSharedPointer<utility::IntervalViewMap> maches);
@@ -25,15 +26,17 @@ public:
     void showPattern(const QString& patternName);
     void changeTab(int index);
     void closeTab(int index);
-
     QSharedPointer<utility::IntervalViewMap> getCurrentMatches() const;
     void clear();
 protected:
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 signals:
     void rowClicked(int,int);
 public slots:
     void slotOnRowClick(const QItemSelection & selected, const QItemSelection & deselected);
+    void slotShowAll();
+    void slotHideAll();
+
 };
 
 #endif // MATCHESTABLE_H

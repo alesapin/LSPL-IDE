@@ -31,12 +31,12 @@ public:
         QString text;
         QString params;
         QString transform;
-        //QStringList patternNames;
         uint start;
         uint end;
         uint variants;
     };
     PatternCompiler();
+
     QSharedPointer<QMap<QString,QVector<PatternCompiler::MatchRepr>>> analyzeText(const QStringList &patternNames,const QString& text) ;
     QString compilePattern(const QString& pattern);
     QString compilePatternNoException(const QString& pattern);
@@ -54,5 +54,4 @@ private:
     QTextCodec *codec;
 };
 typedef QMap<QString,QVector<PatternCompiler::MatchRepr>> PatternViewMap;
-
 #endif // PATTERNCOMPILER_H

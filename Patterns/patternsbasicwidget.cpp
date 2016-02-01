@@ -1,30 +1,12 @@
 #include "patternsbasicwidget.h"
 #include <QDebug>
-void PatternsBasicWidget::initCompileButton()
-{
-//    QToolBar* buttonBar = new QToolBar(this);
-//    compileButton = new QPushButton("Compile",this);
-//    connect(compileButton,SIGNAL(clicked(bool)),this,SLOT(compilePattern()));
-//    buttonBar->addWidget(compileButton);
-//    this->addToolBar(buttonBar);
-}
-
-void PatternsBasicWidget::initPatternTable()
-{
-//    tableModel = new PatternCompiledTable();
-//    table = new QTableView();
-//    table->setModel(tableModel);
-//    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-////    for(int c = 0; c < table->horizontalHeader()->count();++c){
-////        table->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-////    }
-}
 
 void PatternsBasicWidget::initPatternEditor()
 {
     QMainWindow* wrapper = new QMainWindow();
     QToolBar* buttonBar = new QToolBar(this);
     buttonBar->setMovable(false);
+    buttonBar->setFloatable(false);
     compileButton = new QPushButton("Compile",this);
     addButton = new QPushButton("Add",this);
     buttonBar->addWidget(compileButton);
@@ -45,80 +27,23 @@ void PatternsBasicWidget::initPatternEditor()
     lay->setStretch(0,5);
     lay->setStretch(1,1);
     container->setLayout(lay);
-    wrapper->setContentsMargins(10,10,10,10);
+    wrapper->setContentsMargins(10,0,10,10);
     wrapper->setCentralWidget(container);
     wrapper->addToolBar(buttonBar);
     setWidget(wrapper);
-
-
-
-}
-
-void PatternsBasicWidget::initPatternLogBar()
-{
-//    QDockWidget* wrapper = new QDockWidget(this);
-//    wrapper->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-//    logBar = new PatternCompLogBar();
-//    logtab = new QTabWidget(this);
-//    logtab->addTab(logBar,"Compilation output");
-////    QSizePolicy small(QSizePolicy::Expanding,QSizePolicy::Expanding);
-////    small.setVerticalStretch(1);
-////    logtab->setSizePolicy(small);
-
-//    wrapper->setWidget(logtab);
-//    addDockWidget(Qt::RightDockWidgetArea,wrapper);
-}
-
-void PatternsBasicWidget::clearDuplicates(QStringList &listPatterns, QStringList &editorPatterns)
-{
-    for(int i = 0; i < editorPatterns.size();++i){
-        QString edPatName = editorPatterns[i].split("=")[0].trimmed();
-        for(int j = 0;j<listPatterns.size();++j){
-            QString lPatName = listPatterns[j].split("=")[0].trimmed();
-            if(edPatName == lPatName) listPatterns.removeAt(j);
-        }
-    }
 }
 
 PatternsBasicWidget::PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent) : BasicWidget(parent,"Шаблоны")
 {
-//    QSplitter *split2 = new QSplitter();
-//    QSplitter *split3 = new QSplitter();
-
-//    QHBoxLayout * lay = new QHBoxLayout(this);
-//    this->setStyleSheet("QTabWidget::pane { /* The tab widget frame */ \
-//                        border-top: 0px;\
-//                    }");
     comp = compiler;
-    initCompileButton();
     initPatternEditor();
-//    initPatternTable();
-    //initPatternLogBar();
-//    QVBoxLayout* buttonEdit = new QVBoxLayout();
-//    buttonEdit->addWidget(compileButton);
-//   // buttonEdit->addWidget(editor);
-//    QWidget* container1 = new QWidget();
-//    QWidget* container2 = new QWidget();
-//    container1->setLayout(buttonEdit);
-//    split2->addWidget(container1);
-//    QVBoxLayout* containerLay = new QVBoxLayout();
-//    containerLay->addWidget(split2);
-//    container2->setLayout(containerLay);
-//    split3->setOrientation(Qt::Vertical);
-//    split3->addWidget(container2);
-//    split3->addWidget(logtab);
-//    lay->addWidget(split3);
 }
 
-QStringList PatternsBasicWidget::getChoosenPatterns()
+QStringList PatternsBasicWidget::getChoosenPatterns() const
 {
     return list->getCompiledPatterns();
 }
 
-void PatternsBasicWidget::setPatternValues(QString name, int segments, int matches, int variants)
-{
-    //tableModel->setPatternValues(name,segments,matches,variants);
-}
 
 void PatternsBasicWidget::importPatterns(QString filename)
 {
@@ -130,7 +55,9 @@ void PatternsBasicWidget::importPatterns(QString filename)
                                  .arg(file.errorString()));
             return;
        }
+    const char* codecName = utility::codecNameForText(file);
     QTextStream in(&file);
+    in.setCodec(codecName);
 #ifndef QT_NO_CURSOR
     QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
@@ -160,11 +87,6 @@ void PatternsBasicWidget::exportPatterns(QString filename)
 #endif
 }
 
-void PatternsBasicWidget::addLog(const QString &text)
-{
-    //logBar->append(text);
-}
-
 void PatternsBasicWidget::slotClearPatterns()
 {
     comp->clear();
@@ -180,28 +102,5 @@ void PatternsBasicWidget::slotAddPattern()
 
 
 
-void PatternsBasicWidget::compilePattern()
-{
-//    QStringList patterns = editor->getPatternsForCompile();
-//    QStringList recompiledPatterns =  list->getPatternsForCompile();
-//    clearDuplicates(recompiledPatterns,patterns);
-//    recompiledPatterns << patterns;
-//    comp->clear();
-//    QStringList compiledPatterns;
-//    for(QString pattern: recompiledPatterns){
-//        qDebug() << pattern;
-//        QString patternName = pattern.split("=").at(0);
-//        QString res = comp->compilePatternNoException(pattern);
-//        if(res.isEmpty()){
-//            compiledPatterns << pattern;
-//            //logBar->append("Pattern " + patternName + " successfully compiled.");
-//        }else{
-//            //logBar->append("Error in pattern: " + patternName.simplified());
-//            //logBar->append("\t"+res);
-//        }
-//    }
 
-//    editor->clear();
-//    list->addPatterns(compiledPatterns);
-}
 

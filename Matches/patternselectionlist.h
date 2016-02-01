@@ -10,7 +10,6 @@
 class PatternSelectionList : public QComboBox
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList checkedItems READ checkedItems)
 public:
     PatternSelectionList(QWidget* parent = 0);
     virtual ~PatternSelectionList();
@@ -20,25 +19,30 @@ public:
     void clearAll();
     void changeTab(int index);
     void closeTab(int index);
-    void setUserCheckable(bool);
 private:
     ComboSelectionModel* myModel(){
         return models[currentTab];
     }
+    void updateDisplayText();
 
+    const QRect mDisplayRectDelta;
     int currentTab;
     QStringList labelList;
     QVector<ComboSelectionModel*> models;
-    const QRect mDisplayRectDelta;
-    void updateDisplayText();
 protected:
-    virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
+    virtual void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    virtual void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 private slots:
     void slotModelItemChanged(QStandardItem *item);
+
+public slots:
+    void slotSetUserCheckable(bool);
+    void slotDeselectAll();
+    void slotSelectAll();
 signals:
     void patternUncheked(const QString& name);
     void patternChecked(const QString& name);
+
 };
 
 #endif // PATTERNSELECTIONLIST_H

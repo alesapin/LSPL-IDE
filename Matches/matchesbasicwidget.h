@@ -12,6 +12,7 @@
 #include <QLabel>
 #include <QTextStream>
 #include <QApplication>
+#include <QPushButton>
 class MatchesBasicWidget : public BasicWidget
 {
     Q_OBJECT
@@ -21,7 +22,7 @@ public:
     void setCheckedPatterns(const QStringList& patterns);
     void setCheckedAllPatterns();
     QSharedPointer<utility::IntervalViewMap> getSelectedMatches() const;
-    QDomDocument getXml();
+    QDomDocument getXml() const;
 
     void saveMatches(QString filename);
 
@@ -29,18 +30,23 @@ private:
     QLabel* selectPattern;
     PatternSelectionList* list;
     MatchesTable* table;
+    QPushButton *selectAll;
+    QPushButton *deselectAll;
  signals:
     void rowClicked(int,int);
     void patternWasUnchecked(const QString& name);
     void patternWasChecked(const QString& name);
+    void hideAll();
+    void showAll();
  public slots:
     void slotClear();
-    void slotRowClicked(int s,int e);
     void slotPatternUnchecked(const QString& s);
     void slotPatternChecked(const QString& s);
     void slotCloseTab(int);
     void slotChangeTab(int);
     void slotEnableChecking();
+    void slotSelectAllClicked();
+    void slotDeselectAllClicked();
 
 };
 

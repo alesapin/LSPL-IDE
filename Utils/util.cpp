@@ -12,12 +12,14 @@ QSharedPointer<IntervalViewMap> convertMatchesToIntervals(const PatternViewMap& 
                 pm.patterns.append(patternName);
                 pm.params.append(match.params);
                 pm.transforms.append(match.transform);
+                pm.variants.append(match.variants);
             } else{
                 IntervalMatch current;
                 current.text = match.text;
                 current.patterns.append(patternName);
                 current.params.append(match.params);
                 current.transforms.append(match.transform);
+                current.variants.append(match.variants);
                 intervalMatches->addInterval(match.start,match.end,current);
             }
         }
@@ -120,6 +122,19 @@ const char *codecNameForText(QFile &in)
       } else {
           return result;
       }
+}
+
+QPair<QString, QString> splitPattern(const QString &pattern)
+{
+    QStringList listRepr = pattern.split("=");
+    if(!listRepr.isEmpty()){
+        QString name = listRepr[0].simplified();
+        listRepr.pop_front();
+        QString body = listRepr.join("=").simplified();
+        return qMakePair<QString,QString> (name,body);
+    }
+    return qMakePair<QString,QString>("","");
+
 }
 
 }

@@ -9,7 +9,9 @@ void TextBasicWidget::saveTextFile(QString filename,int index)
                                  .arg(file.errorString()));
             return ;
      }
+
     QTextStream out(&file);
+
    #ifndef QT_NO_CURSOR
        QApplication::setOverrideCursor(Qt::WaitCursor);
    #endif
@@ -18,6 +20,7 @@ void TextBasicWidget::saveTextFile(QString filename,int index)
        }else{
            out << textEdit->getIndexText(index);
        }
+       textEdit->slotRenameCurrentTab(filename);
    #ifndef QT_NO_CURSOR
        QApplication::restoreOverrideCursor();
 #endif
@@ -33,7 +36,6 @@ void TextBasicWidget::openTextFile(const QString &filename)
                                  .arg(file.errorString()));
             return;
        }
-    qDebug() << utility::codecNameForText(file);
     QTextStream in(&file);
     in.setCodec(utility::codecNameForText(file));
 
@@ -87,12 +89,6 @@ void TextBasicWidget::setReadOnly(bool)
     textEdit->setReadOnly(true);
 }
 
-
-//void TextBasicWidget::dehighlightPatterns(const QStringList &patterns)
-//{
-//    textEdit->deHighlightPatterns(patterns);
-//}
-
 QString TextBasicWidget::getCurrentFile() const
 {
     return textEdit->getCurrentFile();
@@ -122,8 +118,8 @@ void TextBasicWidget::slotEditEnable()
 
 void TextBasicWidget::slotShowStatistics()
 {
-//    StatisticsWindow* w = new StatisticsWindow(matches->getSelectedMatches(),this);
-//    w->show();
+    StatisticsWindow* w = new StatisticsWindow(textEdit->getMatches(),this);
+    w->show();
 }
 
 void TextBasicWidget::slotSelectFragment(int from, int to)
@@ -139,6 +135,16 @@ void TextBasicWidget::slotPatternUncheked(const QString &name)
 void TextBasicWidget::slotPatternChecked(const QString &name)
 {
     textEdit->highLightPatterns(QStringList() << name);
+}
+
+void TextBasicWidget::slotHighlightAll()
+{
+    textEdit->highlightAll();
+}
+
+void TextBasicWidget::slotDehighlightAll()
+{
+    textEdit->dehighlightAll();
 }
 
 void TextBasicWidget::initEditor( QMainWindow* wrapper)
@@ -173,7 +179,6 @@ TextBasicWidget::TextBasicWidget(QWidget *parent) : BasicWidget(parent,"Текс
 {
     QMainWindow* wrapper = new QMainWindow();
     wrapper->setContentsMargins(10,0,10,10);
-   // wrapper->setStyleSheet("QMainWindow{border:10px solid red;}");
     initButtons(wrapper);
     initEditor(wrapper);
     setWidget(wrapper);

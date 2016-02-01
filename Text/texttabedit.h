@@ -15,7 +15,7 @@ class TextTabEdit : public QTabWidget
 {
     Q_OBJECT
 public:
-    TextTabEdit(QWidget* parent= 0);
+    TextTabEdit(QWidget* parent = 0);
     QString addAnotherTab(const QString& filename,const QString& text);
     QString getCurrentText() const;
     QString getCurrentFile() const;
@@ -23,10 +23,12 @@ public:
     void highLightPatterns(const QStringList& patterns);
     void deHighlightPattern(const QString& pattern);
     void setMatches(QSharedPointer<utility::IntervalViewMap> m);
+    QSharedPointer<utility::IntervalViewMap> getMatches() const;
     void selectText(int start,int end);
     void clearSelection();
     void setReadOnly(bool f);
-
+    void dehighlightAll();
+    void highlightAll();
 signals:
     /**
      * @brief tabWasClosed
@@ -37,7 +39,8 @@ signals:
     void tabWasClosed(int);
     void checkingEnabled();
 public slots:
-    void closeTab(int index);
+    void slotCloseTab(int index);
+    void slotRenameCurrentTab(const QString& name);
 private:
     QMap<QString,QString> fileNamePath;
     TextBasicWidget* par;

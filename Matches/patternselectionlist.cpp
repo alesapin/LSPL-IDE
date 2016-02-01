@@ -1,5 +1,4 @@
 #include "patternselectionlist.h"
-#include <QDebug>
 PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), mDisplayRectDelta(4, 1, -25, 0),currentTab(0)
 {
     labelList.append("");
@@ -90,9 +89,8 @@ void PatternSelectionList::closeTab(int index)
     }
 }
 
-void PatternSelectionList::setUserCheckable(bool v)
+void PatternSelectionList::slotSetUserCheckable(bool v)
 {
-    qDebug() << v;
     myModel()->setChekable(v);
 }
 
@@ -118,7 +116,7 @@ void PatternSelectionList::updateDisplayText()
 void PatternSelectionList::paintEvent(QPaintEvent *event)
 {
 
-    (void)event;
+    Q_UNUSED(event);
 
     QStylePainter painter(this);
 
@@ -138,7 +136,7 @@ void PatternSelectionList::paintEvent(QPaintEvent *event)
 
 void PatternSelectionList::resizeEvent(QResizeEvent *event)
 {
-    (void)event;
+    Q_UNUSED(event);
 
     updateDisplayText();
 }
@@ -155,6 +153,29 @@ void PatternSelectionList::slotModelItemChanged(QStandardItem *item)
     updateDisplayText();
     repaint();
     myModel()->setChekable(false);
+}
+
+void PatternSelectionList::slotDeselectAll()
+{
+    disconnect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+    for(int i = 0;i<myModel()->rowCount();++i){
+        setItemData(i,Qt::Unchecked,Qt::CheckStateRole);
+    }
+    updateDisplayText();
+    repaint();
+    connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+
+}
+
+void PatternSelectionList::slotSelectAll()
+{
+    disconnect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+    for(int i = 0;i<myModel()->rowCount();++i){
+       setItemData(i,Qt::Checked,Qt::CheckStateRole);
+    }
+    updateDisplayText();
+    repaint();
+    connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
 }
 
 

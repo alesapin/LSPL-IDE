@@ -8,7 +8,7 @@ class PatternHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
 public:
-    PatternHighlighter(QTextDocument *parent = 0);
+    explicit PatternHighlighter(QTextDocument *parent = 0);
 
 protected:
     void highlightBlock(const QString &text) Q_DECL_OVERRIDE;

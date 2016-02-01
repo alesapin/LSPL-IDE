@@ -3,7 +3,7 @@
 TreeItem::TreeItem(int s,int e,int pos, TreeItem *parentItem):start(s),end(e)
 {
     matchNumber = pos;
-    this->m_parentItem = parentItem;
+    this->parentItem = parentItem;
 
 }
 
@@ -34,14 +34,16 @@ int TreeItem::columnCount() const
 
 int TreeItem::row() const
 {
-    if(m_parentItem){
-        return m_parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
+    if(parentItem){
+        return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
     }
+    return -1;
+
 }
 
-TreeItem *TreeItem::parentItem()
+TreeItem *TreeItem::getParentItem()
 {
-    return m_parentItem;
+    return parentItem;
 }
 
 void TreeItem::clearChilds()

@@ -30,13 +30,14 @@ public:
         int high;
         T value;
     private:
+
         int max;
         Interval* parent;
         Interval *left;
         Interval* right;
         Color color;
         Interval():low(0),high(0),max(0),parent(0),left(0),right(0),color(BLACK){}
-        Interval(int l,int h,const T& v):low(l),high(h),max(h),value(v),parent(0),left(0),right(0),color(BLACK){}
+        Interval(int l,int h,const T& v):low(l),high(h),value(v),max(h),parent(0),left(0),right(0),color(BLACK){}
     };
     typedef Interval* Pointer;
     class iterator{

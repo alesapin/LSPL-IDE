@@ -9,6 +9,7 @@ MatchesModel::MatchesModel(QWidget *parent): QAbstractTableModel(parent),current
 
 int MatchesModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     int result  = 0;
     if(currentPatterns.size() > 0) {
         for(const QString& pattern:currentPatterns[currentTab]){
@@ -20,6 +21,7 @@ int MatchesModel::rowCount(const QModelIndex &parent) const
 
 int MatchesModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return MATCHES_COLUMNS;
 }
 
@@ -79,6 +81,7 @@ QVariant MatchesModel::headerData(int section, Qt::Orientation orientation, int 
 
 bool MatchesModel::insertRows(int row, int count, const QModelIndex &parent)
 {
+    Q_UNUSED(parent);
     int end = row + count;
     qDebug() << end;
     beginInsertRows(QModelIndex(), row, end-1);
@@ -90,6 +93,7 @@ bool MatchesModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool MatchesModel::removeRows(int row, int count, const QModelIndex &parent)
 {
+    Q_UNUSED(parent);
     beginRemoveRows( QModelIndex(), row, row + count - 1);
     qDebug() <<"COUNT:"<< count;
     endRemoveRows();

@@ -86,7 +86,7 @@ QModelIndex MatchesTreeModel::parent(const QModelIndex &index) const
         return QModelIndex();
 
     TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
-    TreeItem *parentItem = childItem->parentItem();
+    TreeItem *parentItem = childItem->getParentItem();
 
     if (parentItem == root)
         return QModelIndex();
@@ -215,6 +215,8 @@ QVariant MatchesTreeModel::getData(TreeItem *it, int column) const
         case PARAMS_COLUMN:
             if(pos == -1) return "";
             return m.params[pos];
+        default:
+            return QVariant("");
         }
     } catch (IntervalNotFoundException& e){
         return QVariant("");

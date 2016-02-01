@@ -29,12 +29,13 @@ public:
     QStringList getRowPattern(int rowNum) const;
     QSharedPointer<utility::IntervalViewMap> getMatches() const;
 private:
-    QString getToolTipText(int start,int low,int pos) const;
     TreeItem* root;
     QSharedPointer<utility::IntervalViewMap> datum;
     QStringList header;
-    
+
+    QString getToolTipText(int start,int low,int pos) const;
     QVariant getData(TreeItem* it,int column) const;
+
     const static QString TOOLTIP_BASIC_PATTERN;
     const static QString TOOLTIP_TRANSFORM_PATTERN;
     const static QString TOOLTIP_PARAMS_PATTERN;

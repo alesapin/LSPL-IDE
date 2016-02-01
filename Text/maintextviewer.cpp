@@ -25,7 +25,10 @@ void MainTextViewer::parallelHighlightPatterns()
             if(it->value.patterns.contains(pattern)){
                 emit highlightIt(it->low,it->high,true);
                 i++;
-                if(i%100==0) this->thread()->wait(100);
+                if(i%100==0){
+                    this->thread()->wait(100);
+                    watcher->pause();
+                }
                 break;
             }
             if(watcher->isCanceled()){
@@ -63,6 +66,7 @@ void MainTextViewer::parallelDehighlightPattern()
         }
         if(i%100==0){
             this->thread()->wait(100);
+            watcher->pause();
         }
     }
     emit highlightIt(-1,-1,true);
@@ -78,25 +82,24 @@ void MainTextViewer::parallelHighlightAll()
             dehighlightAll();
             return;
         }
-        if(i%100==0) this->thread()->wait(100);
+        if(i%100==0){
+            this->thread()->wait(100);
+            watcher->pause();
+        }
     }
     emit highlightIt(-1,-1,true);
+    qDebug() << "FINISHED";
 }
 
 MainTextViewer::MainTextViewer(QWidget *parent) : QPlainTextEdit(parent),modified(false)
 {
-    fmtDeSelect = new QTextCharFormat();
-    fmtSelect = new QTextCharFormat();
-    fmtSelect->setBackground(Qt::yellow);
-    cursor = new QTextCursor(this->document());
     selectionCursor = new QTextCursor(this->document());
     intervalMatches = QSharedPointer<utility::IntervalViewMap>(new utility::IntervalViewMap());
     watcher = new QFutureWatcher<void>();
-    converter = QTextCodec::codecForLocale();
     setMinimumHeight(300);
     connect(this,SIGNAL(textChanged()),this,SLOT(slotModify()));
     connect(this,SIGNAL(highlightIt(int,int,bool)),this,SLOT(slotHighlighFragment(int,int,bool)));
-    connect(watcher,SIGNAL(finished()),this,SIGNAL(chekingEnabled()));
+    connect(watcher,SIGNAL(finished()),this,SIGNAL(jobDone()));
 }
 
 bool MainTextViewer::isModified()
@@ -108,6 +111,7 @@ bool MainTextViewer::isModified()
 void MainTextViewer::dehighlightAll()
 {
     setExtraSelections(QList<QTextEdit::ExtraSelection>());
+    emit jobDone();
 }
 
 
@@ -117,6 +121,11 @@ void MainTextViewer::setMatches(QSharedPointer<utility::IntervalViewMap> m)
     dehighlightAll();
     intervalMatches = m;
     highlightAll();
+}
+
+QSharedPointer<utility::IntervalViewMap> MainTextViewer::getMatches() const
+{
+    return intervalMatches;
 }
 
 void MainTextViewer::highlightPatterns(const QStringList &patternNames)
@@ -230,10 +239,12 @@ void MainTextViewer::slotHighlighFragment(int begin, int end,bool select)
         tmpSelections.append(current);
         if(tmpSelections.size()%100 == 0){
             setExtraSelections(tmpSelections);
+            watcher->resume();
         }
     } else {
         setExtraSelections(tmpSelections);
         tmpSelections.clear();
+        watcher->resume();
     }
 }
 

@@ -13,7 +13,7 @@ enum ColumnNames{
 class TreeItem
 {
 public:
-    explicit TreeItem(int s,int l,int pos, TreeItem *m_parentItem = 0);
+    TreeItem(int s,int l,int pos, TreeItem *parentItem = 0);
     ~TreeItem();
 
     void appendChild(TreeItem *child);
@@ -22,7 +22,7 @@ public:
     int childCount() const;
     int columnCount() const;
     int row() const;
-    TreeItem *parentItem();
+    TreeItem *getParentItem();
 
     void clearChilds();
 
@@ -37,7 +37,7 @@ private:
     int matchNumber;
     int start;
     int end;
-    TreeItem *m_parentItem;
+    TreeItem *parentItem;
 };
 
 #endif // TREEITEM_H

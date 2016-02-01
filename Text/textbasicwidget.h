@@ -62,6 +62,8 @@ public slots:
     void slotSelectFragment(int from,int to);
     void slotPatternUncheked(const QString& name);
     void slotPatternChecked(const QString& name);
+    void slotHighlightAll();
+    void slotDehighlightAll();
 };
 
 #endif // TEXTBASICWIDGET_H

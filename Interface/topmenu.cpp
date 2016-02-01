@@ -14,27 +14,27 @@ void TopMenu::setFileMenu()
 
 void TopMenu::setFileActions()
 {
-    newAct = new QAction(tr("&New"),this);
+    newAct = new QAction(tr("New"),this);
     newAct->setShortcut(QKeySequence::New);
     newAct->setStatusTip(tr("Create new file"));
     connect(newAct,SIGNAL(triggered()),this,SLOT(newFile()));
 
-    openAct = new QAction(tr("&Open"),this);
+    openAct = new QAction(tr("Open"),this);
     openAct->setShortcut(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
     connect(openAct,SIGNAL(triggered()),this,SLOT(openFile()));
 
-    saveAct = new QAction(tr("&Save"),this);
+    saveAct = new QAction(tr("Save"),this);
     saveAct->setShortcut(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save file"));
     connect(saveAct,SIGNAL(triggered()),this,SLOT(saveFile()));
 
-    saveAsAct = new QAction(tr("&Save as"),this);
-    saveAsAct->setShortcut(QKeySequence::Save);
+    saveAsAct = new QAction(tr("Save as"),this);
+    saveAsAct->setShortcut(QKeySequence::SaveAs);
     saveAsAct->setStatusTip(tr("Save file as"));
     connect(saveAsAct,SIGNAL(triggered()),this,SLOT(saveFileAs()));
 
-    saveAllAct = new QAction(tr("&Save all"),this);
+    saveAllAct = new QAction(tr("Save all"),this);
     saveAllAct->setShortcut(QKeySequence::SelectAll);
     saveAllAct->setStatusTip(tr("Save all files"));
     connect(saveAllAct,SIGNAL(triggered()),this,SLOT(saveAllFiles()));

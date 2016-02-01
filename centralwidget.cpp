@@ -27,15 +27,19 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
     connect(txt,SIGNAL(buttonClicked()),this,SLOT(slotAnalyze()));
     connect(matches,SIGNAL(patternWasUnchecked(QString)),txt,SLOT(slotPatternUncheked(QString)));
     connect(matches,SIGNAL(patternWasChecked(QString)),txt,SLOT(slotPatternChecked(QString)));
+    connect(matches,SIGNAL(showAll()),txt,SLOT(slotHighlightAll()));
+    connect(matches,SIGNAL(hideAll()),txt,SLOT(slotDehighlightAll()));
     connect(matches,SIGNAL(rowClicked(int,int)),txt,SLOT(slotSelectFragment(int,int)));
+    connect(matches,SIGNAL(patternWasUnchecked(QString)),this,SIGNAL(statusHighlighting()));
+    connect(matches,SIGNAL(patternWasChecked(QString)),this,SIGNAL(statusHighlighting()));
     connect(txt,SIGNAL(tabChanged(int)),matches,SLOT(slotChangeTab(int)));
+
     connect(txt,SIGNAL(tabClosed(int)),matches,SLOT(slotCloseTab(int)));
     connect(txt,SIGNAL(editEnabled()),matches,SLOT(slotClear()));
     connect(txt,SIGNAL(editEnabled()),this,SLOT(slotEdit()));
     connect(txt,SIGNAL(checkingEnabled()),matches,SLOT(slotEnableChecking()));
     connect(watcher,SIGNAL(finished()),this,SLOT(slotDisplay()));
-    connect(matches,SIGNAL(patternWasUnchecked(QString)),this,SIGNAL(statusHighlighting()));
-    connect(matches,SIGNAL(patternWasChecked(QString)),this,SIGNAL(statusHighlighting()));
+
     connect(txt,SIGNAL(checkingEnabled()),this,SIGNAL(statusReady()));
 
     //connect(watcher,SIGNAL(progressValueChanged(int)),this,SLOT(slotProgress(int)));

@@ -13,8 +13,14 @@ MatchesBasicWidget::MatchesBasicWidget(QWidget* parent) : BasicWidget(parent,"С
     big.setHorizontalStretch(5);
     list = new PatternSelectionList(this);
     list->setSizePolicy(big);
+    selectAll = new QPushButton("Выбрать все");
+    deselectAll = new QPushButton("Отменить все");
+    selectAll->setEnabled(false);
+    deselectAll->setEnabled(false);
     line->addWidget(selectPattern);
     line->addWidget(list);
+    line->addWidget(selectAll);
+    line->addWidget(deselectAll);
     table = new MatchesTable(this);
     lay->addLayout(line);
     lay->addWidget(table);
@@ -22,9 +28,12 @@ MatchesBasicWidget::MatchesBasicWidget(QWidget* parent) : BasicWidget(parent,"С
     wrapper->setLayout(lay);
     wrapper->setContentsMargins(10,10,10,10);
     setWidget(wrapper);
-    connect(table,SIGNAL(rowClicked(int,int)),this,SLOT(slotRowClicked(int,int)));
+
+    connect(table,SIGNAL(rowClicked(int,int)),this,SIGNAL(rowClicked(int,int)));
     connect(list,SIGNAL(patternUncheked(QString)),this,SLOT(slotPatternUnchecked(QString)));
     connect(list,SIGNAL(patternChecked(QString)),this,SLOT(slotPatternChecked(QString)));
+    connect(selectAll,SIGNAL(clicked(bool)),this,SLOT(slotSelectAllClicked()));
+    connect(deselectAll,SIGNAL(clicked(bool)),this,SLOT(slotDeselectAllClicked()));
 }
 
 void MatchesBasicWidget::setMatches(QSharedPointer<utility::IntervalViewMap> patterns,const QStringList& names)
@@ -53,8 +62,29 @@ void MatchesBasicWidget::slotChangeTab(int index)
 
 void MatchesBasicWidget::slotEnableChecking()
 {
-    qDebug() << "CALLED";
-    list->setUserCheckable(true);
+    selectAll->setEnabled(true);
+    deselectAll->setEnabled(true);
+    list->slotSetUserCheckable(true);
+}
+
+void MatchesBasicWidget::slotSelectAllClicked()
+{
+    list->slotSelectAll();
+    list->slotSetUserCheckable(false);
+    selectAll->setEnabled(false);
+    deselectAll->setEnabled(false);
+    table->slotShowAll();
+    emit showAll();
+}
+
+void MatchesBasicWidget::slotDeselectAllClicked()
+{
+    list->slotDeselectAll();
+    list->slotSetUserCheckable(false);
+    selectAll->setEnabled(false);
+    deselectAll->setEnabled(false);
+    table->slotHideAll();
+    emit hideAll();
 }
 
 void MatchesBasicWidget::saveMatches(QString filename)
@@ -89,7 +119,7 @@ void MatchesBasicWidget::slotClear()
     list->clearAll();
 }
 
-QDomDocument MatchesBasicWidget::getXml()
+QDomDocument MatchesBasicWidget::getXml() const
 {
     return utility::toXml(table->getCurrentMatches());
 }
@@ -104,21 +134,18 @@ void MatchesBasicWidget::slotCloseTab(int index)
     }
 }
 
-
-
-void MatchesBasicWidget::slotRowClicked(int s, int e)
-{
-    emit rowClicked(s,e);
-}
-
 void MatchesBasicWidget::slotPatternUnchecked(const QString &s)
 {
+    selectAll->setEnabled(false);
+    deselectAll->setEnabled(false);
     table->hidePattern(s);
     emit patternWasUnchecked(s);
 }
 
 void MatchesBasicWidget::slotPatternChecked(const QString &s)
 {
+    selectAll->setEnabled(false);
+    deselectAll->setEnabled(false);
     table->showPattern(s);
     emit patternWasChecked(s);
 }

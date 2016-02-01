@@ -8,7 +8,7 @@ PatternCompiler::MatchRepr PatternCompiler::convertMatch(lspl::text::MatchRef re
     QString text = convertToSystem(ref->getRangeString());
     QString transform;
     QString params;
-    int vars = ref->getVariantCount();
+    uint vars = ref->getVariantCount();
     lspl::text::Match::AttributesMap attrMap = ref->getAttributes();
     for(std::map<lspl::text::attributes::AttributeKey,lspl::text::attributes::AttributeValue>::iterator itr = attrMap.begin();
         itr != attrMap.end();++itr)
@@ -23,7 +23,6 @@ PatternCompiler::MatchRepr PatternCompiler::convertMatch(lspl::text::MatchRef re
             value = otherValue;
         }
         if(!title.isEmpty() && ! value.isEmpty()){
-
             params += title+" : " + value + ", ";
         }
     }
@@ -44,14 +43,7 @@ PatternCompiler::MatchRepr PatternCompiler::convertMatch(lspl::text::MatchRef re
         transform = "";
         break;
     }
-    return {
-         text,
-        params,
-        transform,
-        ref->getRangeStart(),
-        ref->getRangeEnd(),
-        vars
-    };
+    return {text, params, transform, ref->getRangeStart(),ref->getRangeEnd(),vars};
 }
 
 PatternCompiler::PatternCompiler()
@@ -94,7 +86,6 @@ QSharedPointer<PatternViewMap> PatternCompiler::analyzeText(const QStringList &p
 
 QString PatternCompiler::compilePattern(const QString& pattern)
 {
-    //qDebug() << pattern;
     std::cerr<<pattern.toStdString()<<"\n";
     try{
         if(pattern.contains(RIGHT_WITH_PATTERN)){

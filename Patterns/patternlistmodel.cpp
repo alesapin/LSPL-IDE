@@ -6,7 +6,7 @@ PatternListModel::PatternListModel(QObject *parent):QAbstractListModel(parent)
     font.setFamily(font.defaultFamily());
     par = static_cast<QWidget*>(parent);
     metrics = new QFontMetrics(font);
-    connect(this,SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),this,SLOT(slotRowMoved(QModelIndex,int,int,QModelIndex,int)));
+    //connect(this,SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),this,SLOT(slotRowMoved(QModelIndex,int,int,QModelIndex,int)));
     //qRegisterMetaTypeStreamOperators<PatternListModel::ListItem>("PatternListModel::ListItem");
 
 }
@@ -21,13 +21,10 @@ QVariant PatternListModel::data(const QModelIndex &index, int role) const
     if(role == Qt::SizeHintRole){
         QRect r = metrics->boundingRect(current.name+" = "+current.text);
         return QSize(r.width(),r.height());
-
     }
-
-//    if(role==Qt::SizeHintRole){
-//
-//        return QSize(r.width(),r.height());
-//    }
+    if(role==Qt::EditRole){
+        return QVariant::fromValue(current);
+    }
     if(role == Qt::ToolTipRole){
         return current.compilationOutput;
     }
@@ -40,9 +37,29 @@ int PatternListModel::rowCount(const QModelIndex &parent) const
     return rowData.size();
 }
 
+bool PatternListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    switch (role) {
+    case Qt::EditRole:
+    {
+        QPair<QString,QString> splited = utility::splitPattern(value.toString());
+        rowData[index.row()].name = splited.first;
+        rowData[index.row()].text = splited.second;
+        rowData[index.row()].state = UnCompiled;
+        setPatternsUncompiled();
+        return true;
+    }
+        break;
+    default:
+        return QAbstractListModel::setData(index,value,role);
+        break;
+    }
+}
+
 void PatternListModel::addUncompiledPattern(const QString &pattern)
 {
-    QPair<QString,QString> nameBody = splitPattern(pattern);
+
+    QPair<QString,QString> nameBody = utility::splitPattern(pattern);
     if(nameBody.second == "") return;
     ListItem currentItem = {nameBody.first,nameBody.second,UnCompiled,""};
     int i;
@@ -67,7 +84,7 @@ void PatternListModel::addUncompiledPatterns(const QStringList &patterns)
 
 void PatternListModel::updatePattern(const QString &pattern, QString text)
 {
-    QString patternName = splitPattern(pattern).first;
+    QString patternName = utility::splitPattern(pattern).first;
     ListItem current{patternName,"",UnCompiled,""};
     int index = rowData.indexOf(current);
     if(index!=-1){
@@ -136,13 +153,14 @@ bool PatternListModel::insertRows(int row, int count, const QModelIndex &parent)
     for ( int i = row; i < (row + count - 1); i++ )
         rowData.insert(i, ListItem{"","",UnCompiled,""});
     endInsertRows();
+    return true;
 }
 
 Qt::ItemFlags PatternListModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
      if (index.isValid()){
-            return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags/* | Qt::ItemIsEditable*/;
+            return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags | Qt::ItemIsEnabled | Qt::ItemIsEditable;
       }else{
             return Qt::ItemIsDropEnabled | defaultFlags;
      }
@@ -172,18 +190,6 @@ void PatternListModel::swapRows(int first, int second)
     emit dataChanged(createIndex(first,0),createIndex(second,0));
 }
 
-QPair<QString, QString> PatternListModel::splitPattern(const QString &pattern)
-{
-    QStringList listRepr = pattern.split("=");
-    if(!listRepr.isEmpty()){
-        QString name = listRepr[0].simplified();
-        listRepr.pop_front();
-        QString body = listRepr.join("=").simplified();
-        return qMakePair<QString,QString> (name,body);
-    }
-    return qMakePair<QString,QString>("","");
-}
-
 void PatternListModel::setPatternsUncompiled()
 {
     for(int i = 0;i<rowData.size();++i){
@@ -191,10 +197,6 @@ void PatternListModel::setPatternsUncompiled()
     }
 }
 
-void PatternListModel::slotRowMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow)
-{
-    qDebug() << "CALLED";
-}
 
 //QDataStream& operator<<(QDataStream& ostream, const PatternListModel::ListItem& ms)
 //{

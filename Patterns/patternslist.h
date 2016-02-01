@@ -19,19 +19,24 @@ public:
     void clearAll();
     void addPattern(const QString& text);
     void addPatterns(const QStringList& patterns);
-
+protected:
+    void resizeEvent(QResizeEvent *e) Q_DECL_OVERRIDE;
 private:
-    void dragMoveEvent( QDragMoveEvent* pEvent);
-    void dragEnterEvent(QDragEnterEvent* pEvent);
-    void dropEvent( QDropEvent* pEvent);
+    void dragMoveEvent( QDragMoveEvent* pEvent) Q_DECL_OVERRIDE;
+    void dragEnterEvent(QDragEnterEvent* pEvent) Q_DECL_OVERRIDE;
+    void dropEvent( QDropEvent* pEvent) Q_DECL_OVERRIDE;
+
     PatternListModel* myModel;
     PatternCompiler* compiler;
     QAction *removeAction;
     QAction *editAction;
+    PatternItemDelegate* delegate;
+
 public slots:
     void slotCompilePatterns();
     void slotRemovePattern();
     void slotEditPattern();
+    void slotTextEntered();
 signals:
     void editPatternSignal(const QString& text);
 };

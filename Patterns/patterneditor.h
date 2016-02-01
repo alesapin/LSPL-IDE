@@ -19,7 +19,7 @@ public:
     QString getText() const;
     void clean();
 protected:
-    virtual void keyPressEvent(QKeyEvent *e);
+    virtual void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
 public slots:
     void clearAll();
 private:
