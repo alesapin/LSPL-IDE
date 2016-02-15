@@ -64,7 +64,9 @@ QSharedPointer<PatternViewMap> PatternCompiler::analyzeText(const QStringList &p
     PatternViewMap* result = new PatternViewMap;
     for(QString pattern: patternNames){
         PatternType patternType;
-        lspl::patterns::PatternRef pat = ns->getPatternByName(pattern.toStdString());
+        QByteArray p = codec->fromUnicode(pattern);
+        std::string pName(p.data());
+        lspl::patterns::PatternRef pat = ns->getPatternByName(pName);
         QString patSource(pat->getSource().c_str());
         if(patSource.contains(RIGHT_WITH_PATTERN)){
             patternType = RIGHT_PART_PATTERN;
@@ -135,7 +137,7 @@ void PatternCompiler::clear()
 QString PatternCompiler::convertToSystem(const std::string &str)
 {
     QByteArray arr = QByteArray::fromStdString(str);
-    return codec->toUnicode(arr).toLower();
+    return codec->toUnicode(arr);
 
 }
 

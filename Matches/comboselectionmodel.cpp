@@ -41,9 +41,13 @@ QStringList ComboSelectionModel::getUnchekedItems() const
 
 void ComboSelectionModel::checkAll()
 {
+    qDebug() <<"Start checking!\n";
+    blockSignals(true);
     for(int i = 0;i<rowCount();++i){
+        qDebug() << i<<'\n';
         item(i)->setData(Qt::Checked,Qt::CheckStateRole);
     }
+    blockSignals(false);
 }
 
 

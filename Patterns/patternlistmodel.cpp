@@ -62,6 +62,7 @@ void PatternListModel::addUncompiledPattern(const QString &pattern)
     QPair<QString,QString> nameBody = utility::splitPattern(pattern);
     if(nameBody.second == "") return;
     ListItem currentItem = {nameBody.first,nameBody.second,UnCompiled,""};
+    qDebug()<<nameBody.first<<"\n";
     int i;
     if( (i = rowData.indexOf(currentItem)) !=-1 ){
         rowData[i].text = currentItem.text;

@@ -204,10 +204,12 @@ QVariant MatchesTreeModel::getData(TreeItem *it, int column) const
         utility::IntervalMatch m = datum->getEqualInterval(start,end);
         switch(column){
         case INTERVAL_COLUMN:
-            if(m.transforms.size() == 1 ||  pos == -1){
+            if(m.transforms.size() == 1){
+                return QString("[%1] %3").arg(m.patterns[0],m.text);
+            }else if(pos == -1){
                 return QString("[%1-%2] %3").arg(QString::number(start),QString::number(end),m.text);
             }else{
-                return QString("%1").arg(m.patterns[pos]);
+                return QString("[%1]").arg(m.patterns[pos]);
             }
         case TRANSFORM_COLUMN:
             if(pos == -1) return "";

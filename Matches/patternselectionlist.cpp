@@ -1,4 +1,5 @@
 #include "patternselectionlist.h"
+#include <QDebug>
 PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), mDisplayRectDelta(4, 1, -25, 0),currentTab(0)
 {
     labelList.append("");
@@ -28,6 +29,7 @@ QStringList PatternSelectionList::unchekedItems() const
 void PatternSelectionList::checkAll()
 {
     myModel()->checkAll();
+    slotSelectAll();
 }
 
 
@@ -102,15 +104,19 @@ void PatternSelectionList::updateDisplayText()
 
     QFontMetrics fontMetrics(font());
     labelList[currentTab] = myModel()->getCheckedItems().join(", ");
-    if (fontMetrics.size(Qt::TextSingleLine, labelList[currentTab]).width() > textRect.width())
-    {
-        while (labelList[currentTab] != "" && fontMetrics.size(Qt::TextSingleLine, labelList[currentTab] + "...").width() > textRect.width())
-        {
-            labelList[currentTab].remove(labelList[currentTab].length() - 1, 1);
-        }
-
-        labelList[currentTab] += "...";
-    }
+    labelList[currentTab] = fontMetrics.elidedText(labelList[currentTab],Qt::ElideRight,textRect.width());
+//    if (fontMetrics.size(Qt::TextSingleLine, labelList[currentTab]).width() > textRect.width()) {
+//        int width = fontMetrics.size(Qt::TextSingleLine, labelList[currentTab] + "...").width();
+//        while (labelList[currentTab] != "" && width > textRect.width()) {
+//            qDebug() << "Width:"<<width<<"\n";
+//            qDebug() << "Length:"<<labelList[currentTab].length()<<"\n";
+//            labelList[currentTab].chop(labelList[currentTab].length()/2);
+//            int ind = labelList[currentTab].lastIndexOf(' ');
+//            labelList[currentTab].chop(labelList[currentTab].length() - ind);
+//            width = fontMetrics.size(Qt::TextSingleLine, labelList[currentTab] + "...").width();
+//        }
+//        labelList[currentTab] += "...";
+//    }
 }
 
 void PatternSelectionList::paintEvent(QPaintEvent *event)
