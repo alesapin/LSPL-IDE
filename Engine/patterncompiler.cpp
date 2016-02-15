@@ -52,7 +52,7 @@ PatternCompiler::PatternCompiler()
     noRightPartBuilder = new lspl::patterns::PatternBuilder(ns);
     textTransfromBuilder = new lspl::patterns::PatternBuilder(ns, new lspl::transforms::TextTransformBuilder(ns));
     patternTransformBuilder = new lspl::patterns::PatternBuilder(ns, new lspl::transforms::PatternTransformBuilder(ns));
-    codec = QTextCodec::codecForName("Windows-1251");
+    codec = QTextCodec::codecForName("WINDOWS-1251");
 }
 
 QSharedPointer<PatternViewMap> PatternCompiler::analyzeText(const QStringList &patternNames, const QString &text)
@@ -86,34 +86,36 @@ QSharedPointer<PatternViewMap> PatternCompiler::analyzeText(const QStringList &p
 
 QString PatternCompiler::compilePattern(const QString& pattern)
 {
-    std::cerr<<pattern.toStdString()<<"\n";
     try{
+        QByteArray arr = codec->fromUnicode(pattern);
+        std::string res(arr.data());
         if(pattern.contains(RIGHT_WITH_PATTERN)){
-            patternTransformBuilder->build(pattern.toStdString());
+            patternTransformBuilder->build(res);
         }else if (pattern.contains(RIGHT_WITH_TEXT)){
-            textTransfromBuilder->build(pattern.toStdString());
+            textTransfromBuilder->build(res);
         }else{
-            noRightPartBuilder->build(pattern.toStdString());
+            noRightPartBuilder->build(res);
         }
         return "";
     }catch(const lspl::patterns::PatternBuildingException& e){
-        std::cerr << "Catched!\n";
-        return "Something went wrong";
+        return e.what();
     }catch(const std::exception & e){
         std::cerr << "Catched here!\n";
-        return "Something went wrong...";
+        return  e.what();
     }
 }
 
 QString PatternCompiler::compilePatternNoException(const QString &pattern)
 {
+    QByteArray arr = codec->fromUnicode(pattern);
+    std::string res(arr.data());
     lspl::patterns::PatternBuilder::BuildInfo bi;
     if(pattern.contains(RIGHT_WITH_PATTERN)){
-        bi=patternTransformBuilder->buildNoException(pattern.toStdString());
+        bi=patternTransformBuilder->buildNoException(res);
     }else if (pattern.contains(RIGHT_WITH_TEXT)){
-        bi=textTransfromBuilder->buildNoException(pattern.toStdString());
+        bi=textTransfromBuilder->buildNoException(res);
     }else{
-        bi=noRightPartBuilder->buildNoException(pattern.toStdString());
+        bi=noRightPartBuilder->buildNoException(res);
     }
     if(bi.parseLength == -1){
         return QString::fromStdString(bi.errorMsg);

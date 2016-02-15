@@ -6,7 +6,7 @@ PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), m
     setModel(models[currentTab]);
     connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
 #ifndef Q_OS_WIN
-    setStyleSheet("QComboBox { combobox-popup: 1px }");
+//    setStyleSheet("QComboBox { combobox-popup: 1px;    subcontrol-origin: padding; subcontrol-position: top right; }");
 #endif
 }
 

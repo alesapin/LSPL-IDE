@@ -7,23 +7,9 @@
 #include <QDir>
 #include <cstdlib>
 #include "Utils/intervalrbtree.h"
+#include <QStyleFactory>
 int main(int argc, char *argv[])
 {
-//    IntervalRBTree<int> tr;
-//    for(int i = 0;i<100;++i){
-//        tr.addInterval(i*10,i*100,i);
-//    }
-//    qDebug() << tr.size();
-////    for(int i = 0;i<10;++i){
-////        qDebug()<<tr.getEqualInterval(i*10,i*100);
-////    }
-//    QVector<int> r = tr.getAllIntersections(900,1000);
-//    for(int i =0;i<r.size();++i){
-//        qDebug() << r[i];
-//    }
-//    for(IntervalRBTree<int>::iterator it=tr.begin();it!=tr.end();++it){
-//        qDebug()<<it->low;
-//    }
 #ifdef Q_OS_WIN
     QString path = "RML="+QDir::currentPath()+"/aot";
     putenv(path.toStdString().c_str());
@@ -31,7 +17,7 @@ int main(int argc, char *argv[])
     setenv("RML","/usr/share/aot/",1);
 #endif
     QApplication a(argc, argv);
-
+//    QApplication::setStyle(QStyleFactory::create("Windows"));
     QFile file(":/stylesheet/stylesheet.qss");
      if(file.open(QIODevice::ReadOnly | QIODevice::Text))
      {

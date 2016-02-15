@@ -11,7 +11,7 @@ Qt::ItemFlags ComboSelectionModel::flags(const QModelIndex &index) const
         return Qt::ItemIsEnabled |  Qt::ItemIsUserCheckable;
     }
     if(userChekable){
-        return  Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
+        return  Qt::ItemIsUserCheckable | Qt::ItemIsEnabled ;
     }else{
         return  0;
     }
@@ -45,6 +45,7 @@ void ComboSelectionModel::checkAll()
         item(i)->setData(Qt::Checked,Qt::CheckStateRole);
     }
 }
+
 
 void ComboSelectionModel::setChekable(bool val)
 {
