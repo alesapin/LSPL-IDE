@@ -28,7 +28,7 @@ PatternsList::PatternsList(PatternCompiler* compiler,QWidget *parent):QListView(
 QStringList PatternsList::getCompiledPatterns() const
 {
 
-    //qDebug() << myModel->getCompiledPatterns();
+    ////qDebug() << myModel->getCompiledPatterns();
     return myModel->getCompiledPatterns();
 }
 
@@ -84,7 +84,7 @@ void PatternsList::slotCompilePatterns()
     if(!patterns.isEmpty()){
         compiler->clear();
         for(const QString& pattern:patterns){
-            qDebug() <<"pattern: мой"<< pattern<<"\n";
+            //qDebug() <<"pattern: мой"<< pattern<<"\n";
             QString compilationResult = compiler->compilePatternNoException(pattern);
             myModel->updatePattern(pattern,compilationResult);
         }

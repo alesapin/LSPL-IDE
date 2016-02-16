@@ -142,7 +142,7 @@ void TopMenu::exportPatterns()
     QFileDialog dialog(this);
     QString filter = "Pattern Files (*.pat)";
     QString filePath = QFileDialog::getSaveFileName(this, tr("Export pattern"),"", filter, &filter);
-    qDebug() << filePath;
+    //qDebug() << filePath;
     if(!filePath.isEmpty()){
         if(!filePath.endsWith(".pat")){
             filePath = filePath.append(".pat");
@@ -161,7 +161,7 @@ void TopMenu::exportMatches()
 {
     QString filter = "Matches Files (*.xml)";
     QString filePath = QFileDialog::getSaveFileName(this, tr("Export matches"),"", filter, &filter);
-    qDebug() << filePath;
+    //qDebug() << filePath;
     if(!filePath.isEmpty()){
         if(!filePath.endsWith(".xml")){
             filePath = filePath.append(".xml");

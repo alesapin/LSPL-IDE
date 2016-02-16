@@ -88,7 +88,7 @@ void MainTextViewer::parallelHighlightAll()
         }
     }
     emit highlightIt(-1,-1,true);
-    qDebug() << "FINISHED";
+    //qDebug() << "FINISHED";
 }
 
 MainTextViewer::MainTextViewer(QWidget *parent) : QPlainTextEdit(parent),modified(false)
@@ -252,6 +252,6 @@ void MainTextViewer::slotHighlighFragment(int begin, int end,bool select)
 
 //void MainTextViewer::insertFromMimeData(const QMimeData *source)
 //{
-//    //qDebug() << source->data();
+//    ////qDebug() << source->data();
 //}
 

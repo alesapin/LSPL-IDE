@@ -379,7 +379,7 @@ void IntervalRBTree<T>::fixRemove(IntervalRBTree<T>::Pointer x)
 template<typename T>
 void IntervalRBTree<T>::insert(IntervalRBTree<T>::Pointer z)
 {
-    //qDebug() << z->value;
+    ////qDebug() << z->value;
     Pointer y = NIL_NODE;
     Pointer x = root;
     while (x != NIL_NODE){
@@ -511,8 +511,8 @@ void IntervalRBTree<T>::recalcMax(IntervalRBTree<T>::Pointer p)
 template<typename T>
 void IntervalRBTree<T>::findAllIntersection(Pointer rt, int low, int high, QVector<Pointer> *result) const
 {
-//    qDebug() << "Searchin for: [" << low<<"," << high<<"]";
-//    qDebug() << "Current Node:["<<rt->low<<","<<rt->high<<"]";
+//    //qDebug() << "Searchin for: [" << low<<"," << high<<"]";
+//    //qDebug() << "Current Node:["<<rt->low<<","<<rt->high<<"]";
     if(rt == NIL_NODE) return;
 //    if(low > rt->max){
 //        return;

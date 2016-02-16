@@ -16,11 +16,13 @@ LIBS = -llspl -lcharsetdetect
 SOURCES += main.cpp\
         mainwindow.cpp \
     centralwidget.cpp \
-    basicwidget.cpp
+    basicwidget.cpp \
+    proxystyle.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
-    basicwidget.h
+    basicwidget.h \
+    proxystyle.h
 
 include(Text/Text.pri)
 include(Interface/Interface.pri)

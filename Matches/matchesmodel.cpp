@@ -83,7 +83,7 @@ bool MatchesModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(parent);
     int end = row + count;
-    qDebug() << end;
+    //qDebug() << end;
     beginInsertRows(QModelIndex(), row, end-1);
     //datum.resize(datum.size()+end-row);
     endInsertRows();
@@ -95,7 +95,7 @@ bool MatchesModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(parent);
     beginRemoveRows( QModelIndex(), row, row + count - 1);
-    qDebug() <<"COUNT:"<< count;
+    //qDebug() <<"COUNT:"<< count;
     endRemoveRows();
     return true;
 
@@ -221,7 +221,7 @@ void MatchesModel::changeTab(int index)
 
 void MatchesModel::closeTab(int index)
 {
-    qDebug() << "REmove Index: " << index;
+    //qDebug() << "REmove Index: " << index;
     clearTable();
     if(datum.size() <= index) index = datum.size() -1;
     datum.remove(index);

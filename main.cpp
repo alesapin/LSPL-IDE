@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include "Utils/intervalrbtree.h"
 #include <QStyleFactory>
+#include "proxystyle.h"
 int main(int argc, char *argv[])
 {
 #ifdef Q_OS_WIN
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
     setenv("RML","/usr/share/aot/",1);
 #endif
     QApplication a(argc, argv);
+    a.setStyle(new ProxyStyle);
 //    QApplication::setStyle(QStyleFactory::create("Windows"));
     QFile file(":/stylesheet/stylesheet.qss");
      if(file.open(QIODevice::ReadOnly | QIODevice::Text))

@@ -6,9 +6,6 @@ PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), m
     models.append(new ComboSelectionModel());
     setModel(models[currentTab]);
     connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
-#ifndef Q_OS_WIN
-//    setStyleSheet("QComboBox { combobox-popup: 1px;    subcontrol-origin: padding; subcontrol-position: top right; }");
-#endif
 }
 
 PatternSelectionList::~PatternSelectionList()
@@ -108,8 +105,8 @@ void PatternSelectionList::updateDisplayText()
 //    if (fontMetrics.size(Qt::TextSingleLine, labelList[currentTab]).width() > textRect.width()) {
 //        int width = fontMetrics.size(Qt::TextSingleLine, labelList[currentTab] + "...").width();
 //        while (labelList[currentTab] != "" && width > textRect.width()) {
-//            qDebug() << "Width:"<<width<<"\n";
-//            qDebug() << "Length:"<<labelList[currentTab].length()<<"\n";
+//            //qDebug() << "Width:"<<width<<"\n";
+//            //qDebug() << "Length:"<<labelList[currentTab].length()<<"\n";
 //            labelList[currentTab].chop(labelList[currentTab].length()/2);
 //            int ind = labelList[currentTab].lastIndexOf(' ');
 //            labelList[currentTab].chop(labelList[currentTab].length() - ind);

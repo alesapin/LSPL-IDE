@@ -103,6 +103,6 @@ void CentralWidget::slotEdit()
 
 void CentralWidget::slotProgress(int val)
 {
-    qDebug() << "Progress Value:" << val;
+    //qDebug() << "Progress Value:" << val;
 }
 
