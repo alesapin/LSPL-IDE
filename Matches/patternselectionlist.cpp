@@ -6,6 +6,9 @@ PatternSelectionList::PatternSelectionList(QWidget *parent):QComboBox(parent), m
     models.append(new ComboSelectionModel());
     setModel(models[currentTab]);
     connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+#ifndef Q_OS_WIN
+    this->setStyle(QStyleFactory::create("Windows"));
+#endif
 }
 
 PatternSelectionList::~PatternSelectionList()

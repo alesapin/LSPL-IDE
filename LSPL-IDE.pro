@@ -33,6 +33,6 @@ include(Utils/Utils.pri)
 RESOURCES += \
     stylesheet.qrc \
     images.qrc
-win64:RC_ICONS += lsplico.png
-win32:RC_ICONS += lsplico.png
-ICON = lsplico.png
+win64:RC_ICONS += lsplico.ico
+win32:RC_ICONS += lsplico.ico
+ICON = lsplico.ico

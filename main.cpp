@@ -18,8 +18,6 @@ int main(int argc, char *argv[])
     setenv("RML","/usr/share/aot/",1);
 #endif
     QApplication a(argc, argv);
-    a.setStyle(new ProxyStyle);
-//    QApplication::setStyle(QStyleFactory::create("Windows"));
     QFile file(":/stylesheet/stylesheet.qss");
      if(file.open(QIODevice::ReadOnly | QIODevice::Text))
      {

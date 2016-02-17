@@ -6,6 +6,7 @@
 #include <QStandardItem>
 #include <QAbstractItemView>
 #include <QStylePainter>
+#include <QStyleFactory>
 #include "comboselectionmodel.h"
 class PatternSelectionList : public QComboBox
 {
