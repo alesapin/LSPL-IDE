@@ -2,7 +2,7 @@
 #define DELEGATETEXTEDIT_H
 #include <QTextEdit>
 #include "patternhighlighter.h"
-
+#include <QKeyEvent>
 class DelegateTextEdit : public QTextEdit{
     Q_OBJECT
 public:

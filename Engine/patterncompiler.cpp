@@ -136,7 +136,7 @@ void PatternCompiler::clear()
 
 QString PatternCompiler::convertToSystem(const std::string &str)
 {
-    QByteArray arr = QByteArray::fromStdString(str);
+    QByteArray arr(str.c_str(),str.length());
     return codec->toUnicode(arr);
 
 }
