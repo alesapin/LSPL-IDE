@@ -83,6 +83,20 @@ void TopMenu::setMatchesAction()
 
 }
 
+void TopMenu::setSettingsMenu()
+{
+    setSettingsAction();
+    settingsMenu = addMenu("Settings");
+    settingsMenu->addAction(setRMLAct);
+}
+
+void TopMenu::setSettingsAction()
+{
+    setRMLAct = new QAction(tr("Set RML"),this);
+    setRMLAct->setStatusTip(tr("Save matches to file"));
+    connect(setRMLAct,&QAction::triggered,this,&TopMenu::setRml);
+}
+
 void TopMenu::newFile()
 {
     text->newTextFile();
@@ -170,17 +184,34 @@ void TopMenu::exportMatches()
     }
 }
 
+void TopMenu::setRml()
+{
+    QFileDialog dialog(this);
+    QString aotPath = QFileDialog::getExistingDirectory(this,tr("Path to AOT"),QDir::currentPath(),QFileDialog::ShowDirsOnly
+                                                        | QFileDialog::DontResolveSymlinks);
+    if(!aotPath.isEmpty()){
+#ifdef Q_OS_WIN
+        QString path = "RML="+aotPath;
+        putenv(path.toStdString().c_str());
+#else
+        setenv("RML",aotPath.toStdString().c_str(),1);
+#endif
+        comp->clear();
+    }
+}
+
 TopMenu::TopMenu(QWidget* parent,CentralWidget* c):QMenuBar(parent),cent(c)
 {
     text = c->getTextWidget();
     pattern = c->getPatternWidget();
     matches = c->getMatchesWidget();
+    comp = c->getPatternCompiler();
     setDefaultUp(true);
     setNativeMenuBar(true);
     setFileMenu();
     setPatternMenu();
     setMatchesMenu();
-
+    setSettingsMenu();
 
 }
 

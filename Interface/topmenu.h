@@ -5,7 +5,7 @@
 #include <QAction>
 #include <QWidget>
 #include <QFileDialog>
-
+#include <cstdlib>
 #include "mainwindow.h"
 #include "../centralwidget.h"
 #include "Matches/matchesbasicwidget.h"
@@ -18,6 +18,7 @@ class TopMenu : public QMenuBar
     Q_OBJECT
 private:
     QMenu* fileMenu;
+    QMenu* settingsMenu;
     QMenu* patternsMenu;
     QMenu* matchesMenu;
     QMenu* windowMenu;
@@ -31,16 +32,20 @@ private:
     QAction* importPatternsAct;
     QAction* exportPatternsAct;
     QAction* clearPatternsAct;
+    QAction* setRMLAct;
     void setFileMenu();
     void setFileActions();
     void setPatternMenu();
     void setPatternActions();
     void setMatchesMenu();
     void setMatchesAction();
+    void setSettingsMenu();
+    void setSettingsAction();
     TextBasicWidget* text;
     PatternsBasicWidget* pattern;
     MatchesBasicWidget* matches;
     CentralWidget* cent;
+    PatternCompiler* comp;
     QString filename;
 public:
     TopMenu(QWidget* parent = 0,CentralWidget* c=0);
@@ -56,6 +61,8 @@ private slots:
     void clearPatterns();
 
     void exportMatches();
+
+    void setRml();
 };
 
 #endif // TOPMENU_H

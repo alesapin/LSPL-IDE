@@ -1,4 +1,4 @@
-        #-------------------------------------------------
+    #-------------------------------------------------
     #
     # Project created by QtCreator 2015-09-14T13:41:03
     #
@@ -10,7 +10,7 @@
 
     TARGET = LSPL-IDE
     TEMPLATE = app
-    CONFIG += c++11 exceptions
+    CONFIG += c++11 exceptions concurrent
     LIBS = -llspl -lcharsetdetect
 
     SOURCES += main.cpp\

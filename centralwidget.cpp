@@ -65,6 +65,11 @@ MatchesBasicWidget *CentralWidget::getMatchesWidget()
     return matches;
 }
 
+PatternCompiler *CentralWidget::getPatternCompiler()
+{
+    return compiler;
+}
+
 QStringList CentralWidget::getChoosenPatterns()
 {
     return pattern->getChoosenPatterns();

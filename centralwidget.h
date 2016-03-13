@@ -33,6 +33,7 @@ public:
     TextBasicWidget *getTextWidget();
     PatternsBasicWidget *getPatternWidget();
     MatchesBasicWidget *getMatchesWidget();
+    PatternCompiler *getPatternCompiler();
     QStringList getChoosenPatterns();
 private:
     PatternCompiler* compiler;

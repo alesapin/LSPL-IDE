@@ -2,7 +2,6 @@
 #include <QApplication>
 #include <iostream>
 #include <Text/maintextviewer.h>
-#include <cstdlib>
 #include <QtGui>
 #include <QDir>
 #include <cstdlib>

@@ -69,12 +69,10 @@ void PatternListModel::addUncompiledPattern(const QString &pattern)
     QPair<QString,QString> nameBody = utility::splitPattern(pattern);
     if(nameBody.second == "") return;
     ListItem currentItem = {nameBody.first,nameBody.second,UnCompiled,"",false};
-    qDebug()<<nameBody.first<<"\n";
     int i;
     if( (i = rowData.indexOf(currentItem)) !=-1 ){
         rowData[i].text = currentItem.text;
         rowData[i].state = UnCompiled;
-        insertRow(i);
     } else {
         rowData.append(currentItem);
         insertRows(rowData.size(),1,QModelIndex());
@@ -119,7 +117,7 @@ QStringList PatternListModel::getUncompiledPatterns() const
         }
     }else{
         for(int i = 0; i <rowData.size();++i){
-            if(rowData[i].state == UnCompiled){
+            if(rowData[i].state == UnCompiled || rowData[i].state == FailCompiled){
                 result.append(rowData[i].name+"="+rowData[i].text);
             }
         }
