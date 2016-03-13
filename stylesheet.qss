@@ -35,6 +35,11 @@ QToolBar {
     spacing: 3px; /* spacing between items in the tool bar */
     padding: 3px;
 }
+QTableView::item
+{
+  border: 0px;
+  padding: 5px;
+}
 /*QProgressBar {
     border: 1px solid #8b8989;
     border-radius: 4px;

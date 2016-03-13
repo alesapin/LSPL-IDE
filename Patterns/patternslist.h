@@ -10,12 +10,15 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QAction>
-class PatternsList : public QListView
+#include <QHeaderView>
+#include <QTableView>
+class PatternsList : public QTableView
 {
     Q_OBJECT
 public:
     PatternsList(PatternCompiler* compiler,QWidget* parent = 0);
     QStringList getCompiledPatterns() const;
+    QStringList getCompiledPatternsNames() const;
     void clearAll();
     void addPattern(const QString& text);
     void addPatterns(const QStringList& patterns);

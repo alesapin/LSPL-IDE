@@ -68,7 +68,7 @@ private:
     Pointer remove(Pointer z);
     Pointer intervalSearch(int i,int j, Pointer r) const;
     static Pointer treeSuccessor(Pointer x);
-    Pointer findEqual(int low,int high) const;
+    Pointer findEqual(int low, int high, Pointer x) const;
     void clearTree(Pointer r);
     Pointer initTree(Pointer myParent,Pointer myRoot,Pointer otherRoot);
     int maximum( int a, int b ) { return a>b ? a : b ; }
@@ -160,7 +160,7 @@ T& IntervalRBTree<T>::getFirstIntersection(int point) const  throw(IntervalNotFo
 template <typename T>
 T& IntervalRBTree<T>::getEqualInterval(int low, int high) const throw(IntervalNotFoundException)
 {
-    Pointer x = findEqual(low,high);
+    Pointer x = findEqual(low,high,root);
     if(x == NIL_NODE) throw IntervalNotFoundException(low,high);
     return x->value;
 }
@@ -179,7 +179,7 @@ QVector<T> IntervalRBTree<T>::getAllIntersections(int low, int high) const
 template <typename T>
 bool IntervalRBTree<T>::addInterval(int low, int high, const T &value)
 {
-    Pointer current = findEqual(low,high);
+    Pointer current = findEqual(low,high,root);
     if(current != NIL_NODE){
         current->value = value;
         return true;
@@ -197,7 +197,7 @@ template <typename T>
 bool IntervalRBTree<T>::erase(int low, int high)
 {
     Pointer current;
-    if((current = findEqual(low,high))!= NIL_NODE){
+    if((current = findEqual(low,high,root))!= NIL_NODE){
         remove(current);
         --_size;
         return true;
@@ -225,7 +225,7 @@ bool IntervalRBTree<T>::containsIntersection(int low, int high) const
 template <typename T>
 bool IntervalRBTree<T>::containsEqualInterval(int low, int high) const
 {
-    return findEqual(low,high) != NIL_NODE;
+    return findEqual(low,high,root) != NIL_NODE;
 }
 template <typename T>
 unsigned IntervalRBTree<T>::size() const
@@ -454,18 +454,26 @@ typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::treeSuccessor(IntervalRBT
     return y;
 }
 template<typename T>
-typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::findEqual(int low, int high) const
+typename IntervalRBTree<T>::Pointer IntervalRBTree<T>::findEqual(int low, int high, Pointer x) const
 {
-    Pointer x = root;
     while(x != NIL_NODE && (x->low != low || x->high != high)){
-        if(x->left != NIL_NODE && x->low > low){
+        if(x->low > low){
             x = x->left;
-        }else{
-            x= x->right;
+        }else if(x->low < low){
+            x = x->right;
+        } else {
+            Pointer l = findEqual(low,high,x->left);
+            if(l == NIL_NODE){
+                return findEqual(low,high,x->right);
+            }else{
+                return l;
+            }
         }
     }
     return x;
 }
+
+
 template<typename T>
 void IntervalRBTree<T>::clearTree(IntervalRBTree<T>::Pointer r)
 {

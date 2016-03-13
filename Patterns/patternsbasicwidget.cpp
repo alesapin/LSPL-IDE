@@ -41,7 +41,7 @@ PatternsBasicWidget::PatternsBasicWidget(PatternCompiler* compiler,QWidget *pare
 
 QStringList PatternsBasicWidget::getChoosenPatterns() const
 {
-    return list->getCompiledPatterns();
+    return list->getCompiledPatternsNames();
 }
 
 

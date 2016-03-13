@@ -6,6 +6,9 @@
 #include "patternhighlighter.h"
 #include "delegatetextedit.h"
 #include <QPainter>
+#include <QItemDelegate>
+#include <QStyle>
+#include <QApplication>
 #include <QVariant>
 #include <QTextEdit>
 class PatternItemDelegate : public QStyledItemDelegate

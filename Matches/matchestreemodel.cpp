@@ -174,25 +174,29 @@ QSharedPointer<utility::IntervalViewMap> MatchesTreeModel::getMatches() const
 
 QString MatchesTreeModel::getToolTipText(int start, int end, int pos) const
 {
-    utility::IntervalMatch m = datum->getEqualInterval(start,end);
-    QString patterns,transform,params;
-    if(pos == -1){
-        patterns = "[";
-        int i;
-        for(i = 0; i<m.patterns.size()-1;++i){
-            patterns += m.patterns[i] +", ";
+    try{
+        utility::IntervalMatch m = datum->getEqualInterval(start,end);
+        QString patterns,transform,params;
+        if(pos == -1){
+            patterns = "[";
+            int i;
+            for(i = 0; i<m.patterns.size()-1;++i){
+                patterns += m.patterns[i] +", ";
+            }
+            patterns += m.patterns[i]+"]";
+        }else{
+            patterns = m.patterns[pos];
+            if(!m.transforms[pos].isEmpty()){
+                transform = TOOLTIP_TRANSFORM_PATTERN.arg(m.transforms[pos]);
+            }
+            if(!m.params[pos].isEmpty()){
+                params = TOOLTIP_PARAMS_PATTERN.arg(m.params[pos]);
+            }
         }
-        patterns += m.patterns[i]+"]";
-    }else{
-        patterns = m.patterns[pos];
-        if(!m.transforms[pos].isEmpty()){
-            transform = TOOLTIP_TRANSFORM_PATTERN.arg(m.transforms[pos]);
-        }
-        if(!m.params[pos].isEmpty()){
-            params = TOOLTIP_PARAMS_PATTERN.arg(m.params[pos]);
-        }
+        return TOOLTIP_BASIC_PATTERN.arg(patterns,QString::number(start),QString::number(end),m.text,transform,params);
+    } catch (IntervalNotFoundException e){
+        return "";
     }
-    return TOOLTIP_BASIC_PATTERN.arg(patterns,QString::number(start),QString::number(end),m.text,transform,params);
 }
 
 QVariant MatchesTreeModel::getData(TreeItem *it, int column) const
@@ -202,6 +206,7 @@ QVariant MatchesTreeModel::getData(TreeItem *it, int column) const
     int pos = it->getMatchNumber();
     try {
         utility::IntervalMatch m = datum->getEqualInterval(start,end);
+
         switch(column){
         case INTERVAL_COLUMN:
             if(m.transforms.size() == 1){

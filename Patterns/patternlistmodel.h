@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <QMimeData>
 #include "Utils/util.hpp"
-class PatternListModel : public QAbstractListModel
+class PatternListModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
@@ -19,13 +19,15 @@ public:
     enum CompilationState{
        Compiled,UnCompiled,FailCompiled
     };
-
+    static const int CHECK_COLUMN = 0;
+    static const int DATA_COLUMN = 1;
 
     struct ListItem{
         QString name;
         QString text;
         CompilationState state;
         QString compilationOutput;
+        bool checked;
         bool operator==(const ListItem& o) const{
             return name == o.name;
         }
@@ -34,12 +36,14 @@ public:
     PatternListModel(QObject* parent=0);
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex &parent) const Q_DECL_OVERRIDE;
+    int columnCount(const QModelIndex &parent) const Q_DECL_OVERRIDE;
     bool setData(const QModelIndex &index, const QVariant &value, int role) Q_DECL_OVERRIDE;
     void addUncompiledPattern(const QString& pattern);
     void addUncompiledPatterns(const QStringList& patterns);
     void updatePattern(const QString& patternName, QString text);
     QStringList getUncompiledPatterns() const;
     QStringList getCompiledPatterns() const;
+    QStringList getCompiledPatternsNames() const;
     void clearAll();
     bool removeRows(int row, int count, const QModelIndex &parent) Q_DECL_OVERRIDE;
     bool insertRows(int row, int count, const QModelIndex &parent) Q_DECL_OVERRIDE;

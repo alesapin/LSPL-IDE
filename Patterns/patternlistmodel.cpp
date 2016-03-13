@@ -1,34 +1,39 @@
 #include "patternlistmodel.h"
 #include <QDebug>
-PatternListModel::PatternListModel(QObject *parent):QAbstractListModel(parent)
+PatternListModel::PatternListModel(QObject *parent):QAbstractTableModel(parent)
 {
     QFont font;
     font.setFamily(font.defaultFamily());
     par = static_cast<QWidget*>(parent);
     metrics = new QFontMetrics(font);
-    //connect(this,SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),this,SLOT(slotRowMoved(QModelIndex,int,int,QModelIndex,int)));
-    //qRegisterMetaTypeStreamOperators<PatternListModel::ListItem>("PatternListModel::ListItem");
-
 }
 
 QVariant PatternListModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
+    int col = index.column();
     ListItem current = rowData[row];
-    if(role == Qt::DisplayRole){
-        return QVariant::fromValue(current);
-    }
-    if(role == Qt::SizeHintRole){
-        QRect r = metrics->boundingRect(current.name+" = "+current.text);
-        return QSize(r.width(),r.height());
-    }
-    if(role==Qt::EditRole){
-        return QVariant::fromValue(current);
-    }
-    if(role == Qt::ToolTipRole){
-        return current.compilationOutput;
+    if(col == DATA_COLUMN){
+        if(role == Qt::DisplayRole){
+            return QVariant::fromValue(current);
+        }
+        if(role == Qt::SizeHintRole){
+            QRect r = metrics->boundingRect(current.name+" = "+current.text);
+            return QSize(r.width(),r.height());
+        }
+        if(role==Qt::EditRole){
+            return QVariant::fromValue(current);
+        }
+        if(role == Qt::ToolTipRole){
+            return current.compilationOutput;
+        }
+    }else{
+        if(role == Qt::CheckStateRole){
+           return current.checked?Qt::Checked:Qt::Unchecked;
+        }
     }
     return QVariant();
+
 }
 
 int PatternListModel::rowCount(const QModelIndex &parent) const
@@ -39,21 +44,23 @@ int PatternListModel::rowCount(const QModelIndex &parent) const
 
 bool PatternListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    switch (role) {
-    case Qt::EditRole:
-    {
-        QPair<QString,QString> splited = utility::splitPattern(value.toString());
-        rowData[index.row()].name = splited.first;
-        rowData[index.row()].text = splited.second;
-        rowData[index.row()].state = UnCompiled;
-        setPatternsUncompiled();
-        return true;
+    int col = index.column();
+    if(col == DATA_COLUMN) {
+        if (role == Qt::EditRole){
+            QPair<QString,QString> splited = utility::splitPattern(value.toString());
+            rowData[index.row()].name = splited.first;
+            rowData[index.row()].text = splited.second;
+            rowData[index.row()].state = UnCompiled;
+            setPatternsUncompiled();
+            return true;
+        }
+    }else{
+        if(role == Qt::CheckStateRole){
+            rowData[index.row()].checked = !rowData[index.row()].checked;
+            return true;
+        }
     }
-        break;
-    default:
-        return QAbstractListModel::setData(index,value,role);
-        break;
-    }
+   return QAbstractTableModel::setData(index,value,role);
 }
 
 void PatternListModel::addUncompiledPattern(const QString &pattern)
@@ -61,7 +68,7 @@ void PatternListModel::addUncompiledPattern(const QString &pattern)
 
     QPair<QString,QString> nameBody = utility::splitPattern(pattern);
     if(nameBody.second == "") return;
-    ListItem currentItem = {nameBody.first,nameBody.second,UnCompiled,""};
+    ListItem currentItem = {nameBody.first,nameBody.second,UnCompiled,"",false};
     qDebug()<<nameBody.first<<"\n";
     int i;
     if( (i = rowData.indexOf(currentItem)) !=-1 ){
@@ -86,7 +93,7 @@ void PatternListModel::addUncompiledPatterns(const QStringList &patterns)
 void PatternListModel::updatePattern(const QString &pattern, QString text)
 {
     QString patternName = utility::splitPattern(pattern).first;
-    ListItem current{patternName,"",UnCompiled,""};
+    ListItem current{patternName,"",UnCompiled,"",false};
     int index = rowData.indexOf(current);
     if(index!=-1){
         if(!text.isEmpty()){
@@ -94,6 +101,7 @@ void PatternListModel::updatePattern(const QString &pattern, QString text)
             rowData[index].compilationOutput = text;
         }else{
             rowData[index].state = Compiled;
+            rowData[index].checked = true;
             rowData[index].compilationOutput = "Compilation Succesfull!";
         }
     }
@@ -124,12 +132,23 @@ QStringList PatternListModel::getCompiledPatterns() const
 {
     QStringList result;
     for(int i = 0; i <rowData.size();++i){
-        if(rowData[i].state == Compiled){
-            result.append(rowData[i].name);
+        if(rowData[i].state == Compiled && rowData[i].checked){
+            result.append(rowData[i].name + " = " + rowData[i].text);
         }
     }
     return result;
 
+}
+
+QStringList PatternListModel::getCompiledPatternsNames() const
+{
+    QStringList result;
+    for(int i = 0; i <rowData.size();++i){
+        if(rowData[i].state == Compiled && rowData[i].checked){
+            result.append(rowData[i].name);
+        }
+    }
+    return result;
 }
 
 void PatternListModel::clearAll()
@@ -152,16 +171,16 @@ bool PatternListModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     beginInsertRows(parent, row, row + count - 1);
     for ( int i = row; i < (row + count - 1); i++ )
-        rowData.insert(i, ListItem{"","",UnCompiled,""});
+        rowData.insert(i, ListItem{"","",UnCompiled,"",false});
     endInsertRows();
     return true;
 }
 
 Qt::ItemFlags PatternListModel::flags(const QModelIndex &index) const
 {
-    Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
+    Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);
      if (index.isValid()){
-            return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+            return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled  | Qt::ItemIsSelectable |  Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
       }else{
             return Qt::ItemIsDropEnabled | defaultFlags;
      }
@@ -196,6 +215,9 @@ void PatternListModel::setPatternsUncompiled()
     for(int i = 0;i<rowData.size();++i){
         rowData[i].state = UnCompiled;
     }
+}
+int PatternListModel::columnCount(const QModelIndex &parent) const {
+    return 2;
 }
 
 

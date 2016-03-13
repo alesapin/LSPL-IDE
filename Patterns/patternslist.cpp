@@ -1,25 +1,31 @@
 #include "patternslist.h"
 #include <QDebug>
-PatternsList::PatternsList(PatternCompiler* compiler,QWidget *parent):QListView(parent),compiler(compiler)
+PatternsList::PatternsList(PatternCompiler* compiler,QWidget *parent):QTableView(parent),compiler(compiler)
 {
     myModel = new PatternListModel(this);
     delegate = new PatternItemDelegate(this);
     setModel(myModel);
-    setSizeAdjustPolicy(QListView::AdjustToContents);
     setItemDelegate(delegate);
-    setUniformItemSizes(false);
-    setSelectionMode(QListView::SingleSelection);
+//    setUniformItemSizes(false);
+    setSelectionMode(QTableView::SingleSelection);
+    setSelectionBehavior(QTableView::SelectRows);
     setDragEnabled(true);
     setAcceptDrops(true);
-    setDragDropMode(QListView::InternalMove);
+    setDragDropMode(QAbstractItemView::InternalMove);
     setDropIndicatorShown(true);
     setDragDropOverwriteMode(true);
-    setResizeMode(QListView::Adjust);
+//    setResizeMode(QListView::Adjust);
     setContextMenuPolicy(Qt::ActionsContextMenu);
     removeAction = new QAction("Удалить",this);
     editAction = new QAction("Изменить", this);
+    this->horizontalHeader()->setStretchLastSection(true);
+    this->verticalHeader()->hide();
+    this->horizontalHeader()->hide();
+    this->setColumnWidth(PatternListModel::CHECK_COLUMN,10);
     addAction(removeAction);
     addAction(editAction);
+    this->resizeColumnsToContents();
+    this->resizeRowsToContents();
     connect(removeAction,SIGNAL(triggered()),this,SLOT(slotRemovePattern()));
     connect(editAction,SIGNAL(triggered()),this,SLOT(slotEditPattern()));
     connect(delegate,SIGNAL(textUpdated()),this,SLOT(slotTextEntered()));
@@ -27,9 +33,12 @@ PatternsList::PatternsList(PatternCompiler* compiler,QWidget *parent):QListView(
 
 QStringList PatternsList::getCompiledPatterns() const
 {
-
-    ////qDebug() << myModel->getCompiledPatterns();
     return myModel->getCompiledPatterns();
+}
+
+QStringList PatternsList::getCompiledPatternsNames() const
+{
+    return myModel->getCompiledPatternsNames();
 }
 
 void PatternsList::clearAll()
@@ -40,6 +49,7 @@ void PatternsList::clearAll()
 void PatternsList::addPattern(const QString &text)
 {
     myModel->addUncompiledPattern(text);
+    resizeRowsToContents();
 }
 
 void PatternsList::addPatterns(const QStringList &patterns)
@@ -51,10 +61,9 @@ void PatternsList::addPatterns(const QStringList &patterns)
 
 void PatternsList::resizeEvent(QResizeEvent *e)
 {
-    if(e->size().width() == e->oldSize().width()){
-        //Тут был грязный хак.
-    }
-    QListView::resizeEvent(e);
+    this->setColumnWidth(PatternListModel::CHECK_COLUMN,30);
+    resizeRowsToContents();
+    QTableView::resizeEvent(e);
 }
 
 void PatternsList::dragMoveEvent(QDragMoveEvent *pEvent)
@@ -84,11 +93,11 @@ void PatternsList::slotCompilePatterns()
     if(!patterns.isEmpty()){
         compiler->clear();
         for(const QString& pattern:patterns){
-            //qDebug() <<"pattern: мой"<< pattern<<"\n";
             QString compilationResult = compiler->compilePatternNoException(pattern);
             myModel->updatePattern(pattern,compilationResult);
         }
     }
+    this->viewport()->repaint();
 }
 
 void PatternsList::slotRemovePattern()
