@@ -4,16 +4,20 @@
 #include <QObject>
 #include <QWidget>
 #include <QTabWidget>
-#include <Text/maintextviewer.h>
+#include <Text/matchtextviewer.h>
 #include <QList>
 #include <QMessageBox>
 #include "Text/textbasicwidget.h"
 #include <Engine/patterncompiler.h>
 #include <QMap>
+#include "Text/morphologyviewer.h"
+
 class TextBasicWidget;
 class TextTabEdit : public QTabWidget
 {
     Q_OBJECT
+private:
+    MatchTextViewer *getCurrentWidget() const;
 public:
     TextTabEdit(QWidget* parent = 0);
     QString addAnotherTab(const QString& filename,const QString& text);
@@ -29,6 +33,7 @@ public:
     void setReadOnly(bool f);
     void dehighlightAll();
     void highlightAll();
+
 signals:
     /**
      * @brief tabWasClosed

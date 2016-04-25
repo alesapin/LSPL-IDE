@@ -1,6 +1,9 @@
 #include "util.hpp"
 namespace utility {
 
+QTextCodec* CP_CODEC = QTextCodec::codecForName("WINDOWS-1251");
+
+
 QSharedPointer<IntervalViewMap> convertMatchesToIntervals(const PatternViewMap& m){
     IntervalViewMap *intervalMatches = new IntervalViewMap();
     for(auto it = m.begin();it!=m.end();++it){
@@ -135,6 +138,18 @@ QPair<QString, QString> splitPattern(const QString &pattern)
     }
     return qMakePair<QString,QString>("","");
 
+}
+
+QString convertToUnicode(const std::string &cpString)
+{
+    QByteArray arr(cpString.c_str(),cpString.length());
+    return CP_CODEC->toUnicode(arr);
+}
+
+std::string covertToWinCp(const QString &str)
+{
+    QByteArray arr = CP_CODEC->fromUnicode(str);
+    return std::string(arr.data());
 }
 
 }

@@ -1,11 +1,13 @@
 HEADERS += \
-    $$PWD/maintextviewer.h \
     $$PWD/texttabedit.h \
     $$PWD/textbasicwidget.h \
-    $$PWD/statisticswindow.h
+    $$PWD/statisticswindow.h \
+    $$PWD/morphologyviewer.h \
+    $$PWD/matchtextviewer.h
 
 SOURCES += \
-    $$PWD/maintextviewer.cpp \
     $$PWD/texttabedit.cpp \
     $$PWD/textbasicwidget.cpp \
-    $$PWD/statisticswindow.cpp
+    $$PWD/statisticswindow.cpp \
+    $$PWD/morphologyviewer.cpp \
+    $$PWD/matchtextviewer.cpp

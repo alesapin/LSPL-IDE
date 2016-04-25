@@ -1,5 +1,11 @@
 #include "texttabedit.h"
 #include <QDebug>
+MatchTextViewer *TextTabEdit::getCurrentWidget() const
+{
+    QTabWidget* currentTab =  static_cast<QTabWidget*>(this->currentWidget());
+    return static_cast<MatchTextViewer*>(currentTab->widget(0));
+}
+
 TextTabEdit::TextTabEdit(QWidget* parent):QTabWidget(parent)
 {
     par = static_cast<TextBasicWidget*>(parent);
@@ -12,10 +18,17 @@ TextTabEdit::TextTabEdit(QWidget* parent):QTabWidget(parent)
 QString TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
 {
     QString name = filename.split("/").last();
-    MainTextViewer* current = new MainTextViewer();
+    QTabWidget* viewerTab = new QTabWidget(this);
+
+    MatchTextViewer* current = new MatchTextViewer(viewerTab);
+    MorphologyViewer* currentMorph = new MorphologyViewer(viewerTab);
+    viewerTab->setTabPosition(QTabWidget::South);
+    viewerTab->addTab(current,"Text");
+    viewerTab->addTab(currentMorph,"Morphology");
     fileNamePath[name] = filename;
     current->setPlainText(text);
-    addTab(current,name);
+    currentMorph->setPlainText(text);
+    addTab(viewerTab,name);
     setCurrentWidget(current);
     connect(current,SIGNAL(jobDone()),this,SIGNAL(checkingEnabled()));
     return name;
@@ -23,7 +36,7 @@ QString TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
 
 QString TextTabEdit::getCurrentText() const
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     if(current){
         return current->toPlainText();
     } else {
@@ -39,7 +52,7 @@ QString TextTabEdit::getCurrentFile() const
 
 QString TextTabEdit::getIndexText(int index) const
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));
+    MatchTextViewer* current = getCurrentWidget();
     if (current) {
         return current->toPlainText();
     }
@@ -48,7 +61,7 @@ QString TextTabEdit::getIndexText(int index) const
 
 void TextTabEdit::highLightPatterns(const QStringList &patterns)
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     if(current){
         current->highlightPatterns(patterns);
     }
@@ -56,7 +69,7 @@ void TextTabEdit::highLightPatterns(const QStringList &patterns)
 
 void TextTabEdit::deHighlightPattern(const QString &pattern)
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     if(current){
         current->dehighlightPattern(pattern);
     }
@@ -65,7 +78,7 @@ void TextTabEdit::deHighlightPattern(const QString &pattern)
 
 void TextTabEdit::setMatches(QSharedPointer<utility::IntervalViewMap> m)
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     if(current){
         current->setMatches(m);
     }
@@ -73,7 +86,7 @@ void TextTabEdit::setMatches(QSharedPointer<utility::IntervalViewMap> m)
 
 QSharedPointer<utility::IntervalViewMap> TextTabEdit::getMatches() const
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     if(current){
         return current->getMatches();
     }
@@ -82,7 +95,7 @@ QSharedPointer<utility::IntervalViewMap> TextTabEdit::getMatches() const
 
 void TextTabEdit::selectText(int start, int end)
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     if(current){
         current->selectText(start,end);
     }
@@ -90,7 +103,7 @@ void TextTabEdit::selectText(int start, int end)
 
 void TextTabEdit::clearSelection()
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     if(current){
         current->stopCalcing();
         current->dehighlightAll();
@@ -99,7 +112,7 @@ void TextTabEdit::clearSelection()
 
 void TextTabEdit::setReadOnly(bool f)
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     if(current){
         if(f){
             current->setStyleSheet("QPlainTextEdit {background-color: rgb(0, 255, 0,20%)}");
@@ -113,19 +126,19 @@ void TextTabEdit::setReadOnly(bool f)
 
 void TextTabEdit::dehighlightAll()
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     current->dehighlightAll();
 }
 
 void TextTabEdit::highlightAll()
 {
-    MainTextViewer* current = static_cast<MainTextViewer*>(this->currentWidget());
+    MatchTextViewer* current = getCurrentWidget();
     current->highlightAll();
 }
 
 void TextTabEdit::slotCloseTab(int index)
 {
-        MainTextViewer* current = static_cast<MainTextViewer*>(this->widget(index));
+        MatchTextViewer* current = getCurrentWidget();
         if(current->isModified()){
             QString name = tabText(index);
             if(par->maybeSave(name,index)){

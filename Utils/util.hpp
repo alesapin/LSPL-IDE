@@ -10,13 +10,14 @@
 #include <charsetdetect.h>
 #include <QFile>
 namespace utility{
+
+    extern QTextCodec* CP_CODEC;
     struct IntervalMatch{
         QString text;
         QVector<QString> patterns;
         QVector<QString> transforms;
         QVector<QString> params;
         QVector<int> variants;
-
     };
     QPair<QString, QString> splitPattern(const QString &pattern);
     typedef IntervalRBTree<IntervalMatch> IntervalViewMap;
@@ -24,6 +25,8 @@ namespace utility{
     QDomDocument toXml(QSharedPointer<IntervalViewMap> matches);
     QSharedPointer<IntervalViewMap> convertMatchesToIntervals(const PatternViewMap& m);
     const char *codecNameForText(QFile& arr);
+    QString convertToUnicode(const std::string& cpString);
+    std::string covertToWinCp(const QString& str);
 }
 #endif // UTIL_HPP
 
