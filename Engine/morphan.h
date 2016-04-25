@@ -19,8 +19,10 @@ class MorphAn
 {
 private:
     QSharedPointer<lspl::morphology::AotMorphology> morph;
+    WordForm convertWordForm(const lspl::morphology::WordForm& result) const;
+
 public:
-    QString getSpeechPart(const QString& word);
+    QVector<WordForm> getWordInfo(const QString& word) const;
     MorphAn();
 };
 
