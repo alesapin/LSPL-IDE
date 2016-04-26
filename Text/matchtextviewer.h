@@ -19,7 +19,7 @@
 #include <QThread>
 #include <QtConcurrent/QtConcurrent>
 #include <QFutureWatcher>
-class MainTextViewer : public QPlainTextEdit
+class MatchTextViewer : public QPlainTextEdit
 {
     Q_OBJECT
 private:
@@ -38,7 +38,7 @@ private:
     QString getToolTip(int start,int end) const;
 
 public:
-    explicit MainTextViewer(QWidget *parent = 0);
+    explicit MatchTextViewer(QWidget *parent = 0);
     bool isModified();
     void dehighlightAll();
     void setMatches(QSharedPointer<utility::IntervalViewMap> m);

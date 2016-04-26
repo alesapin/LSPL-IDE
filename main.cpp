@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <iostream>
-#include <Text/maintextviewer.h>
+#include <Text/matchtextviewer.h>
 #include <QtGui>
 #include <QDir>
 #include <cstdlib>

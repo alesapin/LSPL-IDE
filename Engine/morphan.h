@@ -10,9 +10,9 @@
 #include <QSharedPointer>
 #include <boost/ptr_container/ptr_vector.hpp>
 struct WordForm {
-    QString form;
     QString nf;
-    QVector<QString> attributes;
+    QString speechPart;
+    QVector<QVector<QString>> attributeSets;
 };
 
 class MorphAn

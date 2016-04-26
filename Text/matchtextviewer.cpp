@@ -1,7 +1,7 @@
-#include "maintextviewer.h"
+#include "matchtextviewer.h"
 #include <QDebug>
 
-QString MainTextViewer::getToolTip(int start, int end) const
+QString MatchTextViewer::getToolTip(int start, int end) const
 {
     QVector<utility::IntervalMatch> mInterval = intervalMatches->getAllIntersections(start,end);
     QString result = "";
@@ -17,7 +17,7 @@ QString MainTextViewer::getToolTip(int start, int end) const
     return result;
 }
 
-void MainTextViewer::parallelHighlightPatterns()
+void MatchTextViewer::parallelHighlightPatterns()
 {
     int i = 0;
     for(utility::IntervalViewMap::iterator it = intervalMatches->begin();it!=intervalMatches->end();++it){
@@ -40,7 +40,7 @@ void MainTextViewer::parallelHighlightPatterns()
     emit highlightIt(-1,-1,true);
 }
 
-void MainTextViewer::parallelDehighlightPattern()
+void MatchTextViewer::parallelDehighlightPattern()
 {
     int prevHigh=0;
     int i = 0;
@@ -72,7 +72,7 @@ void MainTextViewer::parallelDehighlightPattern()
     emit highlightIt(-1,-1,true);
 }
 
-void MainTextViewer::parallelHighlightAll()
+void MatchTextViewer::parallelHighlightAll()
 {
     int i = 0;
     for(utility::IntervalViewMap::iterator it = intervalMatches->begin();it!=intervalMatches->end();++it){
@@ -91,7 +91,7 @@ void MainTextViewer::parallelHighlightAll()
     //qDebug() << "FINISHED";
 }
 
-MainTextViewer::MainTextViewer(QWidget *parent) : QPlainTextEdit(parent),modified(false)
+MatchTextViewer::MatchTextViewer(QWidget *parent) : QPlainTextEdit(parent),modified(false)
 {
     selectionCursor = new QTextCursor(this->document());
     intervalMatches = QSharedPointer<utility::IntervalViewMap>(new utility::IntervalViewMap());
@@ -102,20 +102,20 @@ MainTextViewer::MainTextViewer(QWidget *parent) : QPlainTextEdit(parent),modifie
     connect(watcher,SIGNAL(finished()),this,SIGNAL(jobDone()));
 }
 
-bool MainTextViewer::isModified()
+bool MatchTextViewer::isModified()
 {
     return modified>1;
 }
 
 
-void MainTextViewer::dehighlightAll()
+void MatchTextViewer::dehighlightAll()
 {
     setExtraSelections(QList<QTextEdit::ExtraSelection>());
     emit jobDone();
 }
 
 
-void MainTextViewer::setMatches(QSharedPointer<utility::IntervalViewMap> m)
+void MatchTextViewer::setMatches(QSharedPointer<utility::IntervalViewMap> m)
 {
     offPatterns.clear();
     dehighlightAll();
@@ -123,12 +123,12 @@ void MainTextViewer::setMatches(QSharedPointer<utility::IntervalViewMap> m)
     highlightAll();
 }
 
-QSharedPointer<utility::IntervalViewMap> MainTextViewer::getMatches() const
+QSharedPointer<utility::IntervalViewMap> MatchTextViewer::getMatches() const
 {
     return intervalMatches;
 }
 
-void MainTextViewer::highlightPatterns(const QStringList &patternNames)
+void MatchTextViewer::highlightPatterns(const QStringList &patternNames)
 {
     for(const QString& patrn : patternNames){
         offPatterns.remove(patrn);
@@ -141,7 +141,7 @@ void MainTextViewer::highlightPatterns(const QStringList &patternNames)
     }
 }
 
-void MainTextViewer::highlightAll()
+void MatchTextViewer::highlightAll()
 {
     if(!watcher->isRunning()){
         slotHighlightAll();
@@ -151,7 +151,7 @@ void MainTextViewer::highlightAll()
 }
 
 
-void MainTextViewer::dehighlightPattern(const QString &pattern)
+void MatchTextViewer::dehighlightPattern(const QString &pattern)
 {
     highlightedPatterns.remove(pattern);
     if(!offPatterns.contains(pattern)){
@@ -165,7 +165,7 @@ void MainTextViewer::dehighlightPattern(const QString &pattern)
 }
 
 
-void MainTextViewer::selectText(int begin, int end)
+void MatchTextViewer::selectText(int begin, int end)
 {
     QTextCursor crs = this->textCursor();
     crs.setPosition(begin);
@@ -174,12 +174,12 @@ void MainTextViewer::selectText(int begin, int end)
 
 }
 
-void MainTextViewer::stopCalcing()
+void MatchTextViewer::stopCalcing()
 {
     watcher->cancel();
 }
 
-bool MainTextViewer::event(QEvent *e)
+bool MatchTextViewer::event(QEvent *e)
 {
     if (e->type() == QEvent::ToolTip){
             QHelpEvent* helpEvent = static_cast<QHelpEvent*>(e);
@@ -195,35 +195,35 @@ bool MainTextViewer::event(QEvent *e)
     return QPlainTextEdit::event(e);
 }
 
-void MainTextViewer::slotHighlightPatterns()
+void MatchTextViewer::slotHighlightPatterns()
 {
     disconnect(watcher,SIGNAL(finished()),this,SLOT(slotHighlightPatterns()));
-    QFuture<void> f = QtConcurrent::run(this,&MainTextViewer::parallelHighlightPatterns);
+    QFuture<void> f = QtConcurrent::run(this,&MatchTextViewer::parallelHighlightPatterns);
     watcher->setFuture(f);
 }
 
-void MainTextViewer::slotDehighlightPattern()
+void MatchTextViewer::slotDehighlightPattern()
 {
     disconnect(watcher,SIGNAL(finished()),this,SLOT(slotDehighlightPattern()));
-    QFuture<void> f = QtConcurrent::run(this,&MainTextViewer::parallelDehighlightPattern);
+    QFuture<void> f = QtConcurrent::run(this,&MatchTextViewer::parallelDehighlightPattern);
     watcher->setFuture(f);
 }
 
-void MainTextViewer::slotHighlightAll()
+void MatchTextViewer::slotHighlightAll()
 {
     disconnect(watcher,SIGNAL(finished()),this,SLOT(slotHighlightAll()));
-    QFuture<void> f = QtConcurrent::run(this,&MainTextViewer::parallelHighlightAll);
+    QFuture<void> f = QtConcurrent::run(this,&MatchTextViewer::parallelHighlightAll);
     watcher->setFuture(f);
 }
 
 
 
-void MainTextViewer::slotModify()
+void MatchTextViewer::slotModify()
 {
     modified ++;
 }
 
-void MainTextViewer::slotHighlighFragment(int begin, int end,bool select)
+void MatchTextViewer::slotHighlighFragment(int begin, int end,bool select)
 {
     if(end != -1){
         selectionCursor->setPosition(begin,QTextCursor::MoveAnchor);
@@ -250,7 +250,7 @@ void MainTextViewer::slotHighlighFragment(int begin, int end,bool select)
 
 
 
-//void MainTextViewer::insertFromMimeData(const QMimeData *source)
+//void MatchTextViewer::insertFromMimeData(const QMimeData *source)
 //{
 //    ////qDebug() << source->data();
 //}

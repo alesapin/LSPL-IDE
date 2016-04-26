@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QTabWidget>
-#include <Text/matchtextviewer.h>
+#include "Text/matchtextviewer.h"
 #include <QList>
 #include <QMessageBox>
 #include "Text/textbasicwidget.h"

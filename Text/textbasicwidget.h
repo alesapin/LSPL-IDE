@@ -1,7 +1,7 @@
 #ifndef TEXTBASICWIDGET_H
 #define TEXTBASICWIDGET_H
 #include <QWidget>
-#include <Text/maintextviewer.h>
+#include "Text/matchtextviewer.h"
 #include <QMainWindow>
 #include <QGridLayout>
 #include <Interface/topmenu.h>
