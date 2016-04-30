@@ -41,6 +41,7 @@ public:
     QStringList getChoosenPatterns() const;
     void importPatterns(QString filename);
     void exportPatterns(QString filename);
+    QString getPatternsAsText() const;
 signals:
 
 public slots:

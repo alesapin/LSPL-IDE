@@ -4,17 +4,18 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     bar = new BottomBar(this);
-    CentralWidget *w = new CentralWidget();
-    setMenuBar(new TopMenu(this,w));
+    center = new CentralWidget();
+    setMenuBar(new TopMenu(this,center));
     setStatusBar(bar);
     //setCentralWidget(new PatternsBasicWidget());
-    setCentralWidget(w);
-    connect(w,SIGNAL(statusReady()),this,SLOT(slotStatusReady()));
-    connect(w,SIGNAL(statusEngine()),this,SLOT(slotStatusEngine()));
-    connect(w,SIGNAL(statusHighlighting()),this,SLOT(slotStatusHighlighting()));
-    connect(w,SIGNAL(statusCompiling()),this,SLOT(slotStatusCompiling()));
+    setCentralWidget(center);
+    connect(center,SIGNAL(statusReady()),this,SLOT(slotStatusReady()));
+    connect(center,SIGNAL(statusEngine()),this,SLOT(slotStatusEngine()));
+    connect(center,SIGNAL(statusHighlighting()),this,SLOT(slotStatusHighlighting()));
+    connect(center,SIGNAL(statusCompiling()),this,SLOT(slotStatusCompiling()));
 
 }
+
 
 MainWindow::~MainWindow()
 {

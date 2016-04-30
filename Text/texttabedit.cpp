@@ -3,7 +3,11 @@
 MatchTextViewer *TextTabEdit::getCurrentWidget() const
 {
     QTabWidget* currentTab =  static_cast<QTabWidget*>(this->currentWidget());
-    return static_cast<MatchTextViewer*>(currentTab->widget(0));
+    if(currentTab){
+        return static_cast<MatchTextViewer*>(currentTab->widget(0));
+    }else{
+        return nullptr;
+    }
 }
 
 TextTabEdit::TextTabEdit(QWidget* parent):QTabWidget(parent)
@@ -127,19 +131,23 @@ void TextTabEdit::setReadOnly(bool f)
 void TextTabEdit::dehighlightAll()
 {
     MatchTextViewer* current = getCurrentWidget();
-    current->dehighlightAll();
+    if(current){
+        current->dehighlightAll();
+    }
 }
 
 void TextTabEdit::highlightAll()
 {
     MatchTextViewer* current = getCurrentWidget();
-    current->highlightAll();
+    if(current){
+        current->highlightAll();
+    }
 }
 
 void TextTabEdit::slotCloseTab(int index)
 {
         MatchTextViewer* current = getCurrentWidget();
-        if(current->isModified()){
+        if(current && current->isModified()){
             QString name = tabText(index);
             if(par->maybeSave(name,index)){
                 this->removeTab(index);

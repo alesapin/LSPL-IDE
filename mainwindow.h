@@ -3,6 +3,7 @@
 
 #include "centralwidget.h"
 #include "Interface/bottombar.h"
+class CentralWidget;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -12,6 +13,7 @@ private:
     static const QString HIGHLIGHT_PROCESSING;
     static const QString PATTERN_COMPILING;
     BottomBar* bar;
+    CentralWidget* center;
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();

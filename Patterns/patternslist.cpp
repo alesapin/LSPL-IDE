@@ -49,14 +49,15 @@ void PatternsList::clearAll()
 void PatternsList::addPattern(const QString &text)
 {
     myModel->addUncompiledPattern(text);
-    resizeRowsToContents();
 }
 
 void PatternsList::addPatterns(const QStringList &patterns)
 {
+    int i =0;
     for(const QString& p:patterns){
         addPattern(p);
     }
+    resizeRowsToContents();
 }
 
 void PatternsList::resizeEvent(QResizeEvent *e)

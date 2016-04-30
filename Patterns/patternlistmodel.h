@@ -7,6 +7,7 @@
 #include <QList>
 #include <QPair>
 #include <QColor>
+#include <QHash>
 #include <QFontMetrics>
 #include <QWidget>
 #include <QMimeData>
@@ -57,6 +58,7 @@ private:
     bool recompileAll;
     //Данные в строках
     QList<ListItem> rowData;
+    QHash<QString,int> positions;
     void setPatternsUncompiled();
 
 };

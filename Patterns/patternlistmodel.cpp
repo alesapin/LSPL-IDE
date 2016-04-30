@@ -68,21 +68,23 @@ void PatternListModel::addUncompiledPattern(const QString &pattern)
 
     QPair<QString,QString> nameBody = utility::splitPattern(pattern);
     if(nameBody.second == "") return;
-    ListItem currentItem = {nameBody.first,nameBody.second,UnCompiled,"",false};
-    int i;
-    if( (i = rowData.indexOf(currentItem)) !=-1 ){
-        rowData[i].text = currentItem.text;
-        rowData[i].state = UnCompiled;
+    if( positions.contains(nameBody.first)) {
+        int pos = positions[nameBody.first];
+        rowData[pos].text += " | " + nameBody.second;
+        rowData[pos].state = UnCompiled;
+        emit dataChanged(createIndex(pos,0),createIndex(pos+1,0));
     } else {
+        ListItem currentItem = {nameBody.first,nameBody.second,UnCompiled,"",false};
+        positions[nameBody.first] = rowData.size();
         rowData.append(currentItem);
         insertRows(rowData.size(),1,QModelIndex());
-
     }
     recompileAll = true;
 }
 
 void PatternListModel::addUncompiledPatterns(const QStringList &patterns)
 {
+    int i = 0;
     for(const QString& str:patterns){
         addUncompiledPattern(str);
     }
@@ -153,6 +155,7 @@ void PatternListModel::clearAll()
 {
     removeRows(0,rowData.size(),QModelIndex());
     rowData.clear();
+    positions.clear();
     recompileAll = false;
 }
 

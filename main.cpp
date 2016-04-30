@@ -1,13 +1,14 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <iostream>
-#include <Text/matchtextviewer.h>
 #include <QtGui>
 #include <QDir>
 #include <cstdlib>
 #include "Utils/intervalrbtree.h"
 #include <QStyleFactory>
 #include "proxystyle.h"
+
+
 int main(int argc, char *argv[])
 {
 #ifdef Q_OS_WIN
@@ -23,7 +24,7 @@ int main(int argc, char *argv[])
          a.setStyleSheet(file.readAll());
          file.close();
      }
-    MainWindow w;
-    w.show();
+     MainWindow w;
+     w.show();
     return a.exec();
 }

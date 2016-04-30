@@ -81,10 +81,15 @@ void PatternsBasicWidget::exportPatterns(QString filename)
    #ifndef QT_NO_CURSOR
        QApplication::setOverrideCursor(Qt::WaitCursor);
    #endif
-        out << list->getCompiledPatterns().join('\n');
+        out << getPatternsAsText();
    #ifndef QT_NO_CURSOR
        QApplication::restoreOverrideCursor();
 #endif
+}
+
+QString PatternsBasicWidget::getPatternsAsText() const
+{
+    return list->getCompiledPatterns().join('\n');
 }
 
 void PatternsBasicWidget::slotClearPatterns()
@@ -96,7 +101,7 @@ void PatternsBasicWidget::slotClearPatterns()
 
 void PatternsBasicWidget::slotAddPattern()
 {
-    list->addPattern(editor->getText());
+    list->addPatterns(QStringList() << editor->getText());
     editor->clean();
 }
 
