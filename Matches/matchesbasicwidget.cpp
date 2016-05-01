@@ -5,7 +5,7 @@ MatchesBasicWidget::MatchesBasicWidget(QWidget* parent) : BasicWidget(parent,"С
     QWidget* wrapper = new QWidget();
     QVBoxLayout* lay = new QVBoxLayout(wrapper);
     QHBoxLayout* line = new QHBoxLayout();
-    selectPattern = new QLabel("Select Patterns: ");
+    selectPattern = new QLabel("Выбрать шаблоны: ");
     QSizePolicy small(QSizePolicy::Preferred,QSizePolicy::Preferred);
     small.setHorizontalStretch(0);
     selectPattern->setSizePolicy(small);
@@ -39,8 +39,19 @@ MatchesBasicWidget::MatchesBasicWidget(QWidget* parent) : BasicWidget(parent,"С
 void MatchesBasicWidget::setMatches(QSharedPointer<utility::IntervalViewMap> patterns,const QStringList& names)
 {
     table->setMatches(patterns);
-    list->clear();
-    list->addItems(names);
+    if(names.empty()){
+        QSet<QString> n;
+        for(auto itr = patterns->begin(); itr != patterns->end(); ++itr){
+            for(const QString &name : itr->value.patterns){
+                n.insert(name);
+            }
+        }
+        list->clear();
+        list->addItems(n.toList());
+    }else{
+        list->clear();
+        list->addItems(names);
+    }
     blockSignals(true);
     list->checkAll();
     blockSignals(false);
@@ -116,12 +127,12 @@ QSharedPointer<utility::IntervalViewMap> MatchesBasicWidget::getSelectedMatches(
 void MatchesBasicWidget::slotClear()
 {
     table->clear();
-    list->clearAll();
+    list->clearCurrent();
 }
 
 QDomDocument MatchesBasicWidget::getXml() const
 {
-    return utility::toXml(table->getCurrentMatches());
+    return utility::matchesToXml(table->getCurrentMatches());
 }
 
 

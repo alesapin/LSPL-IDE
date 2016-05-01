@@ -38,10 +38,12 @@ private:
     void initPatternEditor();
 public:
     explicit PatternsBasicWidget(PatternCompiler* compiler,QWidget *parent = 0);
-    QStringList getChoosenPatterns() const;
+    QStringList getChoosenPatternsNames() const;
     void importPatterns(QString filename);
     void exportPatterns(QString filename);
     QString getPatternsAsText() const;
+    QStringList getPatterns() const;
+    void loadPatterns(const QStringList& patterns);
 signals:
 
 public slots:

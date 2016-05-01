@@ -32,14 +32,23 @@ QTreeView::item {
     border: 1px solid #d9d9d9;
 }
 QToolBar {
-    spacing: 3px; /* spacing between items in the tool bar */
-    padding: 3px;
+    spacing: 10px; /* spacing between items in the tool bar */
+    padding: 5px;
 }
 QTableView::item
 {
   border: 0px;
   padding: 5px;
 }
+QPushButton {
+    padding: 5px;
+    border: 1px solid #8b8989;
+    border-radius: 2px;
+    background:   qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #F5E4D3, stop: 1 #F0BF8D);
+    color: #4A4641;
+/*    font-weight: bold;*/
+}
+
 /*QProgressBar {
     border: 1px solid #8b8989;
     border-radius: 4px;

@@ -37,6 +37,5 @@ WordForm MorphAn::convertWordForm(const lspl::morphology::WordForm& wf) const
 
 MorphAn::MorphAn()
 {
-    lspl::morphology::AotMorphology * aot = dynamic_cast<lspl::morphology::AotMorphology*>(&lspl::morphology::Morphology::instance());
-    morph = QSharedPointer<lspl::morphology::AotMorphology>(aot);
+    morph = dynamic_cast<lspl::morphology::AotMorphology*>(&lspl::morphology::Morphology::instance());
 }

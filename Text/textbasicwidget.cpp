@@ -89,6 +89,11 @@ void TextBasicWidget::setReadOnly(bool)
     textEdit->setReadOnly(true);
 }
 
+void TextBasicWidget::addText(const QString &text)
+{
+    textEdit->addAnotherTab("Untilted",text);
+}
+
 QString TextBasicWidget::getCurrentFile() const
 {
     return textEdit->getCurrentFile();
@@ -106,7 +111,9 @@ void TextBasicWidget::slotClearMatches()
 }
 
 void TextBasicWidget::slotAnalyzeText(){
-    emit buttonClicked();
+    if(textEdit->count() > 0){
+        emit buttonClicked();
+    }
 }
 
 void TextBasicWidget::slotEditEnable()
@@ -160,16 +167,15 @@ void TextBasicWidget::initButtons(QMainWindow* wrapper)
     QToolBar* buttonBar = new QToolBar(this);
     buttonBar->setMovable(false);
     buttonBar->setFloatable(false);
-    analyze = new QPushButton("Analyze",this);
-    edit = new QPushButton("Edit",this);
-    statistics = new QPushButton("Statistics",this);
+    analyze = new QPushButton(tr("Наложить"),this);
+    edit = new QPushButton(tr("Редактировать"),this);
+    statistics = new QPushButton(tr("Статистика"),this);
     connect(analyze,SIGNAL(clicked(bool)),this,SLOT(slotAnalyzeText()));
     connect(edit,SIGNAL(clicked(bool)),this,SLOT(slotEditEnable()));
     connect(statistics,SIGNAL(clicked(bool)),this,SLOT(slotShowStatistics()));
     buttonBar->addWidget(analyze);
     buttonBar->addWidget(edit);
     buttonBar->addWidget(statistics);
-
     wrapper->addToolBar(buttonBar);
 
 }

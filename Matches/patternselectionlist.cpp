@@ -40,16 +40,26 @@ void PatternSelectionList::clearAll()
     labelList.clear();
     models.append(new ComboSelectionModel());
     setModel(models[0]);
+    currentTab = 0;
     connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
     labelList.append("");
     clear();
+}
+
+void PatternSelectionList::clearCurrent()
+{
+    disconnect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+    models[currentTab]->clear();
+    labelList[currentTab] = "";
+    connect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
+
 }
 
 void PatternSelectionList::changeTab(int index)
 {
     if(currentTab != index){
         disconnect(myModel(), SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotModelItemChanged(QStandardItem*)));
-        if(index < models.size()){
+        if(index < models.size()) {
             ComboSelectionModel* m = models[index];
             setModel(m);
             currentTab = index;
@@ -105,18 +115,6 @@ void PatternSelectionList::updateDisplayText()
     QFontMetrics fontMetrics(font());
     labelList[currentTab] = myModel()->getCheckedItems().join(", ");
     labelList[currentTab] = fontMetrics.elidedText(labelList[currentTab],Qt::ElideRight,textRect.width());
-//    if (fontMetrics.size(Qt::TextSingleLine, labelList[currentTab]).width() > textRect.width()) {
-//        int width = fontMetrics.size(Qt::TextSingleLine, labelList[currentTab] + "...").width();
-//        while (labelList[currentTab] != "" && width > textRect.width()) {
-//            //qDebug() << "Width:"<<width<<"\n";
-//            //qDebug() << "Length:"<<labelList[currentTab].length()<<"\n";
-//            labelList[currentTab].chop(labelList[currentTab].length()/2);
-//            int ind = labelList[currentTab].lastIndexOf(' ');
-//            labelList[currentTab].chop(labelList[currentTab].length() - ind);
-//            width = fontMetrics.size(Qt::TextSingleLine, labelList[currentTab] + "...").width();
-//        }
-//        labelList[currentTab] += "...";
-//    }
 }
 
 void PatternSelectionList::paintEvent(QPaintEvent *event)

@@ -18,6 +18,7 @@ public:
     QStringList unchekedItems() const;
     void checkAll();
     void clearAll();
+    void clearCurrent();
     void changeTab(int index);
     void closeTab(int index);
 private:

@@ -33,8 +33,9 @@ QString TextTabEdit::addAnotherTab(const QString &filename, const QString &text)
     current->setPlainText(text);
     currentMorph->setPlainText(text);
     addTab(viewerTab,name);
-    setCurrentWidget(current);
+    setCurrentWidget(viewerTab);
     connect(current,SIGNAL(jobDone()),this,SIGNAL(checkingEnabled()));
+    connect(viewerTab,SIGNAL(currentChanged(int)),this,SLOT(slotMorphologyClicked()));
     return name;
 }
 
@@ -164,5 +165,15 @@ void TextTabEdit::slotRenameCurrentTab(const QString &filename)
     QString name = filename.split("/").last();
     fileNamePath[name] = filename;
     setTabText(this->currentIndex(),name);
+}
+
+void TextTabEdit::slotMorphologyClicked()
+{
+    QTabWidget* currentTab =  static_cast<QTabWidget*>(this->currentWidget());
+    if(currentTab){
+        MatchTextViewer* text = static_cast<MatchTextViewer*>(currentTab->widget(0));
+        MorphologyViewer* viewer = static_cast<MorphologyViewer*>(currentTab->widget(1));
+        viewer->setText(text->toPlainText());
+    }
 }
 

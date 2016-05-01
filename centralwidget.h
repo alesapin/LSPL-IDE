@@ -24,6 +24,7 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include "Interface/bottombar.h"
+#include "Utils/xmlprocessor.h"
 class TextBasicWidget;
 class CentralWidget : public QWidget
 {
@@ -38,9 +39,11 @@ public:
     PatternsBasicWidget *getPatternWidget();
     MatchesBasicWidget *getMatchesWidget();
     PatternCompiler *getPatternCompiler();
+    utility::XmlProcessor xml;
     QStringList getChoosenPatterns();
     void loadAfterCrash(const QString& textFileName, const QString& patternFileName);
     void createBackup() const;
+
 private:
     PatternCompiler* compiler;
     TextBasicWidget* txt;
@@ -62,6 +65,8 @@ public slots:
     void slotEdit();
     void slotTimeout();
     void slotProgress(int val);
+    void slotSaveLspl(const QString& filename);
+    void slotLoadLspl(const QString& filename);
 };
 
 #endif // CENTRALWIDGET_H

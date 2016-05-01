@@ -46,8 +46,10 @@ public:
     void saveMatches(QString filename);
     void setMatches(QSharedPointer<utility::IntervalViewMap> matches);
     void setReadOnly(bool);
+    void addText(const QString& text);
     QString getCurrentFile() const ;
     QString getText() const ;
+
 signals:
     void buttonClicked();
     void editEnabled();

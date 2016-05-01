@@ -18,7 +18,7 @@ struct WordForm {
 class MorphAn
 {
 private:
-    QSharedPointer<lspl::morphology::AotMorphology> morph;
+    lspl::morphology::AotMorphology* morph;
     WordForm convertWordForm(const lspl::morphology::WordForm& result) const;
 
 public:

@@ -7,8 +7,8 @@ void PatternsBasicWidget::initPatternEditor()
     QToolBar* buttonBar = new QToolBar(this);
     buttonBar->setMovable(false);
     buttonBar->setFloatable(false);
-    compileButton = new QPushButton("Compile",this);
-    addButton = new QPushButton("Add",this);
+    compileButton = new QPushButton(tr("Скомпилировать"),this);
+    addButton = new QPushButton(tr("Добавить"),this);
     buttonBar->addWidget(compileButton);
     QWidget* container =new QWidget(this);
     QVBoxLayout* lay = new QVBoxLayout(container);
@@ -39,7 +39,7 @@ PatternsBasicWidget::PatternsBasicWidget(PatternCompiler* compiler,QWidget *pare
     initPatternEditor();
 }
 
-QStringList PatternsBasicWidget::getChoosenPatterns() const
+QStringList PatternsBasicWidget::getChoosenPatternsNames() const
 {
     return list->getCompiledPatternsNames();
 }
@@ -90,6 +90,17 @@ void PatternsBasicWidget::exportPatterns(QString filename)
 QString PatternsBasicWidget::getPatternsAsText() const
 {
     return list->getCompiledPatterns().join('\n');
+}
+
+QStringList PatternsBasicWidget::getPatterns() const
+{
+    return list->getCompiledPatterns();
+}
+
+void PatternsBasicWidget::loadPatterns(const QStringList &patterns)
+{
+    list->clearAll();
+    list->addPatterns(patterns);
 }
 
 void PatternsBasicWidget::slotClearPatterns()

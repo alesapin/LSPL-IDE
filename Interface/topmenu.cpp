@@ -3,48 +3,52 @@
 void TopMenu::setFileMenu()
 {
     setFileActions();
-    fileMenu = addMenu("File");
+    fileMenu = addMenu("Файл");
     fileMenu->addAction(newAct);
     fileMenu->addAction(openAct);
     fileMenu->addSeparator();
+    fileMenu->addAction(saveLsplAct);
+    fileMenu->addAction(loadLsplAct);
+    fileMenu->addSeparator();
     fileMenu->addAction(saveAct);
     fileMenu->addAction(saveAsAct);
-    fileMenu->addAction(saveAllAct);
 }
 
 void TopMenu::setFileActions()
 {
-    newAct = new QAction(tr("New"),this);
+    newAct = new QAction(tr("Новый текстовый файл"),this);
     newAct->setShortcut(QKeySequence::New);
-    newAct->setStatusTip(tr("Create new file"));
+    newAct->setStatusTip(tr("Создает новый текстовый файл"));
     connect(newAct,SIGNAL(triggered()),this,SLOT(newFile()));
 
-    openAct = new QAction(tr("Open"),this);
+    openAct = new QAction(tr("Открыть текстовый файл"),this);
     openAct->setShortcut(QKeySequence::Open);
-    openAct->setStatusTip(tr("Open an existing file"));
+    openAct->setStatusTip(tr("Открывает существующий текстовый файл"));
     connect(openAct,SIGNAL(triggered()),this,SLOT(openFile()));
 
-    saveAct = new QAction(tr("Save"),this);
+    saveAct = new QAction(tr("Сохранить текстовый файл"),this);
     saveAct->setShortcut(QKeySequence::Save);
-    saveAct->setStatusTip(tr("Save file"));
+    saveAct->setStatusTip(tr("Сохраняет текстовый файл"));
     connect(saveAct,SIGNAL(triggered()),this,SLOT(saveFile()));
 
-    saveAsAct = new QAction(tr("Save as"),this);
+    saveAsAct = new QAction(tr("Сохранить текстовый файл как"),this);
     saveAsAct->setShortcut(QKeySequence::SaveAs);
-    saveAsAct->setStatusTip(tr("Save file as"));
+    saveAsAct->setStatusTip(tr("Сохранить как."));
     connect(saveAsAct,SIGNAL(triggered()),this,SLOT(saveFileAs()));
 
-    saveAllAct = new QAction(tr("Save all"),this);
-    saveAllAct->setShortcut(QKeySequence::SelectAll);
-    saveAllAct->setStatusTip(tr("Save all files"));
-    connect(saveAllAct,SIGNAL(triggered()),this,SLOT(saveAllFiles()));
+    saveLsplAct = new QAction(tr("Сохранить в LSPL формат"),this);
+    saveLsplAct->setStatusTip(tr("Сохраняет шалоны, наложения и текст в lspl-формате."));
+    connect(saveLsplAct,SIGNAL(triggered(bool)),this,SLOT(saveLspl()));
 
+    loadLsplAct = new QAction(tr("Загрузить из LSPL формата"),this);
+    loadLsplAct->setStatusTip(tr("Загружает файл из LSPL формата"));
+    connect(loadLsplAct,SIGNAL(triggered(bool)),this,SLOT(loadLspl()));
 }
 
 void TopMenu::setPatternMenu()
 {
     setPatternActions();
-    patternsMenu = addMenu("Patterns");
+    patternsMenu = addMenu(tr("Шаблоны"));
     patternsMenu->addAction(importPatternsAct);
     patternsMenu->addAction(exportPatternsAct);
     patternsMenu->addSeparator();
@@ -54,16 +58,16 @@ void TopMenu::setPatternMenu()
 void TopMenu::setPatternActions()
 {
 
-    importPatternsAct = new QAction(tr("Import patterns"),this);
-    importPatternsAct->setStatusTip(tr("Save patterns to file"));
+    importPatternsAct = new QAction(tr("Импортировать шаблоны"),this);
+    importPatternsAct->setStatusTip(tr("Сохранить шаблоны в файл"));
     connect(importPatternsAct,SIGNAL(triggered()),this,SLOT(importPatterns()));
 
-    exportPatternsAct = new QAction(tr("Export patterns"),this);
-    exportPatternsAct->setStatusTip(tr("Load patterns from file"));
+    exportPatternsAct = new QAction(tr("Экспортировать шаблоны"),this);
+    exportPatternsAct->setStatusTip(tr("Загрузить шаблоны из файла"));
     connect(exportPatternsAct,SIGNAL(triggered()),this,SLOT(exportPatterns()));
 
-    clearPatternsAct = new QAction(tr("Clear Patterns"),this);
-    clearPatternsAct->setStatusTip(tr("Delete all patterns from namespace"));
+    clearPatternsAct = new QAction(tr("Очистить шаблоны"),this);
+    clearPatternsAct->setStatusTip(tr("Удалить все текущие шаблоны и их наложения"));
     connect(clearPatternsAct,SIGNAL(triggered(bool)),this,SLOT(clearPatterns()));
 
 }
@@ -71,14 +75,14 @@ void TopMenu::setPatternActions()
 void TopMenu::setMatchesMenu()
 {
     setMatchesAction();
-    matchesMenu  = addMenu("Matches");
+    matchesMenu  = addMenu("Наложения");
     matchesMenu->addAction(exportMatchesAct);
 }
 
 void TopMenu::setMatchesAction()
 {
-    exportMatchesAct = new QAction(tr("Export Matches"),this);
-    exportMatchesAct->setStatusTip(tr("Save matches to file"));
+    exportMatchesAct = new QAction(tr("Выгрузить наложения"),this);
+    exportMatchesAct->setStatusTip(tr("Выгружает наложения в xml формате"));
     connect(exportMatchesAct,SIGNAL(triggered()),this,SLOT(exportMatches()));
 
 }
@@ -86,14 +90,14 @@ void TopMenu::setMatchesAction()
 void TopMenu::setSettingsMenu()
 {
     setSettingsAction();
-    settingsMenu = addMenu("Settings");
+    settingsMenu = addMenu(tr("Настройки"));
     settingsMenu->addAction(setRMLAct);
 }
 
 void TopMenu::setSettingsAction()
 {
-    setRMLAct = new QAction(tr("Set RML"),this);
-    setRMLAct->setStatusTip(tr("Save matches to file"));
+    setRMLAct = new QAction(tr("Путь к RML"),this);
+    setRMLAct->setStatusTip(tr("Указать путь к конфигурационному файлу морфологии"));
     connect(setRMLAct,&QAction::triggered,this,&TopMenu::setRml);
 }
 
@@ -133,7 +137,7 @@ void TopMenu::saveFileAs()
     } else {
             return;
     }
-    return text->saveTextFile(files.at(0));
+    text->saveTextFile(files.at(0));
 }
 
 void TopMenu::saveAllFiles()
@@ -141,21 +145,40 @@ void TopMenu::saveAllFiles()
 
 }
 
+void TopMenu::saveLspl()
+{
+    QString filter = "Xml Files (*.xml)";
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Сохранить в формате LSPL"),"", filter, &filter);
+    if(!filePath.isEmpty()){
+        if(!filePath.endsWith(".xml")){
+            filePath = filePath.append(".xml");
+        }
+        cent->slotSaveLspl(filePath);
+    }
+}
+
+void TopMenu::loadLspl()
+{
+    QString filter = "Xml Files (*.xml)";
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Загрузить из LSPL формата"),"", filter, &filter);
+    if(!filePath.isEmpty()){
+        cent->slotLoadLspl(filePath);
+    }
+}
+
 void TopMenu::importPatterns()
 {
     QString filter = "Pattern Files (*.pat)";
-    QString filename = QFileDialog::getOpenFileName(this,"Import pattern","",filter,&filter);
+    QString filename = QFileDialog::getOpenFileName(this,"Выгрузить шаблоны","",filter,&filter);
     if(!filename.isEmpty()){
-        //clearPatterns();
         pattern->importPatterns(filename);
     }
 }
 
 void TopMenu::exportPatterns()
 {
-    QFileDialog dialog(this);
     QString filter = "Pattern Files (*.pat)";
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Export pattern"),"", filter, &filter);
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Загрузить шаблоны"),"", filter, &filter);
     //qDebug() << filePath;
     if(!filePath.isEmpty()){
         if(!filePath.endsWith(".pat")){
@@ -174,7 +197,7 @@ void TopMenu::clearPatterns()
 void TopMenu::exportMatches()
 {
     QString filter = "Matches Files (*.xml)";
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Export matches"),"", filter, &filter);
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Выгрузить наложения"),"", filter, &filter);
     //qDebug() << filePath;
     if(!filePath.isEmpty()){
         if(!filePath.endsWith(".xml")){
@@ -187,7 +210,7 @@ void TopMenu::exportMatches()
 void TopMenu::setRml()
 {
     QFileDialog dialog(this);
-    QString aotPath = QFileDialog::getExistingDirectory(this,tr("Path to AOT"),QDir::currentPath(),QFileDialog::ShowDirsOnly
+    QString aotPath = QFileDialog::getExistingDirectory(this,tr("Путь к AOT"),QDir::currentPath(),QFileDialog::ShowDirsOnly
                                                         | QFileDialog::DontResolveSymlinks);
     if(!aotPath.isEmpty()){
 #ifdef Q_OS_WIN

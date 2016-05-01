@@ -78,17 +78,12 @@ void MatchTextViewer::parallelHighlightAll()
     for(utility::IntervalViewMap::iterator it = intervalMatches->begin();it!=intervalMatches->end();++it){
         emit highlightIt(it->low,it->high,true);
         i++;
-        if(watcher->isCanceled()){
-            dehighlightAll();
-            return;
-        }
         if(i%100==0){
             this->thread()->wait(100);
             watcher->pause();
         }
     }
     emit highlightIt(-1,-1,true);
-    //qDebug() << "FINISHED";
 }
 
 MatchTextViewer::MatchTextViewer(QWidget *parent) : QPlainTextEdit(parent),modified(false)

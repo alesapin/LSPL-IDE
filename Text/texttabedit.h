@@ -46,6 +46,7 @@ signals:
 public slots:
     void slotCloseTab(int index);
     void slotRenameCurrentTab(const QString& name);
+    void slotMorphologyClicked();
 private:
     QMap<QString,QString> fileNamePath;
     TextBasicWidget* par;

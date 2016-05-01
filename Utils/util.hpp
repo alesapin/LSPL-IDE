@@ -21,8 +21,8 @@ namespace utility{
     };
     QPair<QString, QString> splitPattern(const QString &pattern);
     typedef IntervalRBTree<IntervalMatch> IntervalViewMap;
-    QDomDocument toXml(const PatternViewMap& matches);
-    QDomDocument toXml(QSharedPointer<IntervalViewMap> matches);
+    QDomDocument matchesToXml(const PatternViewMap& matches);
+    QDomDocument matchesToXml(QSharedPointer<IntervalViewMap> matches);
     QSharedPointer<IntervalViewMap> convertMatchesToIntervals(const PatternViewMap& m);
     const char *codecNameForText(QFile& arr);
     QString convertToUnicode(const std::string& cpString);

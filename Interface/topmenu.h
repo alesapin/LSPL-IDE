@@ -27,6 +27,8 @@ private:
     QAction* saveAct;
     QAction* saveAsAct;
     QAction* saveAllAct;
+    QAction* saveLsplAct;
+    QAction* loadLsplAct;
     QAction* exitAct;
     QAction* exportMatchesAct;
     QAction* importPatternsAct;
@@ -55,7 +57,9 @@ private slots:
     void saveFile();
     void saveFileAs();
     void saveAllFiles();
+    void saveLspl();
 
+    void loadLspl();
     void importPatterns();
     void exportPatterns();
     void clearPatterns();

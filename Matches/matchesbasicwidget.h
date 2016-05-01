@@ -18,7 +18,7 @@ class MatchesBasicWidget : public BasicWidget
     Q_OBJECT
 public:
     MatchesBasicWidget(QWidget* parent = 0);
-    void setMatches(QSharedPointer<utility::IntervalViewMap> patterns, const QStringList &all);
+    void setMatches(QSharedPointer<utility::IntervalViewMap> patterns, const QStringList &all = QStringList());
     void setCheckedPatterns(const QStringList& patterns);
     void setCheckedAllPatterns();
     QSharedPointer<utility::IntervalViewMap> getSelectedMatches() const;

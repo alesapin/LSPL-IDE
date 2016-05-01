@@ -85,7 +85,7 @@ PatternCompiler *CentralWidget::getPatternCompiler()
 
 QStringList CentralWidget::getChoosenPatterns()
 {
-    return pattern->getChoosenPatterns();
+    return pattern->getChoosenPatternsNames();
 }
 
 void CentralWidget::loadAfterCrash(const QString &textFileName, const QString &patternFileName)
@@ -114,7 +114,7 @@ void CentralWidget::createBackup() const
 
 void CentralWidget::slotAnalyze()
 {
-    QStringList patternNames = pattern->getChoosenPatterns();
+    QStringList patternNames = pattern->getChoosenPatternsNames();
     if(!patternNames.isEmpty()){
         emit statusEngine();
         txt->setReadOnly(true);
@@ -128,7 +128,7 @@ void CentralWidget::slotDisplay()
 {
     if(!watcher->future().isCanceled()){
         timeoutTimer->stop();
-        QStringList patternNames = pattern->getChoosenPatterns();
+        QStringList patternNames = pattern->getChoosenPatternsNames();
         QSharedPointer<PatternViewMap> m = watcher->future().result();
         QSharedPointer<utility::IntervalViewMap> convertedResult = utility::convertMatchesToIntervals(*m);
         if(!convertedResult->empty() && !txt->getText().isEmpty()){
@@ -164,8 +164,8 @@ void CentralWidget::slotTimeout()
                    шаблонов и перезагрузить приложение."),
                    QMessageBox::Yes | QMessageBox::No);
 
-    msgBox.setButtonText(QMessageBox::Yes, tr("Перезагрузить"));
-    msgBox.setButtonText(QMessageBox::No, tr("Подождать"));
+    msgBox.setButtonText(QMessageBox::Yes, tr("Reboot app"));
+    msgBox.setButtonText(QMessageBox::No, tr("Wait"));
 
     if (msgBox.exec() == QMessageBox::Yes) {
         createBackup();
@@ -182,5 +182,25 @@ void CentralWidget::slotTimeout()
 void CentralWidget::slotProgress(int val)
 {
     //qDebug() << "Progress Value:" << val;
+}
+
+void CentralWidget::slotSaveLspl(const QString &filename)
+{
+    xml.setMatches(matches->getSelectedMatches());
+    xml.setPatterns(pattern->getPatterns());
+    xml.setText(txt->getText());
+    xml.writeFile(filename);
+}
+
+void CentralWidget::slotLoadLspl(const QString &filename)
+{
+    if(xml.readFile(filename)){
+        pattern->loadPatterns(xml.getPatterns());
+        txt->addText(xml.getText());
+        QSharedPointer<utility::IntervalViewMap> mths = xml.getMatches();
+        emit statusHighlighting();
+        txt->setMatches(mths);
+        matches->setMatches(mths);
+    }
 }
 

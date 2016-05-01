@@ -31,7 +31,7 @@ QSharedPointer<IntervalViewMap> convertMatchesToIntervals(const PatternViewMap& 
     return QSharedPointer<IntervalViewMap>(intervalMatches);
 }
 
-QDomDocument toXml(const PatternViewMap &matches)
+QDomDocument matchesToXml(const PatternViewMap &matches)
 {
 
     QDomDocument doc;
@@ -63,7 +63,7 @@ QDomDocument toXml(const PatternViewMap &matches)
     return doc;
 }
 
-QDomDocument toXml(QSharedPointer<IntervalViewMap> matches)
+QDomDocument matchesToXml(QSharedPointer<IntervalViewMap> matches)
 {
     QDomDocument doc;
     QDomElement header1 = doc.createElement("texts");
@@ -151,6 +151,8 @@ std::string covertToWinCp(const QString &str)
     QByteArray arr = CP_CODEC->fromUnicode(str);
     return std::string(arr.data());
 }
+
+
 
 }
 
