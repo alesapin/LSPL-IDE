@@ -5,17 +5,21 @@ void PatternsBasicWidget::initPatternEditor()
 {
     QMainWindow* wrapper = new QMainWindow();
     QToolBar* buttonBar = new QToolBar(this);
+
     buttonBar->setMovable(false);
     buttonBar->setFloatable(false);
     compileButton = new QPushButton(tr("Скомпилировать"),this);
+    clearAllButton= new QPushButton(tr("Удалить всё"),this);
     addButton = new QPushButton(tr("Добавить"),this);
     buttonBar->addWidget(compileButton);
+    buttonBar->addWidget(clearAllButton);
     QWidget* container =new QWidget(this);
     QVBoxLayout* lay = new QVBoxLayout(container);
     lay->setContentsMargins(0,0,0,0);
     list = new PatternsList(comp,this);
     editor = new PatternEditor(this);
     connect(compileButton,SIGNAL(clicked(bool)),list,SLOT(slotCompilePatterns()));
+    connect(clearAllButton,SIGNAL(clicked(bool)),this,SLOT(slotClearPatterns()));
     connect(addButton,SIGNAL(clicked(bool)),this,SLOT(slotAddPattern()));
     connect(list,SIGNAL(editPatternSignal(QString)),editor,SLOT(setText(QString)));
     QHBoxLayout* line = new QHBoxLayout();

@@ -33,6 +33,7 @@ private:
     PatternEditor* editor;
     QPushButton* compileButton;
     QPushButton* addButton;
+    QPushButton* clearAllButton;
     PatternCompiler* comp;
     PatternsList* list;
     void initPatternEditor();
