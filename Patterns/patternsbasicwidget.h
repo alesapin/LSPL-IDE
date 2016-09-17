@@ -33,7 +33,10 @@ private:
     PatternEditor* editor;
     QPushButton* compileButton;
     QPushButton* addButton;
-    QPushButton* clearAllButton;
+    QPushButton* clearButton;
+    QPushButton* matchButton;
+    QPushButton* selectAllButton;
+    QPushButton* deselectAllButton;
     PatternCompiler* comp;
     PatternsList* list;
     void initPatternEditor();
@@ -46,10 +49,14 @@ public:
     QStringList getPatterns() const;
     void loadPatterns(const QStringList& patterns);
 signals:
-
+    void matchClicked();
 public slots:
     void slotClearPatterns();
     void slotAddPattern();
+    void slotEnableMatch();
+    void slotMatchClicked();
+    void slotDisableMatch();
+    void slotDeleteSelected();
 };
 
 #endif // PATTERNSBASICWIDGET_H

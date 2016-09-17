@@ -51,14 +51,12 @@ public:
     QString getText() const ;
 
 signals:
-    void buttonClicked();
     void editEnabled();
     void tabClosed(int);
     void tabChanged(int);
     void checkingEnabled();
 public slots:
     void slotClearMatches();
-    void slotAnalyzeText();
     void slotEditEnable();
     void slotShowStatistics();
     void slotSelectFragment(int from,int to);

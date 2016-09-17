@@ -163,7 +163,17 @@ bool PatternListModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(parent);
     beginRemoveRows(QModelIndex(), row, row + count - 1);
-    while(count--) rowData.removeAt(row);
+
+    while(count--) {
+        int index = positions[rowData[row].name];
+        positions.remove(rowData[row].name);
+        for (auto itr = positions.begin(); itr != positions.end(); ++itr){
+            if (itr.value() > index) {
+                positions[itr.key()]--;
+            }
+        }
+        rowData.removeAt(row);
+    }
     endRemoveRows();
     return true;
 }
@@ -211,6 +221,48 @@ void PatternListModel::swapRows(int first, int second)
     emit dataChanged(createIndex(first,0),createIndex(second,0));
 }
 
+QVector<int> PatternListModel::getSelectedPatterns() const
+{
+    QVector<int> result;
+    for (int i =0; i < rowData.size(); ++i){
+        if(rowData[i].checked) result.push_front(i);
+    }
+    return result;
+}
+
+QStringList PatternListModel::getSelectedNames() const
+{
+    QStringList result;
+    for(int i =0;i<rowData.size();++i){
+        if (rowData[i].checked){
+            result.append(rowData[i].name);
+        }
+    }
+    return result;
+}
+
+void PatternListModel::checkAll()
+{
+    for(int i = 0;i<rowData.size();++i){
+        if(rowData[i].state != FailCompiled){
+            rowData[i].checked = true;
+        }
+    }
+    emit dataChanged(createIndex(0,0),createIndex(rowData.size(),0));
+}
+
+void PatternListModel::resetAll()
+{
+    for(int i = 0;i<rowData.size();++i){
+        if(rowData[i].state != FailCompiled){
+            rowData[i].checked = false;
+        }
+    }
+    emit dataChanged(createIndex(0,0),createIndex(rowData.size(),0));
+}
+
+
+
 void PatternListModel::setPatternsUncompiled()
 {
     for(int i = 0;i<rowData.size();++i){
@@ -221,15 +273,3 @@ int PatternListModel::columnCount(const QModelIndex &parent) const {
     return 2;
 }
 
-
-//QDataStream& operator<<(QDataStream& ostream, const PatternListModel::ListItem& ms)
-//{
-//    ostream << ms.name << ms.text;
-//    return ostream;
-//}
-
-//QDataStream& operator>>(QDataStream& istream, PatternListModel::ListItem& ms)
-//{
-//    istream >> ms.name >> ms.text;
-//    return istream;
-//}

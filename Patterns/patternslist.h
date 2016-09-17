@@ -22,6 +22,7 @@ public:
     void clearAll();
     void addPattern(const QString& text);
     void addPatterns(const QStringList& patterns);
+    QStringList getSelectedPatternNames() const {return myModel->getSelectedNames();}
 protected:
     void resizeEvent(QResizeEvent *e) Q_DECL_OVERRIDE;
 private:
@@ -38,8 +39,10 @@ private:
 public slots:
     void slotCompilePatterns();
     void slotRemovePattern();
-    void slotEditPattern();
     void slotTextEntered();
+    void slotDeleteChecked();
+    void slotSelectAll();
+    void slotDeselectAll();
 signals:
     void editPatternSignal(const QString& text);
 };

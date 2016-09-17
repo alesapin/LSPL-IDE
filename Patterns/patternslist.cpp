@@ -17,17 +17,14 @@ PatternsList::PatternsList(PatternCompiler* compiler,QWidget *parent):QTableView
 //    setResizeMode(QListView::Adjust);
     setContextMenuPolicy(Qt::ActionsContextMenu);
     removeAction = new QAction("Удалить",this);
-    editAction = new QAction("Изменить", this);
     this->horizontalHeader()->setStretchLastSection(true);
     this->verticalHeader()->hide();
     this->horizontalHeader()->hide();
     this->setColumnWidth(PatternListModel::CHECK_COLUMN,10);
     addAction(removeAction);
-    addAction(editAction);
     this->resizeColumnsToContents();
     this->resizeRowsToContents();
     connect(removeAction,SIGNAL(triggered()),this,SLOT(slotRemovePattern()));
-    connect(editAction,SIGNAL(triggered()),this,SLOT(slotEditPattern()));
     connect(delegate,SIGNAL(textUpdated()),this,SLOT(slotTextEntered()));
 }
 
@@ -109,20 +106,26 @@ void PatternsList::slotRemovePattern()
     }
 }
 
-void PatternsList::slotEditPattern()
-{
-    QModelIndexList indexes = selectionModel()->selectedIndexes();
-    if(!indexes.isEmpty()) {
-        QModelIndex ind = indexes[0];
-        PatternListModel::ListItem dat = qvariant_cast<PatternListModel::ListItem>(ind.data(Qt::DisplayRole));
-        emit editPatternSignal(dat.name+" = "+dat.text);
-        myModel->removeRows(ind.row(),1,ind);
-    }
-}
-
-
 void PatternsList::slotTextEntered()
 {
     resize(this->width(),this->height()+1);
+}
+
+void PatternsList::slotDeleteChecked()
+{
+    QVector<int> selRows = myModel->getSelectedPatterns();
+    for (int i = 0; i < selRows.size(); ++i){
+        myModel->removeRows(selRows[i],1,QModelIndex());
+    }
+}
+
+void PatternsList::slotSelectAll()
+{
+    myModel->checkAll();
+}
+
+void PatternsList::slotDeselectAll()
+{
+    myModel->resetAll();
 }
 

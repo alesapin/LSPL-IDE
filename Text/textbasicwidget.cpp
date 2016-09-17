@@ -110,11 +110,6 @@ void TextBasicWidget::slotClearMatches()
     textEdit->clearSelection();
 }
 
-void TextBasicWidget::slotAnalyzeText(){
-    if(textEdit->count() > 0){
-        emit buttonClicked();
-    }
-}
 
 void TextBasicWidget::slotEditEnable()
 {
@@ -167,13 +162,10 @@ void TextBasicWidget::initButtons(QMainWindow* wrapper)
     QToolBar* buttonBar = new QToolBar(this);
     buttonBar->setMovable(false);
     buttonBar->setFloatable(false);
-    analyze = new QPushButton(tr("Наложить"),this);
-    edit = new QPushButton(tr("Редактировать"),this);
+    edit = new QPushButton(tr("Редактирование"),this);
     statistics = new QPushButton(tr("Статистика"),this);
-    connect(analyze,SIGNAL(clicked(bool)),this,SLOT(slotAnalyzeText()));
     connect(edit,SIGNAL(clicked(bool)),this,SLOT(slotEditEnable()));
     connect(statistics,SIGNAL(clicked(bool)),this,SLOT(slotShowStatistics()));
-    buttonBar->addWidget(analyze);
     buttonBar->addWidget(edit);
     buttonBar->addWidget(statistics);
     wrapper->addToolBar(buttonBar);

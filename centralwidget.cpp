@@ -33,10 +33,11 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent), timeOut(DEFAULT
 //    vert->addWidget(progress);
     mainLay->addWidget(vert);
     setLayout(mainLay);
-    connect(txt,SIGNAL(buttonClicked()),this,SLOT(slotAnalyze()));
+    connect(pattern,SIGNAL(matchClicked()), this,SLOT(slotAnalyze()));
     connect(matches,SIGNAL(patternWasUnchecked(QString)),txt,SLOT(slotPatternUncheked(QString)));
     connect(matches,SIGNAL(patternWasChecked(QString)),txt,SLOT(slotPatternChecked(QString)));
     connect(matches,SIGNAL(showAll()),txt,SLOT(slotHighlightAll()));
+    connect(matches,SIGNAL(showAll()),pattern,SLOT(slotDisableMatch()));
     connect(matches,SIGNAL(hideAll()),txt,SLOT(slotDehighlightAll()));
     connect(matches,SIGNAL(rowClicked(int,int)),txt,SLOT(slotSelectFragment(int,int)));
     connect(matches,SIGNAL(patternWasUnchecked(QString)),this,SIGNAL(statusHighlighting()));
@@ -48,6 +49,7 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent), timeOut(DEFAULT
     connect(txt,SIGNAL(editEnabled()),this,SLOT(slotEdit()));
     connect(txt,SIGNAL(checkingEnabled()),matches,SLOT(slotEnableChecking()));
     connect(txt,SIGNAL(checkingEnabled()),this,SIGNAL(statusReady()));
+    connect(txt, SIGNAL(checkingEnabled()),pattern, SLOT(slotEnableMatch()));
 
     connect(watcher,SIGNAL(finished()),this,SLOT(slotDisplay()));
     connect(timeoutTimer,SIGNAL(timeout()),this,SLOT(slotTimeout()));
@@ -115,12 +117,14 @@ void CentralWidget::createBackup() const
 void CentralWidget::slotAnalyze()
 {
     QStringList patternNames = pattern->getChoosenPatternsNames();
-    if(!patternNames.isEmpty()){
+    if(!patternNames.isEmpty() && !txt->getText().isEmpty()){
         emit statusEngine();
         txt->setReadOnly(true);
         QFuture<QSharedPointer<PatternViewMap>> future = QtConcurrent::run(compiler,&PatternCompiler::analyzeText,patternNames,txt->getText());
         watcher->setFuture(future);
         timeoutTimer->start(timeOut);
+    } else {
+        pattern->slotEnableMatch();
     }
 }
 

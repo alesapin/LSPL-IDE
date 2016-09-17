@@ -106,7 +106,6 @@ bool MatchTextViewer::isModified()
 void MatchTextViewer::dehighlightAll()
 {
     setExtraSelections(QList<QTextEdit::ExtraSelection>());
-    emit jobDone();
 }
 
 

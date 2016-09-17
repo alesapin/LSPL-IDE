@@ -8,19 +8,28 @@ void PatternsBasicWidget::initPatternEditor()
 
     buttonBar->setMovable(false);
     buttonBar->setFloatable(false);
-    compileButton = new QPushButton(tr("Скомпилировать"),this);
-    clearAllButton= new QPushButton(tr("Удалить всё"),this);
+    compileButton = new QPushButton(tr("Компиляция"),this);
+    matchButton = new QPushButton(tr("Сопоставление"), this);
+    clearButton= new QPushButton(tr("Удалить"),this);
     addButton = new QPushButton(tr("Добавить"),this);
+    selectAllButton = new QPushButton(tr("Выбрать всё"),this);
+    deselectAllButton = new QPushButton(tr("Сбросить всё"),this);
     buttonBar->addWidget(compileButton);
-    buttonBar->addWidget(clearAllButton);
+    buttonBar->addWidget(matchButton);
+    buttonBar->addWidget(selectAllButton);
+    buttonBar->addWidget(deselectAllButton);
+    buttonBar->addWidget(clearButton);
     QWidget* container =new QWidget(this);
     QVBoxLayout* lay = new QVBoxLayout(container);
     lay->setContentsMargins(0,0,0,0);
     list = new PatternsList(comp,this);
     editor = new PatternEditor(this);
     connect(compileButton,SIGNAL(clicked(bool)),list,SLOT(slotCompilePatterns()));
-    connect(clearAllButton,SIGNAL(clicked(bool)),this,SLOT(slotClearPatterns()));
+    connect(clearButton,SIGNAL(clicked(bool)),this,SLOT(slotDeleteSelected()));
+    connect(matchButton,SIGNAL(clicked(bool)),this,SLOT(slotMatchClicked()));
     connect(addButton,SIGNAL(clicked(bool)),this,SLOT(slotAddPattern()));
+    connect(selectAllButton,SIGNAL(clicked(bool)),list,SLOT(slotSelectAll()));
+    connect(deselectAllButton,SIGNAL(clicked(bool)),list,SLOT(slotDeselectAll()));
     connect(list,SIGNAL(editPatternSignal(QString)),editor,SLOT(setText(QString)));
     QHBoxLayout* line = new QHBoxLayout();
     line->addWidget(editor);
@@ -119,6 +128,42 @@ void PatternsBasicWidget::slotAddPattern()
     list->addPatterns(QStringList() << editor->getText());
     editor->clean();
 }
+
+void PatternsBasicWidget::slotEnableMatch()
+{
+    matchButton->setEnabled(true);
+}
+
+void PatternsBasicWidget::slotMatchClicked()
+{
+    matchButton->setDisabled(true);
+    emit matchClicked();
+}
+
+void PatternsBasicWidget::slotDisableMatch()
+{
+    matchButton->setDisabled(true);
+}
+
+void PatternsBasicWidget::slotDeleteSelected()
+{
+    QStringList selected = list->getSelectedPatternNames();
+    if(!selected.empty()) {
+        QMessageBox msgBox(
+                    QMessageBox::Information,
+                    tr("Удалить выбранные шаблоны?"),
+                   "Данные шаблоны будут удалены: "+ selected.join(',')+ ".",
+                    QMessageBox::Yes | QMessageBox::No
+         );
+        msgBox.setButtonText(QMessageBox::Yes, tr("Да"));
+        msgBox.setButtonText(QMessageBox::No, tr("Нет"));
+
+        if (msgBox.exec() == QMessageBox::Yes) {
+            list->slotDeleteChecked();
+        }
+    }
+}
+
 
 
 

@@ -92,8 +92,6 @@ void MatchesBasicWidget::slotDeselectAllClicked()
 {
     list->slotDeselectAll();
     list->slotSetUserCheckable(false);
-    selectAll->setEnabled(false);
-    deselectAll->setEnabled(false);
     table->slotHideAll();
     emit hideAll();
 }
