@@ -7,6 +7,7 @@
 <li> <a href="https://github.com/alesapin/lspl">Форк библиотеки</a>;</li>
 <li> <a href="https://github.com/batterseapower/libcharsetdetect"> Минимальная сборка определителя кодировок от Mozilla </a>.</li>
 </ul>
+
 # Сборка
 <ul>
 <li> qmake </li>
